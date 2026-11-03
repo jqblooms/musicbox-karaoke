@@ -24,6 +24,10 @@ body { font: 15px var(--font); color: #000; background: #c5ccd4 repeating-linear
   box-shadow: inset 0 1px 3px rgba(0,0,0,.3); outline: none; }
 .lock .remember { display: flex; align-items: center; gap: 8px; justify-content: center; margin: 12px 0; color: #4c566c; font-size: 14px; }
 .lock .btn { width: 100%; height: 42px; font-size: 16px; }
+.kids-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 14px; padding: 8px 12px; border-radius: 8px;
+  background: #f2f5f9; border: 1px solid #d3d9e1; font-weight: bold; color: #2c3d55; }
+.kids-badge { font-size: 12px; font-weight: bold; color: #fff; padding: 3px 9px; border-radius: 10px; margin-right: 6px;
+  background: linear-gradient(#8fd0ff, #3d8fe0); border: 1px solid #23609e; text-shadow: 0 -1px 0 rgba(0,0,0,.3); }
 .lock-msg { min-height: 1.3em; margin: 12px 0 0; color: #4c566c; }
 .lock-msg.bad { color: #b3261e; }
 .shake { animation: shake .35s; }

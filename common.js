@@ -32,6 +32,17 @@ function store(key, val) {
 
 /* ------------------------------------------------------------------ the encrypted songs */
 let meta = null, key = null, songs = null, config = null;
+/* child-friendly mode (on unless switched off, remembered): `songs` is then the list without the
+ * songs marked explicit at build time (x: 1 their words, 2 their artist), so nothing explicit can
+ * be found, recommended, queued or played */
+let songsAll = null, songsKids = null;
+let kids = store("mbxKids") !== false;
+function setKids(on) {
+  kids = !!on;
+  store("mbxKids", kids);
+  if (songsAll) songs = kids ? songsKids : songsAll;
+  for (const id of ["kidsLock", "kidsSw"]) if ($(id)) $(id).checked = kids;
+}
 const shards = new Map();
 
 async function rawKey(password) {
@@ -61,7 +72,9 @@ async function unlock(raw) {
   key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
   const rows = await openFile("index.bin"); /* a wrong key fails here (the data will not authenticate) */
   keyBytes = raw;
-  songs = MbxRecommend.prepare(rows.map(([id, artist, title, language, year, genre, v, a]) => ({ id, artist, title, language, year, genre, v, a })));
+  songsAll = MbxRecommend.prepare(rows.map(([id, artist, title, language, year, genre, v, a, x]) => ({ id, artist, title, language, year, genre, v, a, x: x || 0 })));
+  songsKids = MbxRecommend.prepare(songsAll.filter((s) => !s.x));
+  setKids(kids);
   try {
     config = await openFile("config.bin"); /* the songbook's database settings (not in every build) */
   } catch {
@@ -79,6 +92,10 @@ let metaReady = null; /* the page asks for data/meta.json at once; unlocking wai
 async function start() {
   metaReady = fetch("data/meta.json", { cache: "no-cache" }).then((r) => r.json());
   meta = await metaReady;
+  if ($("kidsLock")) {
+    $("kidsLock").checked = kids;
+    $("kidsLock").addEventListener("change", (e) => setKids(e.target.checked));
+  }
   /* a link with the key in it (scanned QR code): unlock at once, remember it, and take the key
    * out of the address bar so it isn't bookmarked or shared by accident */
   const fromLink = (location.hash.match(/[#&]k=([A-Za-z0-9_-]{40,})/) || [])[1];

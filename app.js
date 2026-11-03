@@ -36,6 +36,12 @@ function loadYouTube() {
 }
 
 async function playSong(rec) {
+  if (kids && rec.x) {
+    toast(`"${rec.title}" isn't child-friendly - skipping it`);
+    if (rec.remoteKey) takeRemote(rec.remoteKey);
+    mode.exclude.push(rec.id);
+    return next();
+  }
   leaveSong();
   const text = await chartText(rec.id);
   const song = text && MbxChart.parse(text);
@@ -301,6 +307,21 @@ $("cover").addEventListener("click", togglePlay);
 $("pauseScreen").addEventListener("click", togglePlay);
 $("cover").addEventListener("dblclick", toggleFullscreen);
 
+/* child-friendly: hides explicit songs everywhere, and stops one that's on */
+$("kidsSw").addEventListener("change", (e) => {
+  setKids(e.target.checked);
+  mode.upnextFor = -1;
+  renderPicks();
+  renderUpNext();
+  if ($("q").value.trim()) $("q").dispatchEvent(new Event("input"));
+  publishKids();
+  toast(kids ? "Child-friendly: on" : "Child-friendly: off");
+  if (kids && cur && cur.rec.x) {
+    toast(`"${cur.rec.title}" isn't child-friendly - skipping it`);
+    next();
+  }
+});
+
 /* volume: ours (kept between visits), applied to YouTube's player */
 settings.volume ??= 80;
 settings.muted ??= false;
@@ -473,7 +494,10 @@ async function hostSongbook() {
     const queue = db.ref(database, path + "/queue");
     db.onChildAdded(queue, (snap) => {
       const v = snap.val();
-      if (!v || !songs.byId.has(v.id)) return void db.remove(snap.ref).catch(() => {});
+      if (!v || !songs.byId.has(v.id)) {
+        if (v && kids && songsAll.byId.get(v.id)?.x) toast(`${v.name || "Someone"} picked "${v.title}" - not child-friendly, left out`);
+        return void db.remove(snap.ref).catch(() => {});
+      }
       remote.set(snap.key, { key: snap.key, id: v.id, name: v.name || "", at: v.at || 0 });
       renderUpNext();
       if (!cur) next();
@@ -485,6 +509,7 @@ async function hostSongbook() {
     });
     await showQr();
     $("sbStatus").textContent = "Scan to pick songs on your phone";
+    publishKids();
     publishNow();
   } catch (e) {
     $("sbStatus").textContent = "Songbook offline: " + e.message;
@@ -494,6 +519,12 @@ async function hostSongbook() {
 function takeRemote(key) {
   remote.delete(key);
   if (hosted) hosted.fb.db.remove(hosted.fb.db.ref(hosted.fb.database, `${hosted.path}/queue/${key}`)).catch(() => {});
+}
+
+function publishKids() {
+  if (!hosted) return;
+  const { db, database } = hosted.fb;
+  db.set(db.ref(database, hosted.path + "/kids"), kids).catch(() => {});
 }
 
 function publishNow() {

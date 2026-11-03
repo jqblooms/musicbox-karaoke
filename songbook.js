@@ -134,6 +134,13 @@ window.onUnlocked = async () => {
     now = snap.val();
     paintNow();
   });
+  /* the screen's child-friendly setting decides what this phone can find (on until it says) */
+  db.onValue(db.ref(database, path + "/kids"), (snap) => {
+    setKids(snap.val() !== false);
+    $("kidsBadge").hidden = !kids;
+    paintResults();
+    paintQueue();
+  });
   db.onValue(db.ref(database, path + "/seen"), (snap) => {
     seen = snap.val() || 0;
     paintHost();
