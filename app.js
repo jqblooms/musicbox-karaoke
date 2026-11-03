@@ -60,8 +60,10 @@ async function chartText(id) {
   return (await shards.get(n))[id] || null;
 }
 
+let metaReady = null; /* the page asks for data/meta.json at once; unlocking waits for it */
 async function start() {
-  meta = await (await fetch("data/meta.json", { cache: "no-cache" })).json();
+  metaReady = fetch("data/meta.json", { cache: "no-cache" }).then((r) => r.json());
+  meta = await metaReady;
   const saved = store("mbxKey");
   if (saved && saved.salt === meta.salt) {
     try {
@@ -80,6 +82,7 @@ $("lockForm").addEventListener("submit", async (e) => {
   msg.className = "lock-msg";
   msg.textContent = "Unlocking…";
   try {
+    meta = meta || (await metaReady);
     const raw = await rawKey($("pw").value);
     await unlock(raw);
     if ($("remember").checked) store("mbxKey", { salt: meta.salt, key: b64.enc(raw) });
@@ -151,7 +154,7 @@ async function playSong(rec) {
     player = new YT.Player("yt", {
       videoId: yt,
       playerVars: { autoplay: 1, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, rel: 0, playsinline: 1, cc_load_policy: 0, origin: location.origin, mute: MUTED ? 1 : 0 },
-      events: { onStateChange, onError },
+      events: { onReady: () => applyVolume(), onStateChange, onError },
     });
   } else player.loadVideoById(yt);
   renderUpNext();
@@ -167,6 +170,7 @@ function onStateChange(e) {
       } catch {}
   clock.at = performance.now();
   $("playBtn").innerHTML = clock.playing ? "&#10074;&#10074;" : "&#9654;";
+  $("pauseScreen").hidden = s !== YT.PlayerState.PAUSED || !cur;
   if (s === YT.PlayerState.ENDED && cur) {
     cur.ended = true;
     next();
@@ -364,7 +368,43 @@ $("shuffleBtn").addEventListener("click", () => {
   mode.upnextFor = -1;
   renderUpNext();
 });
-$("fsBtn").addEventListener("click", () => (document.fullscreenElement ? document.exitFullscreen() : $("stage").requestFullscreen()));
+$("fsBtn").addEventListener("click", () => (document.fullscreenElement ? document.exitFullscreen() : $("stageCol").requestFullscreen()));
+$("cover").addEventListener("click", togglePlay);
+$("pauseScreen").addEventListener("click", togglePlay);
+$("cover").addEventListener("dblclick", () => $("fsBtn").click());
+
+/* volume: ours (kept between visits), applied to YouTube's player */
+settings.volume ??= 80;
+settings.muted ??= false;
+function applyVolume() {
+  $("vol").value = settings.volume;
+  $("muteBtn").innerHTML = settings.muted || settings.volume === 0 ? "&#128263;" : "&#128266;";
+  store("mbxSettings", settings);
+  if (!player || !player.setVolume) return;
+  player.setVolume(settings.volume);
+  if (settings.muted || MUTED) player.mute();
+  else player.unMute();
+}
+$("vol").addEventListener("input", (e) => {
+  settings.volume = +e.target.value;
+  settings.muted = false;
+  applyVolume();
+});
+$("muteBtn").addEventListener("click", () => {
+  settings.muted = !settings.muted;
+  applyVolume();
+});
+applyVolume();
+
+/* full screen: the control bar hides after 3 s without the mouse moving */
+let idleTimer = 0;
+function wake() {
+  $("stageCol").classList.remove("idle");
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => document.fullscreenElement && $("stageCol").classList.add("idle"), 3000);
+}
+$("stageCol").addEventListener("mousemove", wake);
+document.addEventListener("fullscreenchange", wake);
 $("notesSw").checked = settings.notes;
 $("notesSw").addEventListener("change", (e) => {
   settings.notes = e.target.checked;
@@ -375,6 +415,14 @@ document.addEventListener("keydown", (e) => {
   if (e.key === " ") (e.preventDefault(), togglePlay());
   else if (e.key === "n" || e.key === "N") cur && next();
   else if (e.key === "f" || e.key === "F") $("fsBtn").click();
+  else if (e.key === "m" || e.key === "M") $("muteBtn").click();
+  else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+    e.preventDefault();
+    settings.volume = Math.max(0, Math.min(100, settings.volume + (e.key === "ArrowUp" ? 10 : -10)));
+    settings.muted = false;
+    applyVolume();
+    toast(`Volume ${settings.volume}%`);
+  }
   else if (e.key === "/") (e.preventDefault(), $("q").focus());
   else if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && player && cur) player.seekTo(Math.max(0, videoTime() + (e.key === "ArrowLeft" ? -5 : 5)), true);
 });

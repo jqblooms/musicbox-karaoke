@@ -31,14 +31,16 @@
         <input id="q" type="search" placeholder="Search karaoke songs" autocomplete="off" spellcheck="false">
         <div id="results" class="results" hidden></div>
       </div>
-      <button id="fsBtn" class="btn small" title="Full screen (F)">Full screen</button>
     </header>
 
     <main class="main">
-      <div class="stage-col">
+      <div id="stageCol" class="stage-col">
         <div id="stage" class="stage">
           <div id="ytHost" class="yt"><div id="yt"></div></div>
           <canvas id="lyrics" class="lyrics"></canvas>
+          <!-- covers YouTube's player so its own hover and pause layers never show; clicks are ours -->
+          <div id="cover" class="cover"></div>
+          <div id="pauseScreen" class="pause" hidden><div class="pause-card"><div class="pause-sign"><i></i><i></i></div><b>Paused</b><span>Click or press Space to carry on</span></div></div>
           <div id="mapHit" class="map-hit" title="Jump to here"></div>
           <div id="welcome" class="welcome">
             <h2>Pick a song to sing</h2>
@@ -51,7 +53,10 @@
           <button id="playBtn" class="btn round" title="Play / pause (Space)">&#9654;</button>
           <button id="nextBtn" class="btn round" title="Next song (N)">&#9197;</button>
           <div class="now"><b id="nowTitle">Nothing playing</b><span id="nowArtist"></span></div>
+          <button id="muteBtn" class="btn round" title="Mute (M)">&#128266;</button>
+          <input id="vol" class="vol" type="range" min="0" max="100" step="1" title="Volume (Up / Down)">
           <label class="switch-row" title="Note bars"><span>Notes</span><input id="notesSw" type="checkbox" class="switch"></label>
+          <button id="fsBtn" class="btn round" title="Full screen (F)">&#x26F6;</button>
         </div>
       </div>
       <aside class="side">
