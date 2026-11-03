@@ -58,6 +58,7 @@ async function playSong(rec) {
   mode.queue = mode.queue.filter((id) => id !== rec.id);
   save();
   $("welcome").hidden = true;
+  document.body.classList.remove("idle-screen");
   $("nowTitle").textContent = rec.title;
   $("nowArtist").textContent = $("fsArtist").textContent = rec.artist + (rec.v ? "" : " · audio only");
   $("fsTitle").textContent = rec.title;
@@ -464,12 +465,13 @@ function loadScript(src) {
 }
 
 async function showQr() {
+  if (TV) $("tvQr").hidden = false;
   await loadScript("https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js");
   const q = qrcode(0, "M");
   q.addData(songbookUrl());
   q.make();
   const src = q.createDataURL(6, 2);
-  $("qr").src = $("fsQr").src = src;
+  $("qr").src = $("fsQr").src = $("tvQrImg").src = src;
   $("qrLink").href = songbookUrl();
 }
 
@@ -533,6 +535,122 @@ function publishNow() {
   db.set(db.ref(database, hosted.path + "/now"), { id: cur.rec.id, title: cur.rec.title, artist: cur.rec.artist, name: cur.by || "", at: db.serverTimestamp() }).catch(() => {});
 }
 
+/* ------------------------------------------------------------------ TV mode (?tv=1)
+ * The page in the TV app: the video fills the screen, the QR code stays up, and the remote drives
+ * it: OK pauses, Left / Right jump 10 s, Down opens Up next, Up opens the menu, Back closes what's
+ * open (the app sends Escape for Back). Media keys work too. */
+const TV = new URLSearchParams(location.search).get("tv") === "1";
+let hintTimer = 0;
+function tvHint() {
+  if (!TV) return;
+  $("tvHint").hidden = false;
+  $("tvHint").style.opacity = "1";
+  clearTimeout(hintTimer);
+  hintTimer = setTimeout(() => ($("tvHint").style.opacity = "0"), 4000);
+}
+function tvPanel() {
+  if (!$("tvMenu").hidden) return "menu";
+  if (document.querySelector(".side").classList.contains("open")) return "side";
+  return null;
+}
+function tvClose() {
+  $("tvMenu").hidden = true;
+  document.querySelector(".side").classList.remove("open");
+  document.activeElement?.blur();
+}
+function tvFocusables(panel) {
+  if (panel === "menu") return [...document.querySelectorAll("#tvMenu .tv-item")];
+  return [...document.querySelectorAll("#upnext .row")];
+}
+function tvOpen(panel) {
+  tvClose();
+  if (panel === "menu") {
+    paintTvMenu();
+    $("tvMenu").hidden = false;
+  } else {
+    renderUpNext();
+    document.querySelector(".side").classList.add("open");
+  }
+  const items = tvFocusables(panel);
+  items.forEach((el) => (el.tabIndex = 0));
+  items[0]?.focus();
+}
+function paintTvMenu() {
+  $("tvKids").textContent = `Child-friendly: ${kids ? "On" : "Off"}`;
+  $("tvNotes").textContent = `Note bars: ${settings.notes ? "On" : "Off"}`;
+}
+function moveFocus(items, step) {
+  const i = items.indexOf(document.activeElement);
+  const n = Math.max(0, Math.min(items.length - 1, (i < 0 ? 0 : i + step)));
+  items[n]?.focus();
+  items[n]?.scrollIntoView({ block: "nearest" });
+}
+/* the welcome screen's picks: a grid, moved through by the arrows */
+function moveGrid(key) {
+  const picks = [...document.querySelectorAll(".pick")];
+  picks.forEach((p) => (p.tabIndex = 0));
+  let i = picks.indexOf(document.activeElement);
+  if (i < 0) return picks[0]?.focus();
+  const cols = Math.max(1, picks.filter((p) => p.offsetTop === picks[0].offsetTop).length);
+  i += key === "ArrowRight" ? 1 : key === "ArrowLeft" ? -1 : key === "ArrowDown" ? cols : -cols;
+  if (picks[i]) picks[i].focus();
+}
+if (TV) {
+  document.body.classList.add("tv");
+  document.querySelector(".welcome p").textContent = "Choose one with the remote, or scan the code with your phone to pick any song:";
+  document.querySelector(".pause-card span").textContent = "Press OK to carry on";
+  $("tvKids").addEventListener("click", () => {
+    $("kidsSw").click();
+    paintTvMenu();
+  });
+  $("tvNotes").addEventListener("click", () => {
+    $("notesSw").click();
+    paintTvMenu();
+  });
+  $("tvNext").addEventListener("click", () => {
+    tvClose();
+    next();
+  });
+  $("tvUpnext").addEventListener("click", () => tvOpen("side"));
+  document.addEventListener(
+    "keydown",
+    (e) => {
+      const k = e.key, panel = tvPanel();
+      const handled = () => (e.preventDefault(), e.stopImmediatePropagation());
+      tvHint();
+      if (k === "Escape" || k === "GoBack" || k === "BrowserBack" || k === "Backspace") {
+        if (panel) tvClose();
+        return handled();
+      }
+      if (k === "MediaPlayPause" || k === "MediaPlay" || k === "MediaPause") return handled(), togglePlay();
+      if (k === "MediaTrackNext" || k === "MediaFastForward") return handled(), cur && next();
+      if (panel) {
+        if (k === "ArrowDown" || k === "ArrowUp") moveFocus(tvFocusables(panel), k === "ArrowDown" ? 1 : -1);
+        else if (k === "ArrowLeft" && panel === "side") tvClose();
+        else if (k === "Enter" || k === " ") {
+          const el = document.activeElement;
+          if (el && el !== document.body) el.click();
+          if (panel === "side") tvClose();
+        }
+        return handled();
+      }
+      if (!cur) { /* the welcome screen: pick a song */
+        if (k.startsWith("Arrow")) moveGrid(k);
+        else if (k === "Enter" && document.activeElement?.classList.contains("pick")) document.activeElement.click();
+        else if (k === "Enter") moveGrid("ArrowRight");
+        return handled();
+      }
+      if (k === "Enter" || k === " ") togglePlay();
+      else if (k === "ArrowDown") tvOpen("side");
+      else if (k === "ArrowUp") tvOpen("menu");
+      else if ((k === "ArrowLeft" || k === "ArrowRight") && player) player.seekTo(Math.max(0, videoTime() + (k === "ArrowLeft" ? -10 : 10)), true);
+      else return;
+      handled();
+    },
+    true
+  );
+}
+
 /* ------------------------------------------------------------------ in */
 window.onUnlocked = enter;
 function enter() {
@@ -543,6 +661,11 @@ function enter() {
   requestAnimationFrame(frame);
   loadYouTube();
   hostSongbook();
+  if (TV) {
+    document.body.classList.toggle("idle-screen", !cur);
+    tvHint();
+    setTimeout(() => !cur && moveGrid("ArrowRight"), 300);
+  }
 }
 window.addEventListener("pagehide", leaveSong);
 start().catch((e) => {

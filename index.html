@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>musicbox karaoke</title>
 <link rel="icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793695040186">
+<link rel="stylesheet" href="style.css?v=1793695759772">
 </head>
 <body>
   <!-- the lock: the songs are encrypted; the password unlocks them here, in the browser -->
@@ -50,6 +50,16 @@
           </div>
           <div id="toast" class="toast" hidden></div>
           <img id="fsQr" class="fs-qr" alt="">
+          <!-- TV mode (?tv=1): the QR code stays up, and a menu for the remote -->
+          <div id="tvQr" class="tv-qr" hidden><img id="tvQrImg" alt=""><span>Scan to pick songs</span></div>
+          <div id="tvMenu" class="tv-menu" hidden>
+            <b>musicbox</b>
+            <button id="tvKids" class="tv-item"></button>
+            <button id="tvNotes" class="tv-item"></button>
+            <button id="tvNext" class="tv-item">Next song</button>
+            <button id="tvUpnext" class="tv-item">Up next</button>
+          </div>
+          <div id="tvHint" class="tv-hint" hidden>&#9660; Up next &nbsp;&middot;&nbsp; &#9650; Menu &nbsp;&middot;&nbsp; OK Pause &nbsp;&middot;&nbsp; &#9664; &#9654; 10 s</div>
           <div id="adPill" class="ad-pill" hidden>Ad - click YouTube's <b>Skip</b> button</div>
           <!-- full screen: a mini bar that comes up when the mouse moves -->
           <div id="fsBar" class="fsbar">
@@ -85,10 +95,10 @@
     </main>
   </section>
 
-  <script src="chart.js?v=1793695040186"></script>
-  <script src="draw.js?v=1793695040186"></script>
-  <script src="recommend.js?v=1793695040186"></script>
-  <script src="common.js?v=1793695040186"></script>
-  <script src="app.js?v=1793695040186"></script>
+  <script src="chart.js?v=1793695759772"></script>
+  <script src="draw.js?v=1793695759772"></script>
+  <script src="recommend.js?v=1793695759772"></script>
+  <script src="common.js?v=1793695759772"></script>
+  <script src="app.js?v=1793695759772"></script>
 </body>
 </html>

@@ -114,6 +114,23 @@ async function start() {
       $("lockMsg").textContent = "That code is out of date - scan the screen again, or use the password.";
     }
   }
+  /* the TV app passes the password after the # (never sent anywhere): it works with every build,
+   * unlike a key, which changes when the songs are rebuilt */
+  const pwLink = (location.hash.match(/[#&]pw=([^&]+)/) || [])[1];
+  if (pwLink) {
+    history.replaceState(null, "", location.href.replace(/([#&])pw=[^&]+&?/, "$1").replace(/[#&]$/, ""));
+    $("lockForm").hidden = true;
+    $("lockMsg").textContent = "Opening…";
+    try {
+      const raw = await rawKey(decodeURIComponent(pwLink));
+      await unlock(raw);
+      store("mbxKey", { salt: meta.salt, key: b64.enc(raw) });
+      return window.onUnlocked();
+    } catch {
+      $("lockForm").hidden = false;
+      $("lockMsg").textContent = "";
+    }
+  }
   const saved = store("mbxKey");
   if (saved && saved.salt === meta.salt) {
     try {
