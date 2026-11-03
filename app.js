@@ -146,7 +146,8 @@ async function playSong(rec) {
   save();
   $("welcome").hidden = true;
   $("nowTitle").textContent = rec.title;
-  $("nowArtist").textContent = rec.artist + (rec.v ? "" : " · audio only");
+  $("nowArtist").textContent = $("fsArtist").textContent = rec.artist + (rec.v ? "" : " · audio only");
+  $("fsTitle").textContent = rec.title;
   document.title = `${rec.title} · musicbox karaoke`;
   Object.assign(clock, { raw: -1, val: 0, at: performance.now(), playing: false, out: 0 });
   await loadYouTube();
@@ -169,7 +170,7 @@ function onStateChange(e) {
         player.unloadModule(m);
       } catch {}
   clock.at = performance.now();
-  $("playBtn").innerHTML = clock.playing ? "&#10074;&#10074;" : "&#9654;";
+  $("playBtn").innerHTML = $("fsPlay").innerHTML = clock.playing ? "&#10074;&#10074;" : "&#9654;";
   $("pauseScreen").hidden = s !== YT.PlayerState.PAUSED || !cur;
   if (s === YT.PlayerState.ENDED && cur) {
     cur.ended = true;
@@ -368,17 +369,30 @@ $("shuffleBtn").addEventListener("click", () => {
   mode.upnextFor = -1;
   renderUpNext();
 });
-$("fsBtn").addEventListener("click", () => (document.fullscreenElement ? document.exitFullscreen() : $("stageCol").requestFullscreen()));
+function toggleFullscreen() {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else $("stage").requestFullscreen().catch(() => toast("Full screen isn't allowed here"));
+}
+$("fsBtn").addEventListener("click", toggleFullscreen);
+$("fsExit").addEventListener("click", toggleFullscreen);
+$("fsPlay").addEventListener("click", togglePlay);
+$("fsNext").addEventListener("click", () => cur && next());
+$("fsMute").addEventListener("click", () => $("muteBtn").click());
+$("fsVol").addEventListener("input", (e) => {
+  $("vol").value = e.target.value;
+  $("vol").dispatchEvent(new Event("input"));
+});
+for (const id of ["fsBar"]) $(id).addEventListener("click", (e) => e.stopPropagation());
 $("cover").addEventListener("click", togglePlay);
 $("pauseScreen").addEventListener("click", togglePlay);
-$("cover").addEventListener("dblclick", () => $("fsBtn").click());
+$("cover").addEventListener("dblclick", toggleFullscreen);
 
 /* volume: ours (kept between visits), applied to YouTube's player */
 settings.volume ??= 80;
 settings.muted ??= false;
 function applyVolume() {
-  $("vol").value = settings.volume;
-  $("muteBtn").innerHTML = settings.muted || settings.volume === 0 ? "&#128263;" : "&#128266;";
+  $("vol").value = $("fsVol").value = settings.volume;
+  $("muteBtn").innerHTML = $("fsMute").innerHTML = settings.muted || settings.volume === 0 ? "&#128263;" : "&#128266;";
   store("mbxSettings", settings);
   if (!player || !player.setVolume) return;
   player.setVolume(settings.volume);
@@ -399,12 +413,43 @@ applyVolume();
 /* full screen: the control bar hides after 3 s without the mouse moving */
 let idleTimer = 0;
 function wake() {
-  $("stageCol").classList.remove("idle");
+  $("stage").classList.remove("idle");
   clearTimeout(idleTimer);
-  idleTimer = setTimeout(() => document.fullscreenElement && $("stageCol").classList.add("idle"), 3000);
+  idleTimer = setTimeout(() => !$("fsBar").matches(":hover") && $("stage").classList.add("idle"), 3000);
 }
-$("stageCol").addEventListener("mousemove", wake);
-document.addEventListener("fullscreenchange", wake);
+$("stage").addEventListener("mousemove", wake);
+$("stage").addEventListener("mousedown", wake);
+document.addEventListener("fullscreenchange", () => {
+  $("stage").classList.toggle("fs", document.fullscreenElement === $("stage"));
+  wake();
+});
+
+/* ads: YouTube won't let a page press its Skip button, so the cover steps aside and they click it.
+ * An ad is likely when the player says it's playing but the song's time doesn't move. */
+let throughUntil = 0, stalledSince = 0, lastRaw = -1;
+function letThrough(ms) {
+  throughUntil = Math.max(throughUntil, performance.now() + ms);
+}
+function skipAd() {
+  letThrough(20000);
+  toast("Now click YouTube's Skip button");
+}
+$("skipAdBtn").addEventListener("click", skipAd);
+$("fsSkipAd").addEventListener("click", skipAd);
+setInterval(() => {
+  let ad = false;
+  if (player && player.getPlayerState && cur) {
+    const raw = player.getCurrentTime() || 0, playing = player.getPlayerState() === YT.PlayerState.PLAYING;
+    if (playing && raw === lastRaw) stalledSince ||= performance.now();
+    else stalledSince = 0;
+    lastRaw = raw;
+    ad = stalledSince && performance.now() - stalledSince > 1500;
+  }
+  if (ad) letThrough(1200);
+  const through = performance.now() < throughUntil;
+  $("stage").classList.toggle("through", through);
+  $("adPill").hidden = !ad;
+}, 500);
 $("notesSw").checked = settings.notes;
 $("notesSw").addEventListener("change", (e) => {
   settings.notes = e.target.checked;
@@ -414,7 +459,7 @@ document.addEventListener("keydown", (e) => {
   if (e.target.closest("input, textarea") || e.ctrlKey || e.metaKey || e.altKey) return;
   if (e.key === " ") (e.preventDefault(), togglePlay());
   else if (e.key === "n" || e.key === "N") cur && next();
-  else if (e.key === "f" || e.key === "F") $("fsBtn").click();
+  else if (e.key === "f" || e.key === "F") toggleFullscreen();
   else if (e.key === "m" || e.key === "M") $("muteBtn").click();
   else if (e.key === "ArrowUp" || e.key === "ArrowDown") {
     e.preventDefault();

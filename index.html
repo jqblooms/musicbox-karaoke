@@ -48,6 +48,17 @@
             <div id="picks" class="picks"></div>
           </div>
           <div id="toast" class="toast" hidden></div>
+          <div id="adPill" class="ad-pill" hidden>Ad - click YouTube's <b>Skip</b> button</div>
+          <!-- full screen: a mini bar that comes up when the mouse moves -->
+          <div id="fsBar" class="fsbar">
+            <button id="fsPlay" class="btn round" title="Play / pause (Space)">&#9654;</button>
+            <button id="fsNext" class="btn round" title="Next song (N)">&#9197;</button>
+            <div class="now"><b id="fsTitle"></b><span id="fsArtist"></span></div>
+            <button id="fsSkipAd" class="btn small" title="Lets you click YouTube's Skip button">Skip ad</button>
+            <button id="fsMute" class="btn round" title="Mute (M)">&#128266;</button>
+            <input id="fsVol" class="vol" type="range" min="0" max="100" step="1" title="Volume (Up / Down)">
+            <button id="fsExit" class="btn small blue" title="Exit full screen (Esc)">Exit full screen</button>
+          </div>
         </div>
         <div class="controls">
           <button id="playBtn" class="btn round" title="Play / pause (Space)">&#9654;</button>
@@ -56,6 +67,7 @@
           <button id="muteBtn" class="btn round" title="Mute (M)">&#128266;</button>
           <input id="vol" class="vol" type="range" min="0" max="100" step="1" title="Volume (Up / Down)">
           <label class="switch-row" title="Note bars"><span>Notes</span><input id="notesSw" type="checkbox" class="switch"></label>
+          <button id="skipAdBtn" class="btn small" title="Lets you click YouTube's Skip button">Skip ad</button>
           <button id="fsBtn" class="btn round" title="Full screen (F)">&#x26F6;</button>
         </div>
       </div>
