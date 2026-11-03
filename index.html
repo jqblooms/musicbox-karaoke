@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>musicbox karaoke</title>
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- the lock: the songs are encrypted; the password unlocks them here, in the browser -->
+  <section id="lock" class="lock">
+    <div class="lock-card">
+      <img src="icon.png" alt="" class="lock-icon">
+      <h1>musicbox karaoke</h1>
+      <form id="lockForm" autocomplete="off">
+        <input id="pw" type="password" placeholder="Password" autocomplete="current-password" required>
+        <label class="remember"><input id="remember" type="checkbox" checked> Remember on this device</label>
+        <button class="btn blue" type="submit">Unlock</button>
+      </form>
+      <p id="lockMsg" class="lock-msg"></p>
+    </div>
+  </section>
+
+  <section id="app" class="app" hidden>
+    <header class="nav">
+      <span class="nav-title">musicbox</span>
+      <div class="search">
+        <input id="q" type="search" placeholder="Search karaoke songs" autocomplete="off" spellcheck="false">
+        <div id="results" class="results" hidden></div>
+      </div>
+      <button id="fsBtn" class="btn small" title="Full screen (F)">Full screen</button>
+    </header>
+
+    <main class="main">
+      <div class="stage-col">
+        <div id="stage" class="stage">
+          <div id="ytHost" class="yt"><div id="yt"></div></div>
+          <canvas id="lyrics" class="lyrics"></canvas>
+          <div id="mapHit" class="map-hit" title="Jump to here"></div>
+          <div id="welcome" class="welcome">
+            <h2>Pick a song to sing</h2>
+            <p>Search above, or start with one of these:</p>
+            <div id="picks" class="picks"></div>
+          </div>
+          <div id="toast" class="toast" hidden></div>
+        </div>
+        <div class="controls">
+          <button id="playBtn" class="btn round" title="Play / pause (Space)">&#9654;</button>
+          <button id="nextBtn" class="btn round" title="Next song (N)">&#9197;</button>
+          <div class="now"><b id="nowTitle">Nothing playing</b><span id="nowArtist"></span></div>
+          <label class="switch-row" title="Note bars"><span>Notes</span><input id="notesSw" type="checkbox" class="switch"></label>
+        </div>
+      </div>
+      <aside class="side">
+        <div class="side-bar"><b>Up next</b><button id="shuffleBtn" class="btn small" title="New suggestions">New picks</button></div>
+        <div id="upnext" class="list"></div>
+      </aside>
+    </main>
+  </section>
+
+  <script src="chart.js"></script>
+  <script src="draw.js"></script>
+  <script src="recommend.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+/* musicbox karaoke - iOS 6: pinstripes, a blue-grey bar, white grouped lists, glossy buttons. */
+:root { color-scheme: light; --font: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { font: 15px var(--font); color: #000; background: #c5ccd4 repeating-linear-gradient(90deg, #c5ccd4 0 5px, #cbd2d8 5px 7px); }
+[hidden] { display: none !important; }
+
+/* buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; height: 36px; padding: 0 14px; border-radius: 8px; cursor: pointer;
+  border: 1px solid #8e96a1; background: linear-gradient(#fefefe, #e2e5ea); font: bold 14px var(--font); color: #3a4d6f;
+  box-shadow: 0 1px 0 rgba(255,255,255,.8), inset 0 1px 0 #fff; }
+.btn:active { filter: brightness(.93); }
+.btn.blue { color: #fff; border-color: #1d4f9c; background: linear-gradient(#7aaaf2, #2f6fd6 50%, #2163cd 50%, #2a6ee0); text-shadow: 0 -1px 0 rgba(0,0,0,.35); }
+.btn.small { height: 30px; padding: 0 10px; font-size: 13px; }
+.btn.round { width: 40px; height: 40px; padding: 0; border-radius: 50%; font-size: 16px; }
+
+/* the lock */
+.lock { min-height: 100%; display: grid; place-items: center; padding: 20px; }
+.lock-card { width: min(360px, 100%); text-align: center; padding: 28px 24px 22px; border-radius: 14px; background: #fff;
+  border: 1px solid #acb3bb; box-shadow: 0 1px 0 rgba(255,255,255,.8), 0 10px 30px rgba(0,0,0,.18); }
+.lock-icon { width: 84px; height: 84px; border-radius: 19px; box-shadow: 0 3px 8px rgba(0,0,0,.35); }
+.lock h1 { font-size: 21px; margin: 12px 0 18px; color: #2c3d55; text-shadow: 0 1px 0 #fff; }
+.lock input[type=password] { width: 100%; height: 40px; border-radius: 8px; border: 1px solid #8e96a1; padding: 0 12px; font: 16px var(--font);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.3); outline: none; }
+.lock .remember { display: flex; align-items: center; gap: 8px; justify-content: center; margin: 12px 0; color: #4c566c; font-size: 14px; }
+.lock .btn { width: 100%; height: 42px; font-size: 16px; }
+.lock-msg { min-height: 1.3em; margin: 12px 0 0; color: #4c566c; }
+.lock-msg.bad { color: #b3261e; }
+.shake { animation: shake .35s; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+
+/* the app */
+.app { height: 100%; display: flex; flex-direction: column; }
+.nav { flex: none; height: 52px; display: flex; align-items: center; gap: 14px; padding: 0 14px;
+  background: linear-gradient(#b0bccd, #889bb3 50%, #8195af 50%, #6d84a2); border-bottom: 1px solid #2d3642; box-shadow: inset 0 1px 0 rgba(255,255,255,.45); }
+.nav-title { color: #fff; font-weight: bold; font-size: 20px; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
+.search { position: relative; flex: 1; max-width: 640px; margin: 0 auto; }
+.search input { width: 100%; height: 34px; border-radius: 17px; border: 1px solid #2d3642; padding: 0 16px; font: 15px var(--font);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.45); outline: none; }
+.results { position: absolute; top: 42px; left: 0; right: 0; z-index: 50; max-height: 70vh; overflow-y: auto; border-radius: 10px;
+  background: #fff; border: 1px solid #2d3642; box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+
+.main { flex: 1; min-height: 0; display: flex; gap: 14px; padding: 14px; }
+.stage-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: calc(100vh - 140px); margin: 0 auto; background: #000;
+  border-radius: 6px; overflow: hidden; border: 1px solid #2d3642; box-shadow: 0 6px 20px rgba(0,0,0,.35); }
+.stage:fullscreen { max-height: none; border-radius: 0; border: 0; aspect-ratio: auto; }
+.yt, .yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.lyrics { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.map-hit { position: absolute; left: 0; right: 0; bottom: 0; height: max(4.6%, 20px); cursor: pointer; z-index: 2; }
+.welcome { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;
+  color: #fff; background: radial-gradient(ellipse at 50% 30%, #3b4a63, #12161d 75%); overflow-y: auto; }
+.welcome h2 { margin: 0 0 4px; font-size: 26px; text-shadow: 0 -1px 0 #000; }
+.welcome p { margin: 0 0 16px; color: #b9c2d0; }
+.picks { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; width: min(900px, 100%); }
+.pick { cursor: pointer; text-align: left; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); }
+.pick:hover { background: rgba(80,140,230,.35); }
+.pick img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #222; }
+.pick b, .pick span { display: block; padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pick b { padding-top: 6px; font-size: 13.5px; } .pick span { padding-bottom: 7px; font-size: 12px; color: #b9c2d0; }
+.toast { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); padding: 9px 16px; border-radius: 16px; color: #fff; font-weight: bold;
+  background: rgba(20,24,32,.9); border: 1px solid rgba(255,255,255,.2); z-index: 5; }
+
+.controls { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: #fff; border: 1px solid #acb3bb; }
+.now { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.now b, .now span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .now span { color: #6d737d; font-size: 13px; }
+.switch-row { display: flex; align-items: center; gap: 8px; font-weight: bold; color: #4c566c; }
+
+.side { flex: none; width: 360px; display: flex; flex-direction: column; min-height: 0; border-radius: 10px; overflow: hidden; background: #fff; border: 1px solid #acb3bb; }
+.side-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; color: #fff;
+  background: linear-gradient(#b0bccd, #889bb3 50%, #8195af 50%, #6d84a2); border-bottom: 1px solid #2d3642; }
+.side-bar b { flex: 1; font-size: 16px; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
+.list { overflow-y: auto; flex: 1; }
+.row { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-top: 1px solid #e0e0e0; cursor: pointer; }
+.row:first-child { border-top: 0; }
+.row:hover, .row.sel { background: linear-gradient(#058cf5, #015fe6); color: #fff; }
+.row:hover .a, .row.sel .a { color: #dbe8ff; }
+.row img { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; flex: none; background: #222; }
+.row .txt { flex: 1; min-width: 0; }
+.row .t { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .a { font-size: 12.5px; color: #6d737d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tag { font-size: 11px; font-weight: bold; color: #fff; background: linear-gradient(#8eb4ea, #4a7fcc); border-radius: 8px; padding: 1px 7px; margin-left: 6px; }
+.mini { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1px solid #8e96a1; cursor: pointer; padding: 0;
+  background: linear-gradient(#fefefe, #e2e5ea); color: #3a4d6f; font: bold 18px/1 var(--font); }
+.empty { padding: 14px; color: #6d737d; text-align: center; }
+
+/* the iOS 6 switch */
+.switch { appearance: none; width: 77px; height: 27px; border-radius: 14px; border: 1px solid #9a9a9a; position: relative; cursor: pointer; margin: 0;
+  background: linear-gradient(#e2e2e2, #fdfdfd); box-shadow: inset 0 2px 3px rgba(0,0,0,.25); flex: none; }
+.switch::before { content: "OFF"; position: absolute; right: 11px; top: 5px; font: bold 14px var(--font); color: #808080; }
+.switch::after { content: ""; position: absolute; left: -1px; top: -1px; width: 27px; height: 27px; border-radius: 50%;
+  background: linear-gradient(#cfcfcf, #fcfcfc); border: 1px solid #a3a3a3; box-shadow: 0 1px 2px rgba(0,0,0,.3); }
+.switch:checked { background: linear-gradient(#0a5bcc, #3d94f6); border-color: #1d5ab0; }
+.switch:checked::before { content: "ON"; left: 14px; right: auto; color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4); }
+.switch:checked::after { left: auto; right: -1px; }
+
+@media (max-width: 900px) {
+  .main { flex-direction: column; overflow-y: auto; }
+  .side { width: 100%; min-height: 300px; }
+  .nav-title { display: none; }
+  .switch-row span { display: none; }
+}
