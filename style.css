@@ -90,6 +90,14 @@ body { font: 15px var(--font); color: #000; background: #c5ccd4 repeating-linear
 .switch-row { display: flex; align-items: center; gap: 8px; font-weight: bold; color: #4c566c; }
 
 .side { flex: none; width: 360px; display: flex; flex-direction: column; min-height: 0; border-radius: 10px; overflow: hidden; background: #fff; border: 1px solid #acb3bb; }
+.sb { display: flex; align-items: center; gap: 12px; padding: 10px; color: inherit; text-decoration: none; border-bottom: 1px solid #cfd8e6; background: #eef3fb; }
+.sb img { width: 96px; height: 96px; flex: none; image-rendering: pixelated; background: #fff; border-radius: 6px; border: 1px solid #c4ccd8; }
+.sb img:not([src]) { visibility: hidden; }
+.sb b { display: block; color: #2c3d55; } .sb span { font-size: 13px; color: #4c566c; }
+.fs-qr { display: none; position: absolute; right: 16px; top: 16px; z-index: 6; width: 120px; height: 120px; border-radius: 8px; image-rendering: pixelated;
+  background: #fff; padding: 4px; box-shadow: 0 4px 14px rgba(0,0,0,.6); transition: opacity .3s; }
+.stage.fs .fs-qr[src] { display: block; }
+.stage.fs.idle .fs-qr { opacity: 0; }
 .side-bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px; color: #fff;
   background: linear-gradient(#b0bccd, #889bb3 50%, #8195af 50%, #6d84a2); border-bottom: 1px solid #2d3642; }
 .side-bar b { flex: 1; font-size: 16px; text-shadow: 0 -1px 0 rgba(0,0,0,.5); }
@@ -123,3 +131,28 @@ body { font: 15px var(--font); color: #000; background: #c5ccd4 repeating-linear
   .nav-title { display: none; }
   .switch-row span { display: none; }
 }
+
+/* ------------------------------------------------------------------ the songbook (phones) */
+.sbapp { min-height: 100%; display: flex; flex-direction: column; }
+.sbapp .nav { position: sticky; top: 0; z-index: 10; justify-content: space-between; }
+.songbook .nav-title { display: block; }
+.host-state { font-size: 13px; font-weight: bold; color: #fff; padding: 3px 10px; border-radius: 10px;
+  background: linear-gradient(#7bd36a, #3c9a2c); border: 1px solid #2a6a1e; text-shadow: 0 -1px 0 rgba(0,0,0,.3); }
+.host-state.bad { background: linear-gradient(#b9bec6, #8a909a); border-color: #5c626b; }
+.sbcontent { width: min(640px, 100%); margin: 0 auto; padding: 12px 10px 40px; }
+.group { background: #fff; border: 1px solid #acb3bb; border-radius: 10px; box-shadow: 0 1px 0 rgba(255,255,255,.8); overflow: hidden; margin-bottom: 12px; }
+.group.pad { padding: 4px 14px; color: #2c3d55; }
+.group-title { margin: 16px 8px 6px; font-weight: bold; font-size: 16px; color: #4c566c; text-shadow: 0 1px 0 #fff; }
+.group.list:empty { display: none; }
+.name-row { cursor: default; } .name-row:hover { background: none; color: inherit; }
+.name-row input { flex: 1; min-width: 0; text-align: right; border: 0; font: 16px var(--font); color: #385487; outline: none; background: none; }
+.nowcard { display: flex; align-items: center; gap: 12px; padding: 10px; }
+.nowcard img { width: 112px; height: 63px; object-fit: cover; border-radius: 6px; flex: none; background: #222; }
+.nowcard .txt { min-width: 0; display: flex; flex-direction: column; }
+.nowcard small { color: #6d737d; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.nowcard b { font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nowcard span { color: #6d737d; font-size: 13.5px; }
+.sb-search { margin: 4px 0 10px; max-width: none; }
+.sb-search input { font-size: 16px; height: 38px; border-radius: 19px; }
+.sb-toast { position: fixed; top: auto; bottom: 22px; }
+.songbook .row { min-height: 56px; }

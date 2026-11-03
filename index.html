@@ -48,6 +48,7 @@
             <div id="picks" class="picks"></div>
           </div>
           <div id="toast" class="toast" hidden></div>
+          <img id="fsQr" class="fs-qr" alt="">
           <div id="adPill" class="ad-pill" hidden>Ad - click YouTube's <b>Skip</b> button</div>
           <!-- full screen: a mini bar that comes up when the mouse moves -->
           <div id="fsBar" class="fsbar">
@@ -72,6 +73,10 @@
         </div>
       </div>
       <aside class="side">
+        <a id="qrLink" class="sb" target="_blank" rel="noopener" title="Open the songbook">
+          <img id="qr" alt="QR code for the songbook">
+          <div><b>Add songs from your phone</b><span id="sbStatus">Connecting…</span></div>
+        </a>
         <div class="side-bar"><b>Up next</b><button id="shuffleBtn" class="btn small" title="New suggestions">New picks</button></div>
         <div id="upnext" class="list"></div>
       </aside>
@@ -81,6 +86,7 @@
   <script src="chart.js"></script>
   <script src="draw.js"></script>
   <script src="recommend.js"></script>
+  <script src="common.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#6d84a2">
+<title>Songbook · musicbox karaoke</title>
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="songbook">
+  <section id="lock" class="lock">
+    <div class="lock-card">
+      <img src="icon.png" alt="" class="lock-icon">
+      <h1>Songbook</h1>
+      <form id="lockForm" autocomplete="off">
+        <input id="pw" type="password" placeholder="Password" autocomplete="current-password" required>
+        <label class="remember"><input id="remember" type="checkbox" checked> Remember on this device</label>
+        <button class="btn blue" type="submit">Unlock</button>
+      </form>
+      <p id="lockMsg" class="lock-msg"></p>
+    </div>
+  </section>
+
+  <section id="app" class="sbapp" hidden>
+    <header class="nav"><span class="nav-title">Songbook</span><span id="hostState" class="host-state">Connecting…</span></header>
+    <div class="sbcontent">
+      <div id="noSession" class="group pad" hidden>
+        <p><b>Scan the QR code on the karaoke screen</b> to pick songs for it. This page needs the screen's code to know where to send them.</p>
+      </div>
+      <div id="session">
+        <div class="group">
+          <label class="row name-row"><span>Your name</span><input id="name" maxlength="40" placeholder="So they know it's yours" autocomplete="nickname"></label>
+        </div>
+        <div class="group nowcard">
+          <img id="nowImg" alt="">
+          <div class="txt"><small>Now singing</small><b id="nowTitle">Nothing yet</b><span id="nowArtist"></span></div>
+        </div>
+        <div class="search sb-search"><input id="q" type="search" placeholder="Search songs to sing" autocomplete="off" spellcheck="false"></div>
+        <div id="results" class="group list"></div>
+        <div class="group-title">Up next</div>
+        <div id="queue" class="group list"></div>
+      </div>
+    </div>
+    <div id="toast" class="toast sb-toast" hidden></div>
+  </section>
+
+  <script src="chart.js"></script>
+  <script src="recommend.js"></script>
+  <script src="common.js"></script>
+  <script src="songbook.js"></script>
+</body>
+</html>

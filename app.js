@@ -1,102 +1,7 @@
-/* musicbox karaoke - the web page: unlock the songs, search, queue, and sing along to YouTube.
- *
- * The songs are encrypted (AES-256-GCM, key from the password with PBKDF2-SHA256): data/meta.json
- * says how, data/index.bin is the song list, data/c/N.bin hold the charts (a song's shard is its id
- * modulo the shard count), fetched when first needed. The video is YouTube's embedded player; the
- * lyrics, notes and word map are drawn over it (draw.js, the same as the browser extension). */
+/* musicbox karaoke - the karaoke page (the host): YouTube's embedded player with our lyrics, notes
+ * and word map on top (draw.js, the same as the browser extension), search, queue, autoplay and
+ * recommendations, and the songbook: phones add songs through the live database (common.js). */
 "use strict";
-
-const $ = (id) => document.getElementById(id);
-const b64 = {
-  enc: (u8) => btoa(String.fromCharCode(...u8)),
-  dec: (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0)),
-};
-const MUTED = new URLSearchParams(location.search).get("mute") === "1"; /* ?mute=1: silent (testing) */
-const thumb = (yt) => `https://i.ytimg.com/vi/${yt}/mqdefault.jpg`;
-const ytOf = (s) => s.v || s.a;
-function el(tag, cls, text) {
-  const e = document.createElement(tag);
-  if (cls) e.className = cls;
-  if (text != null) e.textContent = text;
-  return e;
-}
-function store(key, val) {
-  try {
-    if (val === undefined) return JSON.parse(localStorage.getItem(key) || "null");
-    localStorage.setItem(key, JSON.stringify(val));
-  } catch {
-    return null;
-  }
-}
-
-/* ------------------------------------------------------------------ the encrypted songs */
-let meta = null, key = null, songs = null;
-const shards = new Map();
-
-async function rawKey(password) {
-  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: b64.dec(meta.salt), iterations: meta.iter }, base, 256);
-  return new Uint8Array(bits);
-}
-
-async function openFile(path) {
-  const r = await fetch(`data/${path}?b=${meta.built}`);
-  if (!r.ok) throw new Error(`${path}: ${r.status}`);
-  const buf = new Uint8Array(await r.arrayBuffer());
-  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: buf.slice(0, 12) }, key, buf.slice(12));
-  const text = await new Response(new Blob([plain]).stream().pipeThrough(new DecompressionStream("gzip"))).text();
-  return JSON.parse(text);
-}
-
-async function unlock(raw) {
-  key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
-  const rows = await openFile("index.bin"); /* a wrong key fails here (the data will not authenticate) */
-  songs = MbxRecommend.prepare(rows.map(([id, artist, title, language, year, genre, v, a]) => ({ id, artist, title, language, year, genre, v, a })));
-}
-
-async function chartText(id) {
-  const n = id % meta.shards;
-  if (!shards.has(n)) shards.set(n, openFile(`c/${n}.bin`));
-  return (await shards.get(n))[id] || null;
-}
-
-let metaReady = null; /* the page asks for data/meta.json at once; unlocking waits for it */
-async function start() {
-  metaReady = fetch("data/meta.json", { cache: "no-cache" }).then((r) => r.json());
-  meta = await metaReady;
-  const saved = store("mbxKey");
-  if (saved && saved.salt === meta.salt) {
-    try {
-      await unlock(b64.dec(saved.key));
-      return enter();
-    } catch {
-      store("mbxKey", null);
-    }
-  }
-  $("pw").focus();
-}
-
-$("lockForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const msg = $("lockMsg");
-  msg.className = "lock-msg";
-  msg.textContent = "Unlocking…";
-  try {
-    meta = meta || (await metaReady);
-    const raw = await rawKey($("pw").value);
-    await unlock(raw);
-    if ($("remember").checked) store("mbxKey", { salt: meta.salt, key: b64.enc(raw) });
-    enter();
-  } catch {
-    msg.className = "lock-msg bad";
-    msg.textContent = "That's not the password.";
-    const card = document.querySelector(".lock-card");
-    card.classList.remove("shake");
-    void card.offsetWidth;
-    card.classList.add("shake");
-    $("pw").select();
-  }
-});
 
 /* ------------------------------------------------------------------ state: queue, history, taste */
 const st = store("mbxWeb") || {};
@@ -140,7 +45,9 @@ async function playSong(rec) {
     return next();
   }
   const yt = ytOf(rec);
-  cur = { rec, song, yt, offset: yt === rec.v ? song.videogap : 0, played: 0, ended: false, st: { alpha: 0, alphaTarget: 0 } };
+  if (rec.remoteKey) takeRemote(rec.remoteKey);
+  cur = { rec, song, yt, by: rec.by || "", offset: yt === rec.v ? song.videogap : 0, played: 0, ended: false, st: { alpha: 0, alphaTarget: 0 } };
+  publishNow();
   if (mode.history[mode.history.length - 1] !== rec.id) mode.history.push(rec.id);
   mode.queue = mode.queue.filter((id) => id !== rec.id);
   save();
@@ -217,6 +124,11 @@ function leaveSong() {
 }
 
 function upNext() {
+  /* phones' picks first (in the order they came), then this screen's queue, then recommendations */
+  const picks = [...remote.values()]
+    .sort((a, b) => a.at - b.at)
+    .map((r) => songs.byId.get(r.id) && { ...MbxRecommend.info(songs, [r.id])[0], remoteKey: r.key, by: r.name })
+    .filter(Boolean);
   const queued = MbxRecommend.info(songs, mode.queue).map((s) => ({ ...s, queued: true }));
   const curId = cur ? cur.rec.id : 0;
   if (mode.upnextFor !== curId || mode.upnext.length < 4) {
@@ -229,8 +141,9 @@ function upNext() {
     }).map((s) => s.id);
     mode.upnextFor = curId;
   }
-  const recs = MbxRecommend.info(songs, mode.upnext.filter((id) => !mode.queue.includes(id)));
-  return [...queued, ...recs];
+  const taken = new Set([...mode.queue, ...picks.map((p) => p.id)]);
+  const recs = MbxRecommend.info(songs, mode.upnext.filter((id) => !taken.has(id)));
+  return [...picks, ...queued, ...recs];
 }
 
 function next() {
@@ -277,13 +190,14 @@ function renderUpNext() {
   $("upnext").replaceChildren(
     ...list.map((s) =>
       row(s, {
-        tag: s.queued ? "Queued" : null,
+        tag: s.remoteKey ? `\u{1F4F1} ${s.by || "Phone"}` : s.queued ? "Queued" : null,
         onClick: () => playSong(s),
         button: {
           label: "×",
-          title: s.queued ? "Take it out of the queue" : "Not this one",
+          title: s.remoteKey || s.queued ? "Take it out of the queue" : "Not this one",
           run: () => {
-            if (s.queued) mode.queue = mode.queue.filter((id) => id !== s.id);
+            if (s.remoteKey) takeRemote(s.remoteKey);
+            else if (s.queued) mode.queue = mode.queue.filter((id) => id !== s.id);
             else {
               mode.exclude.push(s.id);
               mode.upnext = mode.upnext.filter((id) => id !== s.id);
@@ -508,7 +422,87 @@ function frame() {
   });
 }
 
+/* ------------------------------------------------------------------ the songbook
+ * This screen is a session in the live database; phones open songbook.html#s=<session> (the QR
+ * code) and add songs to its queue. Picks from phones play before anything else. */
+const remote = new Map(); /* queue key -> {key, id, name, at} */
+let session = store("mbxSession") || newSessionId();
+store("mbxSession", session);
+let hosted = null; /* {fb, path} once connected */
+const songbookUrl = () => new URL(`songbook.html#s=${session}`, location.href).href;
+
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    const s = document.createElement("script");
+    s.src = src;
+    s.onload = res;
+    s.onerror = () => rej(new Error("couldn't load " + src));
+    document.head.appendChild(s);
+  });
+}
+
+async function showQr() {
+  await loadScript("https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js");
+  const q = qrcode(0, "M");
+  q.addData(songbookUrl());
+  q.make();
+  const src = q.createDataURL(6, 2);
+  $("qr").src = $("fsQr").src = src;
+  $("qrLink").href = songbookUrl();
+}
+
+async function hostSongbook() {
+  try {
+    const fb = await liveConnect();
+    const { db, database } = fb;
+    let path = `${fb.base}/${session}`;
+    try {
+      await db.set(db.ref(database, path + "/host"), fb.uid);
+    } catch {
+      /* this browser lost its sign-in, so the old session isn't ours any more: start a new one */
+      session = newSessionId();
+      store("mbxSession", session);
+      path = `${fb.base}/${session}`;
+      await db.set(db.ref(database, path + "/host"), fb.uid);
+    }
+    hosted = { fb, path };
+    const beat = () => db.set(db.ref(database, path + "/seen"), db.serverTimestamp()).catch(() => {});
+    beat();
+    setInterval(beat, 20000);
+    const queue = db.ref(database, path + "/queue");
+    db.onChildAdded(queue, (snap) => {
+      const v = snap.val();
+      if (!v || !songs.byId.has(v.id)) return void db.remove(snap.ref).catch(() => {});
+      remote.set(snap.key, { key: snap.key, id: v.id, name: v.name || "", at: v.at || 0 });
+      renderUpNext();
+      if (!cur) next();
+      else toast(`${v.name || "Someone"} added ${songs.byId.get(v.id).title}`);
+    });
+    db.onChildRemoved(queue, (snap) => {
+      remote.delete(snap.key);
+      renderUpNext();
+    });
+    await showQr();
+    $("sbStatus").textContent = "Scan to pick songs on your phone";
+    publishNow();
+  } catch (e) {
+    $("sbStatus").textContent = "Songbook offline: " + e.message;
+  }
+}
+
+function takeRemote(key) {
+  remote.delete(key);
+  if (hosted) hosted.fb.db.remove(hosted.fb.db.ref(hosted.fb.database, `${hosted.path}/queue/${key}`)).catch(() => {});
+}
+
+function publishNow() {
+  if (!hosted || !cur) return;
+  const { db, database } = hosted.fb;
+  db.set(db.ref(database, hosted.path + "/now"), { id: cur.rec.id, title: cur.rec.title, artist: cur.rec.artist, name: cur.by || "", at: db.serverTimestamp() }).catch(() => {});
+}
+
 /* ------------------------------------------------------------------ in */
+window.onUnlocked = enter;
 function enter() {
   $("lock").hidden = true;
   $("app").hidden = false;
@@ -516,6 +510,7 @@ function enter() {
   renderUpNext();
   requestAnimationFrame(frame);
   loadYouTube();
+  hostSongbook();
 }
 window.addEventListener("pagehide", leaveSong);
 start().catch((e) => {
