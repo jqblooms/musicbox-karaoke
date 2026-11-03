@@ -429,7 +429,8 @@ const remote = new Map(); /* queue key -> {key, id, name, at} */
 let session = store("mbxSession") || newSessionId();
 store("mbxSession", session);
 let hosted = null; /* {fb, path} once connected */
-const songbookUrl = () => new URL(`songbook.html#s=${session}`, location.href).href;
+/* everything a phone needs, in the QR code: this screen's session and the key to the songs */
+const songbookUrl = () => new URL(`songbook.html#s=${session}&k=${b64url.enc(keyBytes)}`, location.href).href;
 
 function loadScript(src) {
   return new Promise((res, rej) => {

@@ -46,15 +46,10 @@ $("name").addEventListener("change", () => store("mbxName", myName()));
 
 async function pick(s) {
   if (!fb) return toast("Not connected yet");
-  if (!myName()) {
-    toast("Put your name in first");
-    $("name").focus();
-    return;
-  }
   store("mbxName", myName());
   const { db, database } = fb;
   try {
-    await db.push(db.ref(database, path + "/queue"), { id: s.id, title: s.title.slice(0, 200), artist: s.artist.slice(0, 200), name: myName(), by: fb.uid, at: db.serverTimestamp() });
+    await db.push(db.ref(database, path + "/queue"), { id: s.id, title: s.title.slice(0, 200), artist: s.artist.slice(0, 200), name: myName() || "Guest", by: fb.uid, at: db.serverTimestamp() });
     toast(`Added: ${s.title}`);
     $("q").value = "";
     paintResults();
@@ -147,7 +142,6 @@ window.onUnlocked = async () => {
   setInterval(paintHost, 10000);
   paintQueue();
   paintNow();
-  if (!myName()) $("name").focus();
 };
 
 start().catch((e) => {

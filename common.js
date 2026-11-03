@@ -49,9 +49,18 @@ async function openFile(path) {
   return JSON.parse(text);
 }
 
+/* The key in a link (the songbook's QR code): base64url after "k=" in the part after "#", which
+ * browsers never send to a server. */
+const b64url = {
+  enc: (u8) => b64.enc(u8).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""),
+  dec: (s) => b64.dec(s.replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - (s.length % 4)) % 4)),
+};
+let keyBytes = null; /* the unlocked key, for putting in the QR code */
+
 async function unlock(raw) {
   key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
   const rows = await openFile("index.bin"); /* a wrong key fails here (the data will not authenticate) */
+  keyBytes = raw;
   songs = MbxRecommend.prepare(rows.map(([id, artist, title, language, year, genre, v, a]) => ({ id, artist, title, language, year, genre, v, a })));
   try {
     config = await openFile("config.bin"); /* the songbook's database settings (not in every build) */
@@ -70,6 +79,24 @@ let metaReady = null; /* the page asks for data/meta.json at once; unlocking wai
 async function start() {
   metaReady = fetch("data/meta.json", { cache: "no-cache" }).then((r) => r.json());
   meta = await metaReady;
+  /* a link with the key in it (scanned QR code): unlock at once, remember it, and take the key
+   * out of the address bar so it isn't bookmarked or shared by accident */
+  const fromLink = (location.hash.match(/[#&]k=([A-Za-z0-9_-]{40,})/) || [])[1];
+  if (fromLink) {
+    history.replaceState(null, "", location.href.replace(/([#&])k=[A-Za-z0-9_-]+&?/, "$1").replace(/[#&]$/, ""));
+    $("lockForm").hidden = true;
+    $("lockMsg").textContent = "Opening…";
+    try {
+      const raw = b64url.dec(fromLink);
+      await unlock(raw);
+      store("mbxKey", { salt: meta.salt, key: b64.enc(raw) });
+      return window.onUnlocked();
+    } catch {
+      /* an old code (the songs were rebuilt since): fall back to what's remembered, or the password */
+      $("lockForm").hidden = false;
+      $("lockMsg").textContent = "That code is out of date - scan the screen again, or use the password.";
+    }
+  }
   const saved = store("mbxKey");
   if (saved && saved.salt === meta.salt) {
     try {
