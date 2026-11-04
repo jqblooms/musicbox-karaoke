@@ -64,7 +64,9 @@
   const RATINGS = [[0.9, "Perfect!"], [0.75, "Great!"], [0.55, "Good"], [0.3, "OK"], [0, "Keep going"]];
 
   class Singer {
-    constructor(song, part = 0) {
+    /* from: the song time the singer joined at - lines already under way don't count, so joining
+     * late can still score full marks for the rest */
+    constructor(song, part = 0, from = -Infinity) {
       this.song = song;
       this.track = song.tracks[Math.min(part, song.tracks.length - 1)];
       this.delay = 0.15; /* a typical start; it's found while singing */
@@ -79,8 +81,15 @@
         t1: C.beatTime(song, n.start + n.len),
         w: n.type === "freestyle" ? 0 : n.len * (n.type === "golden" || n.type === "rapgolden" ? 2 : 1),
       }));
-      this.total = this.notes.reduce((s, x) => s + x.w, 0) || 1;
-      this.scoredLines = this.track.lines.filter((l) => this.notes.slice(l.first, l.first + l.count).some((x) => x.w > 0)).length || 1;
+      const counted = this.track.lines.filter((l, li) => {
+        if (C.beatTime(song, l.start) < from + 0.3) {
+          this.done.add(li);
+          return false;
+        }
+        return this.notes.slice(l.first, l.first + l.count).some((x) => x.w > 0);
+      });
+      this.total = counted.reduce((s, l) => s + this.notes.slice(l.first, l.first + l.count).reduce((a, x) => a + x.w, 0), 0) || 1;
+      this.scoredLines = counted.length || 1;
     }
 
     get score() {

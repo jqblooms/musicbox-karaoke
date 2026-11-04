@@ -167,7 +167,7 @@ async function startSinging(part) {
   store("mbxName", name);
   const test = /[?&]testsing=1/.test(location.search); /* the preview: no mic */
   if (!test && !MbxMic.st.on && !(await MbxMic.start())) return toast("Singing needs the mic");
-  sing = { id: chartNow.id, part, name, song: chartNow.song, singer: new MbxScore.Singer(chartNow.song, part - 1), st: { alpha: 0, alphaTarget: 0 }, buf: new Float32Array(2048), rating: "", midi: null, test };
+  sing = { id: chartNow.id, part, name, song: chartNow.song, singer: new MbxScore.Singer(chartNow.song, part - 1, songTime() ?? -Infinity), st: { alpha: 0, alphaTarget: 0 }, buf: new Float32Array(2048), rating: "", midi: null, test };
   sing.end = MbxChart.beatTime(sing.song, Math.max(...sing.song.tracks.map((t) => t.lines.at(-1)?.end || 0)));
   sing.timer = setInterval(singTick, MbxScore.STEP * 1000);
   publishSinger(false);
