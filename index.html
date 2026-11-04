@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>musicbox karaoke</title>
 <link rel="icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793789036348">
+<link rel="stylesheet" href="style.css?v=1793792862640">
 </head>
 <body>
   <!-- the lock: the songs are encrypted; the password unlocks them here, in the browser -->
@@ -49,6 +49,16 @@
             <div id="picks" class="picks"></div>
           </div>
           <div id="toast" class="toast" hidden></div>
+          <!-- singers on their phones: a chip each while singing, then the results -->
+          <div id="chips" class="chips"></div>
+          <div id="scoreScreen" class="results-screen" hidden>
+            <div class="results-card">
+              <b class="results-title" id="resTitle"></b>
+              <div id="resSingers" class="res-list"></div>
+              <div class="res-head">Best scores for this song</div>
+              <div id="resBoard" class="res-list"></div>
+            </div>
+          </div>
           <img id="fsQr" class="fs-qr" alt="">
           <!-- TV mode (?tv=1): the QR code stays up, and a menu for the remote -->
           <div id="tvQr" class="tv-qr" hidden><img id="tvQrImg" alt=""><span>Scan to pick songs</span></div>
@@ -95,10 +105,10 @@
     </main>
   </section>
 
-  <script src="chart.js?v=1793789036348"></script>
-  <script src="draw.js?v=1793789036348"></script>
-  <script src="recommend.js?v=1793789036348"></script>
-  <script src="common.js?v=1793789036348"></script>
-  <script src="app.js?v=1793789036348"></script>
+  <script src="chart.js?v=1793792862640"></script>
+  <script src="draw.js?v=1793792862640"></script>
+  <script src="recommend.js?v=1793792862640"></script>
+  <script src="common.js?v=1793792862640"></script>
+  <script src="app.js?v=1793792862640"></script>
 </body>
 </html>

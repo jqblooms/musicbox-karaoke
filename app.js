@@ -54,6 +54,10 @@ async function playSong(rec) {
   if (rec.remoteKey) takeRemote(rec.remoteKey);
   cur = { rec, song, yt, by: rec.by || "", offset: yt === rec.v ? song.videogap : 0, played: 0, ended: false, st: { alpha: 0, alphaTarget: 0 } };
   publishNow();
+  publishPlay();
+  if (hosted) hosted.fb.db.remove(hosted.fb.db.ref(hosted.fb.database, hosted.path + "/singers")).catch(() => {});
+  singers.clear();
+  paintChips();
   if (mode.history[mode.history.length - 1] !== rec.id) mode.history.push(rec.id);
   mode.queue = mode.queue.filter((id) => id !== rec.id);
   save();
@@ -86,9 +90,11 @@ function onStateChange(e) {
   clock.at = performance.now();
   $("playBtn").innerHTML = $("fsPlay").innerHTML = clock.playing ? "&#10074;&#10074;" : "&#9654;";
   $("pauseScreen").hidden = s !== YT.PlayerState.PAUSED || !cur;
-  if (s === YT.PlayerState.ENDED && cur) {
+  publishPlay();
+  if (s === YT.PlayerState.ENDED && cur && !cur.ended) {
     cur.ended = true;
-    next();
+    const rec = cur.rec;
+    (singersNow().length ? showResults(rec) : Promise.resolve()).finally(() => cur && cur.rec === rec && next());
   }
 }
 
@@ -513,6 +519,8 @@ async function hostSongbook() {
     $("sbStatus").textContent = "Scan to pick songs on your phone";
     publishKids();
     publishNow();
+    publishPlay();
+    listenSingers(fb, path);
   } catch (e) {
     $("sbStatus").textContent = "Songbook offline: " + e.message;
   }
@@ -521,6 +529,95 @@ async function hostSongbook() {
 function takeRemote(key) {
   remote.delete(key);
   if (hosted) hosted.fb.db.remove(hosted.fb.db.ref(hosted.fb.database, `${hosted.path}/queue/${key}`)).catch(() => {});
+}
+
+/* where the song is (in song time), for the phones that score their singers */
+function publishPlay() {
+  if (!hosted || !cur || !player || !player.getCurrentTime) return;
+  const { db, database } = hosted.fb;
+  db.set(db.ref(database, hosted.path + "/play"), {
+    id: cur.rec.id,
+    pos: Math.max(0, videoTime() - cur.offset),
+    playing: !!clock.playing,
+    at: db.serverTimestamp(),
+  }).catch(() => {});
+}
+setInterval(() => clock.playing && publishPlay(), 3000);
+
+/* ------------------------------------------------------------------ singers (phones scoring themselves) */
+const singers = new Map(); /* uid -> {name, part, score, rating, song, final} */
+function singersNow() {
+  return cur ? [...singers.values()].filter((s) => s.song === cur.rec.id) : [];
+}
+function paintChips() {
+  const list = singersNow().sort((a, b) => (a.part || 1) - (b.part || 1) || b.score - a.score);
+  $("chips").replaceChildren(
+    ...list.map((s) => {
+      const c = el("div", "chip" + (s.part === 2 ? " p2" : ""));
+      const who = el("div", "who");
+      who.append(el("span", "", s.name), el("small", "", (cur.song.tracks.length > 1 ? `Part ${s.part || 1} · ` : "") + (s.rating || "singing")));
+      c.append(el("span", "dot"), who, el("span", "pts", (s.score || 0).toLocaleString()));
+      return c;
+    })
+  );
+}
+function listenSingers(fb, path) {
+  fb.db.onValue(fb.db.ref(fb.database, path + "/singers"), (snap) => {
+    singers.clear();
+    snap.forEach((c) => void singers.set(c.key, c.val() || {}));
+    paintChips();
+  });
+}
+
+const stars = (score) => "★".repeat(Math.round(score / 2000)) + "☆".repeat(5 - Math.round(score / 2000));
+
+/* after a song with singers: their scores, and the song's best three (kept for good: names of up to
+ * eight letters), for a few seconds before the next song */
+async function showResults(rec) {
+  await new Promise((r) => setTimeout(r, 2500)); /* the phones send their last lines */
+  const done = [...singers.values()].filter((s) => s.song === rec.id && s.score > 0).sort((a, b) => b.score - a.score);
+  if (!done.length) return;
+  $("resTitle").textContent = rec.title;
+  $("resSingers").replaceChildren(
+    ...done.map((s) => {
+      const r = el("div", "res-row");
+      r.append(el("span", "name", s.name), el("span", "stars", stars(s.score)), el("span", "num", s.score.toLocaleString()));
+      return r;
+    })
+  );
+  let board = [];
+  const fresh = new Set();
+  if (hosted) {
+    const { db, database } = hosted.fb;
+    const ref = db.ref(database, `groups/${config.group}/board/${rec.id}`);
+    try {
+      const res = await db.runTransaction(ref, (cur0) => {
+        const all = [...Object.values(cur0 || {})];
+        for (const s of done) all.push({ name: String(s.name).slice(0, 8), score: Math.min(10000, Math.max(0, Math.round(s.score))), at: Date.now() });
+        all.sort((a, b) => b.score - a.score || a.at - b.at);
+        return Object.fromEntries(all.slice(0, 3).map((e, i) => [String(i), e]));
+      });
+      board = Object.values(res.snapshot.val() || {});
+      const now = Date.now();
+      board.forEach((e, i) => now - e.at < 60000 && fresh.add(i));
+    } catch {
+      board = [];
+    }
+  }
+  $("resBoard").replaceChildren(
+    ...(board.length
+      ? board.map((e, i) => {
+          const r = el("div", "res-row");
+          r.append(el("span", "name", `${i + 1}. ${e.name}`));
+          if (fresh.has(i)) r.append(el("span", "new", "New!"));
+          r.append(el("span", "stars", stars(e.score)), el("span", "num", e.score.toLocaleString()));
+          return r;
+        })
+      : [Object.assign(el("div", "res-row empty"), { textContent: "No scores kept yet" })])
+  );
+  $("scoreScreen").hidden = false;
+  await new Promise((r) => setTimeout(r, 9000));
+  $("scoreScreen").hidden = true;
 }
 
 function publishKids() {

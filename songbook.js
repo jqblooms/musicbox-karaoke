@@ -40,7 +40,7 @@ function row(s, { tag, onClick, button } = {}) {
 }
 
 /* ------------------------------------------------------------------ picking */
-const myName = () => $("name").value.trim().slice(0, 40);
+const myName = () => $("name").value.trim().slice(0, 8);
 $("name").value = store("mbxName") || "";
 $("name").addEventListener("change", () => store("mbxName", myName()));
 
@@ -101,6 +101,157 @@ function paintHost() {
   $("hostState").textContent = ok ? "Connected" : "Screen offline";
   $("hostState").classList.toggle("bad", !ok);
 }
+
+/* ------------------------------------------------------------------ singing along, scored here
+ * The screen announces where it is in the song (play: {id, pos, playing, at}); this phone runs the
+ * song's clock from that, hears its singer, and scores them (score.js). Each scored line goes to the
+ * screen (singers/<this phone>), which shows a chip per singer and the results at the end. */
+let play = null, chartNow = null, sing = null; /* skew (this phone vs the database clock) is kept below */
+
+function songTime() {
+  if (!play) return null;
+  return play.playing ? play.pos + (Date.now() + skew - play.at) / 1000 : play.pos;
+}
+
+function askName() {
+  return new Promise((resolve) => {
+    $("nameAsk").value = myName();
+    $("nameSheet").hidden = false;
+    $("nameAsk").focus();
+    const done = (v) => {
+      $("nameSheet").hidden = true;
+      $("nameForm").onsubmit = $("nameCancel").onclick = null;
+      resolve(v);
+    };
+    $("nameForm").onsubmit = (e) => {
+      e.preventDefault();
+      const v = $("nameAsk").value.trim().slice(0, 8);
+      if (!v) return;
+      $("name").value = v;
+      store("mbxName", v);
+      done(v);
+    };
+    $("nameCancel").onclick = () => done("");
+  });
+}
+
+/* the buttons to join in: one, or a part each for a duet */
+async function paintSingButtons() {
+  const box = $("singButtons");
+  if (!now || sing) {
+    box.hidden = true;
+    return;
+  }
+  if (!chartNow || chartNow.id !== now.id) {
+    const id = now.id, text = await chartText(id).catch(() => null);
+    if (!now || now.id !== id) return;
+    chartNow = { id, song: text && MbxChart.parse(text) };
+  }
+  if (!chartNow.song) return void (box.hidden = true);
+  const tr = chartNow.song.tracks;
+  box.replaceChildren(
+    ...(tr.length > 1 ? [1, 2] : [1]).map((part) => {
+      const b = el("button", "btn blue", tr.length > 1 ? `Sing part ${part}${tr[part - 1].name ? " (" + tr[part - 1].name + ")" : ""}` : "Sing this one");
+      b.type = "button";
+      b.addEventListener("click", () => startSinging(part));
+      return b;
+    })
+  );
+  box.hidden = false;
+}
+
+async function startSinging(part) {
+  if (!now || !chartNow || chartNow.id !== now.id || !chartNow.song) return;
+  const name = myName() || (await askName());
+  if (!name) return;
+  store("mbxName", name);
+  const test = /[?&]testsing=1/.test(location.search); /* the preview: no mic */
+  if (!test && !MbxMic.st.on && !(await MbxMic.start())) return toast("Singing needs the mic");
+  sing = { id: chartNow.id, part, name, song: chartNow.song, singer: new MbxScore.Singer(chartNow.song, part - 1), st: { alpha: 0, alphaTarget: 0 }, buf: new Float32Array(2048), rating: "", midi: null, test };
+  sing.end = MbxChart.beatTime(sing.song, Math.max(...sing.song.tracks.map((t) => t.lines.at(-1)?.end || 0)));
+  sing.timer = setInterval(singTick, MbxScore.STEP * 1000);
+  publishSinger(false);
+  paintSing();
+  requestAnimationFrame(singDraw);
+  paintSingButtons();
+}
+
+function singTick() {
+  if (!sing || !play || play.id !== sing.id) return;
+  const t = songTime();
+  if (t == null) return;
+  if (t > sing.end + 1.2) return stopSinging(true); /* the singing is over: final score */
+  if (!play.playing) return;
+  let midi = null;
+  const an = !sing.test && MbxMic.analyser();
+  if (an && MbxMic.st.on && MbxMic.st.open) {
+    an.getFloatTimeDomainData(sing.buf);
+    const p = MbxScore.pitch(sing.buf, MbxMic.context().sampleRate);
+    if (p && p.confidence > 0.75) midi = p.midi;
+  }
+  sing.midi = midi;
+  sing.singer.add(t, midi);
+  const lines = sing.singer.update(t);
+  if (lines.length) {
+    sing.rating = lines.at(-1).rating;
+    sing.flash = performance.now();
+    publishSinger(false);
+    paintSing();
+  }
+}
+
+function stopSinging(final) {
+  if (!sing) return;
+  clearInterval(sing.timer);
+  if (final) {
+    sing.singer.finish();
+    publishSinger(true);
+    toast(`${sing.name}: ${sing.singer.score.toLocaleString()} points`);
+  } else if (fb) fb.db.remove(fb.db.ref(fb.database, `${path}/singers/${fb.uid}`)).catch(() => {});
+  sing = null;
+  paintSing();
+  paintSingButtons();
+}
+
+function publishSinger(final) {
+  if (!fb || !sing) return;
+  const { db, database } = fb;
+  db.set(db.ref(database, `${path}/singers/${fb.uid}`), {
+    name: sing.name,
+    part: sing.part,
+    score: sing.singer.score,
+    rating: sing.rating || "",
+    song: sing.id,
+    final: !!final,
+    at: db.serverTimestamp(),
+  }).catch(() => {});
+}
+
+const NOTE_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+function paintSing() {
+  $("singPanel").hidden = !sing;
+  if (!sing) return;
+  $("singWho").textContent = sing.name + (sing.song.tracks.length > 1 ? ` · part ${sing.part}` : "");
+  $("singScore").textContent = sing.singer.score.toLocaleString();
+  $("singRating").textContent = sing.rating || "Sing when the line comes up";
+}
+
+/* the lyrics and notes, as on the screen (draw.js), and the note being heard */
+function singDraw() {
+  if (!sing) return;
+  requestAnimationFrame(singDraw);
+  const c = $("singCanvas"), dpr = window.devicePixelRatio || 1;
+  const W = Math.round(c.clientWidth * dpr), H = Math.round(c.clientHeight * dpr);
+  if (c.width !== W || c.height !== H) (c.width = W), (c.height = H);
+  const ctx = c.getContext("2d"), t = songTime();
+  ctx.clearRect(0, 0, W, H);
+  if (t == null || !play || play.id !== sing.id) return;
+  MbxDraw.render(ctx, { song: sing.song, offset: 0, t, dur: 0, W, H, u: H / 820, lift: 0, notes: true, map: false, st: sing.st });
+  $("singNote").textContent = sing.midi == null ? "" : "♪ " + NOTE_NAMES[((Math.round(sing.midi) % 12) + 12) % 12];
+  $("singRating").classList.toggle("hot", performance.now() - (sing.flash || 0) < 1200);
+}
+
+$("singStop").addEventListener("click", () => stopSinging(false));
 
 /* ------------------------------------------------------------------ the mic */
 function paintMic(st) {
@@ -169,7 +320,12 @@ window.onUnlocked = async () => {
   });
   db.onValue(db.ref(database, path + "/now"), (snap) => {
     now = snap.val();
+    if (sing && (!now || now.id !== sing.id)) stopSinging(true); /* the screen moved on */
     paintNow();
+    paintSingButtons();
+  });
+  db.onValue(db.ref(database, path + "/play"), (snap) => {
+    play = snap.val();
   });
   /* the screen's child-friendly setting decides what this phone can find (on until it says) */
   db.onValue(db.ref(database, path + "/kids"), (snap) => {
@@ -182,7 +338,7 @@ window.onUnlocked = async () => {
     seen = snap.val() || 0;
     paintHost();
   });
-  db.onValue(db.ref(database, ".info/serverTimeOffset"), (snap) => (skew = snap.val() || 0));
+  db.onValue(db.ref(database, ".info/serverTimeOffset"), (snap) => (skew = snap.val() || 0)); /* also used for the song's clock */
   setInterval(paintHost, 10000);
   paintQueue();
   paintNow();

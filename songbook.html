@@ -8,7 +8,7 @@
 <title>Songbook · musicbox karaoke</title>
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793789036348">
+<link rel="stylesheet" href="style.css?v=1793792862640">
 </head>
 <body class="songbook">
   <section id="lock" class="lock">
@@ -45,11 +45,19 @@
           <p class="mic-tip">Hold the phone close to your mouth. Headphones sound best and can't squeal.</p>
         </div>
         <div class="group">
-          <label class="row name-row"><span>Your name</span><input id="name" maxlength="40" placeholder="Optional" autocomplete="nickname"></label>
+          <label class="row name-row"><span>Your name</span><input id="name" maxlength="8" placeholder="Up to 8 letters" autocomplete="nickname"></label>
         </div>
         <div class="group nowcard">
           <img id="nowImg" alt="">
           <div class="txt"><small>Now singing</small><b id="nowTitle">Nothing yet</b><span id="nowArtist"></span></div>
+        </div>
+        <!-- singing along: scored on this phone -->
+        <div id="singButtons" class="sing-buttons" hidden></div>
+        <div id="singPanel" class="group sing-panel" hidden>
+          <div class="sing-head"><span id="singWho"></span><b id="singScore">0</b></div>
+          <canvas id="singCanvas" class="sing-canvas"></canvas>
+          <div class="sing-foot"><span id="singRating">Sing when the line comes up</span><span id="singNote"></span></div>
+          <button id="singStop" class="btn small" type="button">Stop singing</button>
         </div>
         <div class="search sb-search"><input id="q" type="search" placeholder="Search songs to sing" autocomplete="off" spellcheck="false"></div>
         <div id="results" class="group list"></div>
@@ -58,12 +66,23 @@
       </div>
     </div>
     <div id="toast" class="toast sb-toast" hidden></div>
+    <!-- the singer's name, asked for the first time they sing -->
+    <div id="nameSheet" class="name-sheet" hidden>
+      <form id="nameForm" class="name-card" autocomplete="off">
+        <b>Who's singing?</b>
+        <span>Your name for the scores (up to 8 letters)</span>
+        <input id="nameAsk" maxlength="8" autocomplete="nickname" required>
+        <div class="name-btns"><button type="button" id="nameCancel" class="btn">Cancel</button><button type="submit" class="btn blue">Sing</button></div>
+      </form>
+    </div>
   </section>
 
-  <script src="chart.js?v=1793789036348"></script>
-  <script src="recommend.js?v=1793789036348"></script>
-  <script src="common.js?v=1793789036348"></script>
-  <script src="mic.js?v=1793789036348"></script>
-  <script src="songbook.js?v=1793789036348"></script>
+  <script src="chart.js?v=1793792862640"></script>
+  <script src="draw.js?v=1793792862640"></script>
+  <script src="score.js?v=1793792862640"></script>
+  <script src="recommend.js?v=1793792862640"></script>
+  <script src="common.js?v=1793792862640"></script>
+  <script src="mic.js?v=1793792862640"></script>
+  <script src="songbook.js?v=1793792862640"></script>
 </body>
 </html>
