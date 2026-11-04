@@ -8,7 +8,7 @@
 <title>Songbook · musicbox karaoke</title>
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793711178160">
+<link rel="stylesheet" href="style.css?v=1793789036348">
 </head>
 <body class="songbook">
   <section id="lock" class="lock">
@@ -31,6 +31,19 @@
         <p><b>Scan the QR code on the karaoke screen</b> to pick songs for it. This page needs the screen's code to know where to send them.</p>
       </div>
       <div id="session">
+        <!-- the phone as a mic: first thing on the page -->
+        <div id="micCard" class="group mic-card">
+          <div class="mic-top">
+            <div class="mic-badge"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8.2" y="2.5" width="7.6" height="12" rx="3.8" fill="#fff"/><path d="M5.6 11.2a6.4 6.4 0 0 0 12.8 0" stroke="#fff" stroke-width="1.9" fill="none" stroke-linecap="round"/><path d="M12 17.6v3.2M8.6 21h6.8" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+            <div class="mic-txt"><b>Sing into this phone</b><span id="micState">It works as your mic: tap Start</span></div>
+          </div>
+          <button id="micBtn" class="btn blue mic-btn" type="button">Start the mic</button>
+          <div class="meter"><i id="micMeter"></i></div>
+          <label class="row mic-row"><span>Hear yourself on this phone</span><input id="hearSw" type="checkbox" class="switch"></label>
+          <div class="row mic-row vol-row"><span>Your volume</span><input id="micVol" class="vol" type="range" min="0" max="1" step="0.01"></div>
+          <label class="row mic-row"><span>Noisy room mode</span><input id="noisySw" type="checkbox" class="switch"></label>
+          <p class="mic-tip">Hold the phone close to your mouth. Headphones sound best and can't squeal.</p>
+        </div>
         <div class="group">
           <label class="row name-row"><span>Your name</span><input id="name" maxlength="40" placeholder="Optional" autocomplete="nickname"></label>
         </div>
@@ -47,9 +60,10 @@
     <div id="toast" class="toast sb-toast" hidden></div>
   </section>
 
-  <script src="chart.js?v=1793711178160"></script>
-  <script src="recommend.js?v=1793711178160"></script>
-  <script src="common.js?v=1793711178160"></script>
-  <script src="songbook.js?v=1793711178160"></script>
+  <script src="chart.js?v=1793789036348"></script>
+  <script src="recommend.js?v=1793789036348"></script>
+  <script src="common.js?v=1793789036348"></script>
+  <script src="mic.js?v=1793789036348"></script>
+  <script src="songbook.js?v=1793789036348"></script>
 </body>
 </html>

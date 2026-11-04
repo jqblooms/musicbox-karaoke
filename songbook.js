@@ -102,6 +102,43 @@ function paintHost() {
   $("hostState").classList.toggle("bad", !ok);
 }
 
+/* ------------------------------------------------------------------ the mic */
+function paintMic(st) {
+  const card = $("micCard");
+  card.classList.toggle("live", st.on);
+  card.querySelector(".mic-badge").classList.toggle("open", st.open);
+  $("micBtn").textContent = st.on ? "Stop the mic" : "Start the mic";
+  $("micMeter").style.width = Math.round(st.level * 100) + "%";
+  const state = $("micState");
+  state.classList.toggle("warn", !!(st.error || st.feedback));
+  state.textContent = st.error
+    ? st.error
+    : st.feedback
+      ? "Squealing! Turned down - move away from the speaker, or use headphones"
+      : !st.on
+        ? "It works as your mic: tap Start"
+        : st.hear
+          ? st.open ? "You're on - singing through this phone" : "Mic on - start singing"
+          : "Mic on (you won't hear yourself on this phone)";
+  $("hearSw").checked = st.hear;
+  $("noisySw").checked = st.noisy;
+  $("micVol").disabled = !st.hear;
+}
+$("micBtn").addEventListener("click", () => (MbxMic.st.on ? MbxMic.stop() : MbxMic.start()));
+$("hearSw").addEventListener("change", (e) => MbxMic.setHear(e.target.checked));
+$("noisySw").addEventListener("change", (e) => MbxMic.setNoisy(e.target.checked));
+$("micVol").value = MbxMic.st.vol;
+$("micVol").addEventListener("input", (e) => MbxMic.setVol(+e.target.value));
+let micPainted = 0;
+MbxMic.onChange((st) => {
+  const t = performance.now(); /* the meter at most 25 times a second */
+  if (t - micPainted > 40 || !st.on) {
+    micPainted = t;
+    paintMic(st);
+  }
+});
+paintMic(MbxMic.st);
+
 /* ------------------------------------------------------------------ in */
 window.onUnlocked = async () => {
   $("lock").hidden = true;
