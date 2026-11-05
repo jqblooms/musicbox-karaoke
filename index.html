@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>musicbox karaoke</title>
 <link rel="icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793864372502">
+<link rel="stylesheet" href="style.css?v=1793864977420">
 </head>
 <body>
   <!-- the lock: the songs are encrypted; the password unlocks them here, in the browser -->
@@ -53,6 +53,8 @@
             <p>Search above, or start with one of these:</p>
             <div id="picks" class="picks"></div>
           </div>
+          <!-- a song on its way: shown from the moment it's chosen until it plays -->
+          <div id="loadCard" class="load-card" hidden><div><i class="spinner"></i><b id="loadTitle"></b><span id="loadArtist"></span><small id="loadState"></small></div></div>
           <div id="toast" class="toast" hidden></div>
           <!-- singers on their phones: a chip each while singing, then the results -->
           <div id="chips" class="chips"></div>
@@ -111,10 +113,10 @@
     </main>
   </section>
 
-  <script src="chart.js?v=1793864372502"></script>
-  <script src="draw.js?v=1793864372502"></script>
-  <script src="recommend.js?v=1793864372502"></script>
-  <script src="common.js?v=1793864372502"></script>
-  <script src="app.js?v=1793864372502"></script>
+  <script src="chart.js?v=1793864977420"></script>
+  <script src="draw.js?v=1793864977420"></script>
+  <script src="recommend.js?v=1793864977420"></script>
+  <script src="common.js?v=1793864977420"></script>
+  <script src="app.js?v=1793864977420"></script>
 </body>
 </html>

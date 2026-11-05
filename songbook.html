@@ -8,7 +8,7 @@
 <title>Songbook · musicbox karaoke</title>
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793864372502">
+<link rel="stylesheet" href="style.css?v=1793864977420">
 </head>
 <body class="songbook">
   <section id="lock" class="lock">
@@ -66,6 +66,14 @@
       </div>
     </div>
     <div id="toast" class="toast sb-toast" hidden></div>
+    <!-- a pick while a suggestion is on: play it now, or queue it? -->
+    <div id="jumpSheet" class="name-sheet" hidden>
+      <div class="name-card">
+        <b>Play yours now?</b>
+        <span id="jumpText"></span>
+        <div class="name-btns"><button type="button" id="jumpQueue" class="btn">Add to the queue</button><button type="button" id="jumpNow" class="btn blue">Play mine now</button></div>
+      </div>
+    </div>
     <!-- the singer's name, asked for the first time they sing -->
     <div id="nameSheet" class="name-sheet" hidden>
       <form id="nameForm" class="name-card" autocomplete="off">
@@ -77,12 +85,12 @@
     </div>
   </section>
 
-  <script src="chart.js?v=1793864372502"></script>
-  <script src="draw.js?v=1793864372502"></script>
-  <script src="score.js?v=1793864372502"></script>
-  <script src="recommend.js?v=1793864372502"></script>
-  <script src="common.js?v=1793864372502"></script>
-  <script src="mic.js?v=1793864372502"></script>
-  <script src="songbook.js?v=1793864372502"></script>
+  <script src="chart.js?v=1793864977420"></script>
+  <script src="draw.js?v=1793864977420"></script>
+  <script src="score.js?v=1793864977420"></script>
+  <script src="recommend.js?v=1793864977420"></script>
+  <script src="common.js?v=1793864977420"></script>
+  <script src="mic.js?v=1793864977420"></script>
+  <script src="songbook.js?v=1793864977420"></script>
 </body>
 </html>

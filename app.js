@@ -37,7 +37,22 @@ function loadYouTube() {
   return playerReady;
 }
 
+/* the loading card: from the moment a song is chosen until it's really playing */
+let loadingSince = 0;
+function showLoading(rec, state) {
+  $("loadTitle").textContent = rec.title;
+  $("loadArtist").textContent = rec.artist;
+  $("loadState").textContent = state;
+  $("loadCard").hidden = false;
+  if (!loadingSince) loadingSince = performance.now();
+}
+function hideLoading() {
+  $("loadCard").hidden = true;
+  loadingSince = 0;
+}
+
 async function playSong(rec) {
+  showLoading(rec, "Loading…");
   if (kids && rec.x) {
     toast(`"${rec.title}" isn't child-friendly - skipping it`);
     if (rec.remoteKey) takeRemote(rec.remoteKey);
@@ -48,13 +63,16 @@ async function playSong(rec) {
   const text = await chartText(rec.id);
   const song = text && MbxChart.parse(text);
   if (!song) {
+    hideLoading();
     toast("That chart can't be read - skipping it");
     mode.exclude.push(rec.id);
     return next();
   }
   const yt = ytOf(rec);
   if (rec.remoteKey) takeRemote(rec.remoteKey);
-  cur = { rec, song, yt, by: rec.by || "", offset: yt === rec.v ? song.videogap : 0, played: 0, ended: false, st: { alpha: 0, alphaTarget: 0 } };
+  showLoading(rec, "Starting the video…");
+  /* auto: an algorithm's suggestion nobody chose - a phone's pick may jump in over it */
+  cur = { rec, song, yt, by: rec.by || "", auto: !!rec.auto, offset: yt === rec.v ? song.videogap : 0, played: 0, ended: false, st: { alpha: 0, alphaTarget: 0 } };
   publishNow();
   publishPlay();
   if (hosted) hosted.fb.db.remove(hosted.fb.db.ref(hosted.fb.database, hosted.path + "/singers")).catch(() => {});
@@ -92,18 +110,42 @@ function onStateChange(e) {
   clock.at = performance.now();
   $("playBtn").innerHTML = $("fsPlay").innerHTML = clock.playing ? "&#10074;&#10074;" : "&#9654;";
   $("pauseScreen").hidden = s !== YT.PlayerState.PAUSED || !cur;
+  if (clock.playing) hideLoading();
   publishPlay();
-  if (s === YT.PlayerState.ENDED && cur && !cur.ended) {
-    cur.ended = true;
-    const rec = cur.rec;
-    (singersNow().length ? showResults(rec) : Promise.resolve()).finally(() => cur && cur.rec === rec && next());
-  }
+  if (s === YT.PlayerState.ENDED) endSong();
 }
+
+/* the song is over: the results if anyone sang, then the next one */
+function endSong() {
+  if (!cur || cur.ended) return;
+  cur.ended = true;
+  const rec = cur.rec;
+  (singersNow().length ? showResults(rec) : Promise.resolve()).finally(() => cur && cur.rec === rec && next());
+}
+
+/* Some videos never say they've ended (YouTube's spinner sits on the last frame), and some never
+ * start: within a second of the end and not moving counts as the end, and a song that hasn't
+ * started after 25 s is skipped. */
+let stillAtEnd = 0;
+setInterval(() => {
+  if (!cur || !player || !player.getDuration) return;
+  if (loadingSince && performance.now() - loadingSince > 25000 && !cur.ended) {
+    hideLoading();
+    toast(`"${cur.rec.title}" won't start - skipping it`);
+    mode.exclude.push(cur.rec.id);
+    cur.ended = true;
+    return next();
+  }
+  const d = player.getDuration() || 0, t = player.getCurrentTime() || 0;
+  stillAtEnd = d > 0 && d - t < 1.2 && !clock.playing ? stillAtEnd + 1 : 0;
+  if (stillAtEnd >= 2) endSong();
+}, 1000);
 
 function onError(e) {
   /* 2 bad id, 5 HTML5 problem, 100 removed/private, 101/150 embedding not allowed (age-restricted
    * videos too), 153 player configuration */
   if (!cur) return;
+  hideLoading();
   mode.exclude.push(cur.rec.id);
   const why = e.data === 101 || e.data === 150 ? "isn't allowed to play outside YouTube" : "won't play";
   toast(`${cur.rec.title} ${why} - skipping it`);
@@ -158,7 +200,7 @@ function upNext() {
   }
   const taken = new Set([...mode.queue, ...picks.map((p) => p.id)]);
   const recs = MbxRecommend.info(songs, mode.upnext.filter((id) => !taken.has(id)));
-  return [...picks, ...queued, ...recs];
+  return [...picks, ...queued, ...recs.map((s) => ({ ...s, auto: true }))];
 }
 
 function next() {
@@ -587,7 +629,11 @@ async function hostSongbook() {
       remote.set(snap.key, { key: snap.key, id: v.id, name: v.name || "", at: v.at || 0 });
       renderUpNext();
       if (!cur) next();
-      else toast(`${v.name || "Someone"} added ${songs.byId.get(v.id).title}`);
+      else if (v.jump && cur.auto && !cur.ended) { /* they chose to skip the suggestion that's on */
+        toast(`${v.name || "Someone"} skipped the suggestion: ${songs.byId.get(v.id).title}`);
+        cur.ended = true;
+        next();
+      } else toast(`${v.name || "Someone"} added ${songs.byId.get(v.id).title}`);
     });
     db.onChildRemoved(queue, (snap) => {
       remote.delete(snap.key);
@@ -707,7 +753,7 @@ function publishKids() {
 function publishNow() {
   if (!hosted || !cur) return;
   const { db, database } = hosted.fb;
-  db.set(db.ref(database, hosted.path + "/now"), { id: cur.rec.id, title: cur.rec.title, artist: cur.rec.artist, name: cur.by || "", at: db.serverTimestamp() }).catch(() => {});
+  db.set(db.ref(database, hosted.path + "/now"), { id: cur.rec.id, title: cur.rec.title, artist: cur.rec.artist, name: cur.by || (cur.auto ? "" : "Chosen on the screen").slice(0, 40), at: db.serverTimestamp() }).catch(() => {});
 }
 
 /* ------------------------------------------------------------------ TV mode (?tv=1)

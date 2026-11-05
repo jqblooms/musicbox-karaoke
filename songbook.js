@@ -44,13 +44,41 @@ const myName = () => $("name").value.trim().slice(0, 8);
 $("name").value = store("mbxName") || "";
 $("name").addEventListener("change", () => store("mbxName", myName()));
 
+/* when the song on is a suggestion nobody chose (no name), ask whether to skip it for this one */
+function askJump(s) {
+  if (!now || now.name) return Promise.resolve(false);
+  return new Promise((resolve) => {
+    $("jumpText").textContent = `Nobody picked "${now.title}" - it's a suggestion. Play "${s.title}" now instead?`;
+    $("jumpSheet").hidden = false;
+    const done = (v) => {
+      $("jumpSheet").hidden = true;
+      $("jumpNow").onclick = $("jumpQueue").onclick = null;
+      resolve(v);
+    };
+    $("jumpNow").onclick = () => done(true);
+    $("jumpQueue").onclick = () => done(false);
+  });
+}
+
 async function pick(s) {
   if (!fb) return toast("Not connected yet");
+  const jump = await askJump(s);
   store("mbxName", myName());
   const { db, database } = fb;
   try {
-    await db.push(db.ref(database, path + "/queue"), { id: s.id, title: s.title.slice(0, 200), artist: s.artist.slice(0, 200), name: myName() || "Guest", by: fb.uid, at: db.serverTimestamp() });
-    toast(`Added: ${s.title}`);
+    const item = { id: s.id, title: s.title.slice(0, 200), artist: s.artist.slice(0, 200), name: myName() || "Guest", by: fb.uid, at: db.serverTimestamp() };
+    if (jump) item.jump = true;
+    let jumped = jump;
+    try {
+      await db.push(db.ref(database, path + "/queue"), item);
+    } catch (e) {
+      if (!jump) throw e;
+      /* older Firebase rules don't know "jump" yet: queue it the plain way */
+      delete item.jump;
+      jumped = false;
+      await db.push(db.ref(database, path + "/queue"), item);
+    }
+    toast(jumped ? `Playing next: ${s.title}` : `Added: ${s.title}`);
     $("q").value = "";
     paintResults();
   } catch (e) {
@@ -90,7 +118,7 @@ function paintQueue() {
 function paintNow() {
   const s = now && songs.byId.get(now.id);
   $("nowTitle").textContent = now ? now.title : "Nothing yet";
-  $("nowArtist").textContent = now ? now.artist + (now.name ? ` · picked by ${now.name}` : "") : "";
+  $("nowArtist").textContent = now ? now.artist + (now.name ? (now.name === "Chosen on the screen" ? " · chosen on the screen" : ` · picked by ${now.name}`) : " · a suggestion") : "";
   if (s) $("nowImg").src = thumb(ytOf(s));
   $("nowImg").hidden = !s;
 }

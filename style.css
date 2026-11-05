@@ -270,3 +270,17 @@ body.tv .pick:focus { background: rgba(80,140,230,.45); transform: scale(1.04); 
   background: linear-gradient(rgba(60,64,72,.95), rgba(14,15,18,.97)); border: 1px solid rgba(255,255,255,.18); box-shadow: 0 10px 30px rgba(0,0,0,.6); }
 .ad-card b { font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: #ffcc33; }
 .ad-card span { font-size: 24px; font-weight: bold; }
+
+/* ------------------------------------------------------------------ a song loading */
+.load-card { position: absolute; inset: 0; z-index: 6; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 40%, rgba(59,74,99,.92), rgba(11,13,18,.96) 75%); }
+.load-card div { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px 40px; border-radius: 18px; color: #fff; max-width: 80%;
+  background: linear-gradient(rgba(60,64,72,.95), rgba(14,15,18,.97)); border: 1px solid rgba(255,255,255,.18); box-shadow: 0 10px 30px rgba(0,0,0,.6); text-align: center; }
+.load-card b { font-size: 26px; text-shadow: 0 -1px 0 #000; }
+.load-card span { font-size: 18px; color: #b9c2d0; }
+.load-card small { margin-top: 6px; font-size: 14px; color: #8fb8ff; font-weight: bold; }
+/* the iOS 6 spinner: twelve spokes fading round */
+.spinner { width: 46px; height: 46px; margin-bottom: 8px; border-radius: 50%; position: relative;
+  background: conic-gradient(from 0deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,.95) 330deg, rgba(255,255,255,0) 360deg);
+  -webkit-mask: radial-gradient(circle, transparent 54%, #000 56%); mask: radial-gradient(circle, transparent 54%, #000 56%);
+  animation: spin 0.9s steps(12) infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
