@@ -3,6 +3,8 @@
  * recommendations, and the songbook: phones add songs through the live database (common.js). */
 "use strict";
 
+const TV = new URLSearchParams(location.search).get("tv") === "1"; /* TV mode (the TV app) */
+
 /* ------------------------------------------------------------------ state: queue, history, taste */
 const st = store("mbxWeb") || {};
 const mode = { queue: st.queue || [], history: st.history || [], exclude: [], upnext: [], upnextFor: -1 };
@@ -426,19 +428,64 @@ const canvas = $("lyrics"), ctx = canvas.getContext("2d");
 /* The lyrics are drawn at no more than 1280 x 720 on a TV (1920 wide elsewhere) and scaled up by the
  * screen: a 4K TV would otherwise redraw 8 million pixels a frame on a weak chip, over the video. */
 let drawScale = 1;
-new ResizeObserver(() => {
+/* Sharpness levels (the width the lyrics are drawn at): if the screen keeps missing frames, the
+ * lyrics step down a level (on a TV: 720p, 540p, 360p); after a couple of minutes running smoothly
+ * they try a level sharper again. The level that works is remembered on this device. */
+const LEVELS = TV ? [1280, 960, 640] : [1920, 1280, 960, 640];
+let level = Math.min(LEVELS.length - 1, Math.max(0, +(store("mbxLyricsLevel") ?? 0) || 0));
+function sizeCanvas() {
   const dpr = window.devicePixelRatio || 1, r = $("stage").getBoundingClientRect();
-  const maxW = TV ? 1280 : 1920;
-  drawScale = Math.min(dpr, maxW / Math.max(1, r.width));
+  drawScale = Math.min(dpr, LEVELS[level] / Math.max(1, r.width));
   canvas.width = Math.max(1, Math.round(r.width * drawScale));
   canvas.height = Math.max(1, Math.round(r.height * drawScale));
   lastSig = "";
-}).observe($("stage"));
+}
+new ResizeObserver(sizeCanvas).observe($("stage"));
+
+/* watching for lag: of the screen's frames over 5 s (while a song plays), how many came late - over
+ * twice the screen's normal frame time, learnt as it goes (TVs can run at 60, 50, 30 or 24 Hz) */
+const lag = { last: 0, n: 0, late: 0, since: 0, calm: 0, triedUpAt: 0, noUp: false, base: 1000, gaps: [] };
+function watchLag(now) {
+  const playing = cur && clock.playing && document.visibilityState === "visible";
+  const gap = now - lag.last;
+  lag.last = now;
+  if (!playing || gap > 1000) return void ((lag.n = lag.late = 0), (lag.since = now));
+  lag.n++;
+  lag.gaps.push(gap);
+  if (gap > Math.max(lag.base * 1.9, 20)) lag.late++;
+  if (now - lag.since < 5000) return;
+  /* the screen's normal frame time: the quickest typical (median) seen so far */
+  const sorted = lag.gaps.sort((a, b) => a - b), median = sorted[sorted.length >> 1] || lag.base;
+  const first = lag.base === 1000;
+  lag.base = Math.max(8, Math.min(lag.base, median));
+  lag.gaps = [];
+  const share = first ? 0 : lag.late / Math.max(1, lag.n); /* the first window only learns the rhythm */
+  lag.n = lag.late = 0;
+  lag.since = now;
+  if (share > 0.2 && level < LEVELS.length - 1) {
+    if (now - lag.triedUpAt < 30000) lag.noUp = true; /* the sharper level didn't hold: stay put */
+    level++;
+    lag.calm = 0;
+    store("mbxLyricsLevel", level);
+    sizeCanvas();
+    console.debug(`[musicbox] lag (${Math.round(share * 100)}% late frames): lyrics now drawn ${canvas.width}x${canvas.height}`);
+  } else if (share < 0.03) {
+    lag.calm += 5;
+    if (lag.calm >= 120 && level > 0 && !lag.noUp) { /* two smooth minutes: try a level sharper */
+      level--;
+      lag.calm = 0;
+      lag.triedUpAt = now;
+      store("mbxLyricsLevel", level);
+      sizeCanvas();
+    }
+  } else lag.calm = 0;
+}
 
 /* drawn every frame on a computer, 30 times a second on a TV, and not at all when nothing changed */
 let lastDraw = 0, lastSig = "";
 function frame(now) {
   requestAnimationFrame(frame);
+  watchLag(now);
   if (TV && now - lastDraw < 31) return;
   const W = canvas.width, H = canvas.height;
   if (!cur || !player || !player.getDuration) {
@@ -666,7 +713,6 @@ function publishNow() {
  * The page in the TV app: the video fills the screen, the QR code stays up, and the remote drives
  * it: OK pauses, Left / Right jump 10 s, Down opens Up next, Up opens the menu, Back closes what's
  * open (the app sends Escape for Back). Media keys work too. */
-const TV = new URLSearchParams(location.search).get("tv") === "1";
 let hintTimer = 0;
 function tvHint() {
   if (!TV) return;
