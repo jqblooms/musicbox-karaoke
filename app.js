@@ -423,18 +423,35 @@ $("mapHit").addEventListener("click", (e) => {
 
 /* ------------------------------------------------------------------ drawing */
 const canvas = $("lyrics"), ctx = canvas.getContext("2d");
+/* The lyrics are drawn at no more than 1280 x 720 on a TV (1920 wide elsewhere) and scaled up by the
+ * screen: a 4K TV would otherwise redraw 8 million pixels a frame on a weak chip, over the video. */
+let drawScale = 1;
 new ResizeObserver(() => {
   const dpr = window.devicePixelRatio || 1, r = $("stage").getBoundingClientRect();
-  canvas.width = Math.max(1, Math.round(r.width * dpr));
-  canvas.height = Math.max(1, Math.round(r.height * dpr));
+  const maxW = TV ? 1280 : 1920;
+  drawScale = Math.min(dpr, maxW / Math.max(1, r.width));
+  canvas.width = Math.max(1, Math.round(r.width * drawScale));
+  canvas.height = Math.max(1, Math.round(r.height * drawScale));
+  lastSig = "";
 }).observe($("stage"));
 
-function frame() {
+/* drawn every frame on a computer, 30 times a second on a TV, and not at all when nothing changed */
+let lastDraw = 0, lastSig = "";
+function frame(now) {
   requestAnimationFrame(frame);
+  if (TV && now - lastDraw < 31) return;
   const W = canvas.width, H = canvas.height;
+  if (!cur || !player || !player.getDuration) {
+    if (lastSig !== "empty") ctx.clearRect(0, 0, W, H), (lastSig = "empty");
+    return;
+  }
+  const vt = videoTime();
+  const sig = [vt.toFixed(3), W, H, settings.notes, cur.rec.id, cur.st.alpha.toFixed(3)].join("|");
+  if (sig === lastSig) return;
+  lastSig = sig;
+  lastDraw = now;
+  const t0 = performance.now();
   ctx.clearRect(0, 0, W, H);
-  if (!cur || !player || !player.getDuration) return;
-  const vt = videoTime(), dpr = window.devicePixelRatio || 1;
   MbxDraw.render(ctx, {
     song: cur.song,
     offset: cur.offset,
@@ -442,12 +459,25 @@ function frame() {
     dur: player.getDuration() || 0,
     W,
     H,
-    u: Math.max(H / 1080, 0.4 * dpr),
+    u: Math.max(H / 1080, 0.4 * drawScale),
     lift: 0,
     notes: settings.notes,
     map: true,
     st: cur.st,
   });
+  frameStat(performance.now() - t0);
+}
+
+/* timing, for "why does it lag?": a line in the console every 10 s (Verbose level) */
+const fstat = { n: 0, ms: 0, worst: 0, since: performance.now() };
+function frameStat(ms) {
+  fstat.n++;
+  fstat.ms += Math.max(0, ms);
+  fstat.worst = Math.max(fstat.worst, ms);
+  if (performance.now() - fstat.since > 10000) {
+    console.debug(`[musicbox] ${fstat.n} lyric frames in 10 s, avg ${(fstat.ms / fstat.n).toFixed(1)} ms, worst ${fstat.worst.toFixed(1)} ms, canvas ${canvas.width}x${canvas.height}`);
+    Object.assign(fstat, { n: 0, ms: 0, worst: 0, since: performance.now() });
+  }
 }
 
 /* ------------------------------------------------------------------ the songbook
