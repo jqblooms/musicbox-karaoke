@@ -778,6 +778,13 @@ if (TV) {
   );
 }
 
+/* the TV app's helper (inside YouTube's player) says when an ad is on: it gets it out of the way
+ * (skips it, or plays it muted and fast) while this card covers it */
+window.addEventListener("message", (e) => {
+  if (!/^https:\/\/(www\.)?youtube(-nocookie)?\.com$/.test(e.origin) || !e.data || typeof e.data.musicboxAd !== "boolean") return;
+  $("adCard").hidden = !e.data.musicboxAd;
+});
+
 /* ------------------------------------------------------------------ in */
 window.onUnlocked = enter;
 function enter() {

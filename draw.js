@@ -74,18 +74,45 @@
     return m;
   }
 
+  /* A line's text as an image, made once and reused every frame: drawing text is the costliest thing
+   * here, and a weak TV chip notices. Same pixels as drawing it directly: the shadow and the text
+   * ("base"), or just the text in the sung colour. A few lines are kept. */
+  const textCache = new Map();
+  function textImage(text, px, kind, colour) {
+    const key = kind + "|" + colour + "|" + px + "|" + text;
+    let img = textCache.get(key);
+    if (img) return img;
+    const probe = document.createElement("canvas").getContext("2d");
+    setFont(probe, px, true);
+    const o = Math.max(1, px / 28), pad = 2;
+    const w = Math.ceil(probe.measureText(text).width + o + pad * 2), h = Math.ceil(px * 1.35 + o + pad * 2);
+    img = document.createElement("canvas");
+    img.width = Math.max(1, w);
+    img.height = Math.max(1, h);
+    const g = img.getContext("2d");
+    setFont(g, px, true);
+    g.textBaseline = "top";
+    if (kind === "base") {
+      g.fillStyle = "rgba(0,0,0,0.65)";
+      g.fillText(text, pad + o, pad + o);
+    }
+    g.fillStyle = colour;
+    g.fillText(text, pad, pad);
+    if (textCache.size > 24) textCache.delete(textCache.keys().next().value);
+    textCache.set(key, img);
+    return img;
+  }
+
   function drawLine(ctx, s, tr, li, t, cx, y, px, maxw, sung, current) {
     const l = tr.lines[li];
     const m = measure(ctx, tr, li, px, maxw);
     px = m.px;
     const w = m.w;
     setFont(ctx, px, true);
-    const x = cx - w / 2, o = Math.max(1, px / 28);
-    ctx.textBaseline = "top";
-    ctx.fillStyle = "rgba(0,0,0,0.65)";
-    ctx.fillText(l.text, x + o, y + o);
-    ctx.fillStyle = current ? "#fff" : "rgba(205,208,214,0.85)";
-    ctx.fillText(l.text, x, y);
+    const x = Math.round(cx - w / 2);
+    y = Math.round(y);
+    const base = textImage(l.text, px, "base", current ? "#fff" : "rgba(205,208,214,0.85)");
+    ctx.drawImage(base, x - 2, y - 2);
     if (!current) return;
     /* how far the singing has got: through the note being sung, in proportion */
     const b = C.timeBeat(s, t);
@@ -113,13 +140,10 @@
     if (lead != null) leadBar(ctx, x - px * 0.35 - px * 2.6, y + px * 0.38, px * 2.6, px * 0.34, lead, sung);
     if (cue) leadBar(ctx, cue.x, y + px * 1.12, cue.w, px * 0.16, cue.fill, sung, true);
     if (sx <= x) return;
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(0, y - px, sx, px * 3);
-    ctx.clip();
-    ctx.fillStyle = sung;
-    ctx.fillText(l.text, x, y);
-    ctx.restore();
+    /* the sung part: the same line in the sung colour, up to where the singing has got */
+    const lit = textImage(l.text, px, "sung", sung);
+    const sw = Math.min(lit.width, Math.ceil(sx - x) + 2);
+    if (sw > 0) ctx.drawImage(lit, 0, 0, sw, lit.height, x - 2, y - 2, sw, lit.height);
   }
 
   /* Lead-ins (as in UltraStar and the old Stage): 0..1 as a bar fills over the rest before
