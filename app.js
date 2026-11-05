@@ -228,6 +228,7 @@ function renderUpNext() {
 }
 
 function renderPicks() {
+  if (TV) paintTvSettings();
   const picks = MbxRecommend.recommend(songs, { current: 0, history: mode.history, exclude: mode.exclude, taste: taste.artists, n: 12 });
   $("picks").replaceChildren(
     ...picks.map((s) => {
@@ -760,18 +761,41 @@ function moveFocus(items, step) {
 }
 /* the welcome screen's picks: a grid, moved through by the arrows */
 function moveGrid(key) {
-  const picks = [...document.querySelectorAll(".pick")];
-  picks.forEach((p) => (p.tabIndex = 0));
+  const picks = [...document.querySelectorAll(".pick")], chips = [...document.querySelectorAll(".tv-chip")];
+  [...picks, ...chips].forEach((p) => (p.tabIndex = 0));
+  /* the settings row above the songs */
+  const c = chips.indexOf(document.activeElement);
+  if (c >= 0) {
+    if (key === "ArrowLeft" || key === "ArrowRight") chips[Math.max(0, Math.min(chips.length - 1, c + (key === "ArrowRight" ? 1 : -1)))].focus();
+    else if (key === "ArrowDown") picks[0]?.focus();
+    return;
+  }
   let i = picks.indexOf(document.activeElement);
   if (i < 0) return picks[0]?.focus();
   const cols = Math.max(1, picks.filter((p) => p.offsetTop === picks[0].offsetTop).length);
+  if (key === "ArrowUp" && i < cols) return chips[0]?.focus(); /* up from the top row: the settings */
   i += key === "ArrowRight" ? 1 : key === "ArrowLeft" ? -1 : key === "ArrowDown" ? cols : -cols;
   if (picks[i]) picks[i].focus();
+}
+function paintTvSettings() {
+  $("tvSetKids").textContent = `Child-friendly: ${kids ? "On" : "Off"}`;
+  $("tvSetNotes").textContent = `Note bars: ${settings.notes ? "On" : "Off"}`;
 }
 if (TV) {
   document.body.classList.add("tv");
   document.querySelector(".welcome p").textContent = "Choose one with the remote, or scan the code with your phone to pick any song:";
   document.querySelector(".pause-card span").textContent = "Press OK to carry on";
+  $("tvSettings").hidden = false;
+  $("tvSetKids").addEventListener("click", () => {
+    $("kidsSw").click();
+    paintTvSettings();
+    $("tvSetKids").focus(); /* stay on the switch after the songs are refreshed */
+  });
+  $("tvSetNotes").addEventListener("click", () => {
+    $("notesSw").click();
+    paintTvSettings();
+    $("tvSetNotes").focus(); /* stay on the switch after the songs are refreshed */
+  });
   $("tvKids").addEventListener("click", () => {
     $("kidsSw").click();
     paintTvMenu();
@@ -807,8 +831,10 @@ if (TV) {
         }
         return handled();
       }
-      if (!cur) { /* the welcome screen: pick a song */
+      if (k === "ContextMenu" || k === "Menu" || k === "Settings" || k === "m" || k === "M") return handled(), tvOpen("menu");
+      if (!cur) { /* the welcome screen: pick a song, or change a setting */
         if (k.startsWith("Arrow")) moveGrid(k);
+        else if (k === "Enter" && document.activeElement?.classList.contains("tv-chip")) document.activeElement.click();
         else if (k === "Enter" && document.activeElement?.classList.contains("pick")) document.activeElement.click();
         else if (k === "Enter") moveGrid("ArrowRight");
         return handled();

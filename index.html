@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>musicbox karaoke</title>
 <link rel="icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793861114258">
+<link rel="stylesheet" href="style.css?v=1793864372502">
 </head>
 <body>
   <!-- the lock: the songs are encrypted; the password unlocks them here, in the browser -->
@@ -45,6 +45,11 @@
           <div id="mapHit" class="map-hit" title="Jump to here"></div>
           <div id="welcome" class="welcome">
             <h2>Pick a song to sing</h2>
+            <!-- TV mode: the settings, reachable with the remote (above the songs) -->
+            <div id="tvSettings" class="tv-settings" hidden>
+              <button id="tvSetKids" class="tv-chip"></button>
+              <button id="tvSetNotes" class="tv-chip"></button>
+            </div>
             <p>Search above, or start with one of these:</p>
             <div id="picks" class="picks"></div>
           </div>
@@ -69,7 +74,7 @@
             <button id="tvNext" class="tv-item">Next song</button>
             <button id="tvUpnext" class="tv-item">Up next</button>
           </div>
-          <div id="tvHint" class="tv-hint" hidden>&#9660; Up next &nbsp;&middot;&nbsp; &#9650; Menu &nbsp;&middot;&nbsp; OK Pause &nbsp;&middot;&nbsp; &#9664; &#9654; 10 s</div>
+          <div id="tvHint" class="tv-hint" hidden>&#9660; Up next &nbsp;&middot;&nbsp; &#9650; or Menu button: Menu &nbsp;&middot;&nbsp; OK Pause &nbsp;&middot;&nbsp; &#9664; &#9654; 10 s</div>
           <div id="adCard" class="ad-card" hidden><div><b>Ad</b><span>Your song starts in a moment</span></div></div>
           <div id="adPill" class="ad-pill" hidden>Ad - click YouTube's <b>Skip</b> button</div>
           <!-- full screen: a mini bar that comes up when the mouse moves -->
@@ -106,10 +111,10 @@
     </main>
   </section>
 
-  <script src="chart.js?v=1793861114258"></script>
-  <script src="draw.js?v=1793861114258"></script>
-  <script src="recommend.js?v=1793861114258"></script>
-  <script src="common.js?v=1793861114258"></script>
-  <script src="app.js?v=1793861114258"></script>
+  <script src="chart.js?v=1793864372502"></script>
+  <script src="draw.js?v=1793864372502"></script>
+  <script src="recommend.js?v=1793864372502"></script>
+  <script src="common.js?v=1793864372502"></script>
+  <script src="app.js?v=1793864372502"></script>
 </body>
 </html>
