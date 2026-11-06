@@ -76,18 +76,26 @@
 
   /* A line's text as an image, made once and reused every frame: drawing text is the costliest thing
    * here, and a weak TV chip notices. Same pixels as drawing it directly: the shadow and the text
-   * ("base"), or just the text in the sung colour. A few lines are kept. */
+   * ("base"), or just the text in the sung colour. A few lines are kept.
+   * The canvases are recycled (the oldest line's goes to the next new one) and the text is measured
+   * on one shared canvas: a browser frees a canvas only when it next tidies its memory, and on a TV
+   * a new canvas or two per line piled up fast. */
   const textCache = new Map();
+  let probe = null;
   function textImage(text, px, kind, colour) {
     const key = kind + "|" + colour + "|" + px + "|" + text;
     let img = textCache.get(key);
     if (img) return img;
-    const probe = document.createElement("canvas").getContext("2d");
+    probe = probe || document.createElement("canvas").getContext("2d");
     setFont(probe, px, true);
     const o = Math.max(1, px / 28), pad = 2;
     const w = Math.ceil(probe.measureText(text).width + o + pad * 2), h = Math.ceil(px * 1.35 + o + pad * 2);
-    img = document.createElement("canvas");
-    img.width = Math.max(1, w);
+    if (textCache.size > 24) {
+      const oldest = textCache.keys().next().value;
+      img = textCache.get(oldest);
+      textCache.delete(oldest);
+    } else img = document.createElement("canvas");
+    img.width = Math.max(1, w); /* resizing also clears it */
     img.height = Math.max(1, h);
     const g = img.getContext("2d");
     setFont(g, px, true);
@@ -98,7 +106,6 @@
     }
     g.fillStyle = colour;
     g.fillText(text, pad, pad);
-    if (textCache.size > 24) textCache.delete(textCache.keys().next().value);
     textCache.set(key, img);
     return img;
   }
