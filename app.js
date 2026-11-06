@@ -475,7 +475,7 @@ let drawScale = 1;
  * lyrics step down a level (on a TV: 720p, 540p, 360p); after a couple of minutes running smoothly
  * they try a level sharper again. The level that works is remembered on this device. */
 const LEVELS = TV ? [1280, 960, 640] : [1920, 1280, 960, 640];
-let level = Math.min(LEVELS.length - 1, Math.max(0, +(store("mbxLyricsLevel") ?? 0) || 0));
+let level = Math.min(LEVELS.length - 1, Math.max(0, +(store("mbxLyricsLevel2") ?? 0) || 0));
 function sizeCanvas() {
   const dpr = window.devicePixelRatio || 1, r = $("stage").getBoundingClientRect();
   drawScale = Math.min(dpr, LEVELS[level] / Math.max(1, r.width));
@@ -509,7 +509,7 @@ function watchLag(now) {
     if (now - lag.triedUpAt < 30000) lag.noUp = true; /* the sharper level didn't hold: stay put */
     level++;
     lag.calm = 0;
-    store("mbxLyricsLevel", level);
+    store("mbxLyricsLevel2", level);
     sizeCanvas();
     console.debug(`[musicbox] lag (${Math.round(share * 100)}% late frames): lyrics now drawn ${canvas.width}x${canvas.height}`);
   } else if (share < 0.03) {
@@ -518,7 +518,7 @@ function watchLag(now) {
       level--;
       lag.calm = 0;
       lag.triedUpAt = now;
-      store("mbxLyricsLevel", level);
+      store("mbxLyricsLevel2", level);
       sizeCanvas();
     }
   } else lag.calm = 0;
