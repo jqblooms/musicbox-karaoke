@@ -468,19 +468,31 @@ $("mapHit").addEventListener("click", (e) => {
 
 /* ------------------------------------------------------------------ drawing */
 const canvas = $("lyrics"), ctx = canvas.getContext("2d");
+/* the glass panels behind the lyrics, on their own canvas: drawn once, faded with CSS opacity */
+const bgCanvas = $("lyricsBg"), bg = { ctx: bgCanvas.getContext("2d"), state: { key: "" } };
+let bgAlpha = 0;
+function setBgAlpha(a) {
+  if (Math.abs(a - bgAlpha) < 0.004 && !(a === 0 && bgAlpha !== 0)) return;
+  bgAlpha = a;
+  bgCanvas.style.opacity = a.toFixed(3);
+}
 /* The lyrics are drawn at no more than 1280 x 720 on a TV (1920 wide elsewhere) and scaled up by the
  * screen: a 4K TV would otherwise redraw 8 million pixels a frame on a weak chip, over the video. */
 let drawScale = 1;
-/* Sharpness levels (the width the lyrics are drawn at): if the screen keeps missing frames, the
- * lyrics step down a level (on a TV: 720p, 540p, 360p); after a couple of minutes running smoothly
- * they try a level sharper again. The level that works is remembered on this device. */
-const LEVELS = TV ? [1280, 960, 640] : [1920, 1280, 960, 640];
-let level = Math.min(LEVELS.length - 1, Math.max(0, +(store("mbxLyricsLevel2") ?? 0) || 0));
+/* Levels (the width the lyrics are drawn at, and how often): if the screen keeps missing frames,
+ * the lyrics step down a level (on a TV: 60 a second, then 30, then 540p, then 360p); after a
+ * couple of minutes running smoothly they try a level up again. The level that works is
+ * remembered on this device. */
+const LEVELS = TV
+  ? [{ w: 1280, fps: 60 }, { w: 1280, fps: 30 }, { w: 960, fps: 30 }, { w: 640, fps: 30 }]
+  : [1920, 1280, 960, 640].map((w) => ({ w, fps: 60 }));
+let level = Math.min(LEVELS.length - 1, Math.max(0, +(store("mbxLyricsLevel3") ?? 0) || 0));
 function sizeCanvas() {
   const dpr = window.devicePixelRatio || 1, r = $("stage").getBoundingClientRect();
-  drawScale = Math.min(dpr, LEVELS[level] / Math.max(1, r.width));
-  canvas.width = Math.max(1, Math.round(r.width * drawScale));
-  canvas.height = Math.max(1, Math.round(r.height * drawScale));
+  drawScale = Math.min(dpr, LEVELS[level].w / Math.max(1, r.width));
+  canvas.width = bgCanvas.width = Math.max(1, Math.round(r.width * drawScale));
+  canvas.height = bgCanvas.height = Math.max(1, Math.round(r.height * drawScale));
+  bg.state.key = "";
   lastSig = "";
 }
 new ResizeObserver(sizeCanvas).observe($("stage"));
@@ -509,7 +521,7 @@ function watchLag(now) {
     if (now - lag.triedUpAt < 30000) lag.noUp = true; /* the sharper level didn't hold: stay put */
     level++;
     lag.calm = 0;
-    store("mbxLyricsLevel2", level);
+    store("mbxLyricsLevel3", level);
     sizeCanvas();
     console.debug(`[musicbox] lag (${Math.round(share * 100)}% late frames): lyrics now drawn ${canvas.width}x${canvas.height}`);
   } else if (share < 0.03) {
@@ -518,7 +530,7 @@ function watchLag(now) {
       level--;
       lag.calm = 0;
       lag.triedUpAt = now;
-      store("mbxLyricsLevel2", level);
+      store("mbxLyricsLevel3", level);
       sizeCanvas();
     }
   } else lag.calm = 0;
@@ -529,10 +541,13 @@ let lastDraw = 0, lastSig = "";
 function frame(now) {
   requestAnimationFrame(frame);
   watchLag(now);
-  if (TV && now - lastDraw < 31) return;
+  /* at 30 a second: every other screen frame (a little early is fine - waiting for a whole 33 ms
+   * would sometimes skip two frames, which shows as a stutter) */
+  if (LEVELS[level].fps < 60 && now - lastDraw < 1000 / LEVELS[level].fps - 8) return;
   const W = canvas.width, H = canvas.height;
   if (!cur || !player || !player.getDuration) {
     if (lastSig !== "empty") ctx.clearRect(0, 0, W, H), (lastSig = "empty");
+    setBgAlpha(0);
     return;
   }
   const vt = videoTime();
@@ -554,7 +569,9 @@ function frame(now) {
     notes: settings.notes,
     map: true,
     st: cur.st,
+    bg,
   });
+  setBgAlpha(cur.st.alpha);
   frameStat(performance.now() - t0);
 }
 

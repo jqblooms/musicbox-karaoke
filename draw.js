@@ -291,9 +291,12 @@
 
   /* One frame. v: {song, offset (video time - song time), t (song time), dur (video length, 0 =
    * unknown), W, H (canvas pixels), u (scale: 1 at 1080 lines), lift (pixels kept clear at the
-   * bottom), notes, map (what to show), st (state kept between frames: fade, cached layers)}. */
+   * bottom), notes, map (what to show), st (state kept between frames: fade, cached layers),
+   * bg (optional {ctx, state}: a canvas behind this one for the glass panels - they never change, so
+   * they're drawn there once and faded with the canvas's CSS opacity (st.alpha) instead of being
+   * repainted every frame)}. */
   function render(ctx, v) {
-    const { song: s, offset, t, dur, W, H, u, lift, notes, map, st } = v;
+    const { song: s, offset, t, dur, W, H, u, lift, notes, map, st, bg } = v;
     const settings = { notes, map };
     /* show only near singing: from 6 s before a line until it ends */
     let near = false;
@@ -314,18 +317,31 @@
       wordMap(ctx, st, s, offset, t, dur, 24 * u, mapY, W - 48 * u, mapH);
     }
     const bottom = settings.map && dur > 0 ? mapY - mapPad : H - lift;
+    const duet = s.tracks.length === 2;
+    const barH = (duet ? 280 : 220) * u, barY = bottom - barH;
+    const lx = 60 * u, ly = 40 * u, lw = W - 120 * u, lh = Math.min(280 * u, barY - ly - 24 * u);
+    const notesOn = settings.notes && lh >= 120 * u;
+    if (bg) {
+      const key = [W, H, barY, barH, notesOn, lh].join("|");
+      if (bg.state.key !== key) {
+        bg.state.key = key;
+        bg.ctx.clearRect(0, 0, W, H);
+        bg.ctx.globalAlpha = 1;
+        glass(bg.ctx, 0, barY, W, barH, 0);
+        if (notesOn) {
+          bg.ctx.globalAlpha = 0.7;
+          glass(bg.ctx, lx, ly, lw, lh, 18 * u);
+          bg.ctx.globalAlpha = 1;
+        }
+      }
+    }
     if (st.alpha < 0.01) return;
     ctx.globalAlpha = 1;
     ctx.save();
     ctx.globalAlpha = st.alpha;
     ctx.globalCompositeOperation = "source-over";
 
-    const duet = s.tracks.length === 2;
-    const barH = (duet ? 280 : 220) * u, barY = bottom - barH;
-    ctx.save();
-    ctx.globalAlpha *= 1;
-    glass(ctx, 0, barY, W, barH, 0);
-    ctx.restore();
+    if (!bg) glass(ctx, 0, barY, W, barH, 0);
     ctx.globalAlpha = st.alpha;
     const big = 64 * u, small = 42 * u, maxw = W - 100 * u;
     s.tracks.forEach((tr, k) => {
@@ -337,11 +353,12 @@
     });
 
     /* the note panel fits above the lyrics bar; skipped when the player is too small for it */
-    const lx = 60 * u, ly = 40 * u, lw = W - 120 * u, lh = Math.min(280 * u, barY - ly - 24 * u);
-    if (settings.notes && lh >= 120 * u) {
-      ctx.globalAlpha = st.alpha * 0.7;
-      glass(ctx, lx, ly, lw, lh, 18 * u);
-      ctx.globalAlpha = st.alpha;
+    if (notesOn) {
+      if (!bg) {
+        ctx.globalAlpha = st.alpha * 0.7;
+        glass(ctx, lx, ly, lw, lh, 18 * u);
+        ctx.globalAlpha = st.alpha;
+      }
       if (duet) {
         drawLane(ctx, s, s.tracks[0], t, lx, ly, lw, lh / 2, BLUE);
         ctx.fillStyle = "rgba(255,255,255,0.15)";
