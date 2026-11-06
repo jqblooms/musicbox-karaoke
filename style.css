@@ -189,7 +189,7 @@ body.tv .pick:focus { background: rgba(80,140,230,.45); transform: scale(1.04); 
 .tv-qr { position: fixed; right: 2vw; top: 3vh; z-index: 15; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 10px 8px;
   border-radius: 14px; background: linear-gradient(rgba(60,64,72,.94), rgba(14,15,18,.96)); border: 1px solid rgba(255,255,255,.2);
   box-shadow: 0 8px 26px rgba(0,0,0,.6); color: #fff; font: bold 14px var(--font); transition: transform .3s, opacity .3s; }
-.tv-qr img { width: 150px; height: 150px; background: #fff; border-radius: 6px; image-rendering: pixelated; }
+.tv-qr img { width: 14vh; height: 14vh; background: #fff; border-radius: 6px; image-rendering: pixelated; }
 .tv-qr img:not([src]) { visibility: hidden; }
 
 .tv-menu { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 25; display: flex; flex-direction: column; gap: 10px; min-width: 380px;
