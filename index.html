@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>musicbox karaoke</title>
 <link rel="icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793966868">
+<link rel="stylesheet" href="style.css?v=1794110869950">
 </head>
 <body>
   <!-- the lock: the songs are encrypted; the password unlocks them here, in the browser -->
@@ -49,6 +49,7 @@
             <!-- TV mode: the settings, reachable with the remote (above the songs) -->
             <div id="tvSettings" class="tv-settings" hidden>
               <button id="tvSetKids" class="tv-chip"></button>
+              <button id="tvSetLyrics" class="tv-chip"></button>
               <button id="tvSetNotes" class="tv-chip"></button>
             </div>
             <p>Search above, or start with one of these:</p>
@@ -73,6 +74,7 @@
           <div id="tvMenu" class="tv-menu" hidden>
             <b>musicbox</b>
             <button id="tvKids" class="tv-item"></button>
+            <button id="tvLyrics" class="tv-item"></button>
             <button id="tvNotes" class="tv-item"></button>
             <button id="tvNext" class="tv-item">Next song</button>
             <button id="tvUpnext" class="tv-item">Up next</button>
@@ -98,6 +100,7 @@
           <button id="muteBtn" class="btn round" title="Mute (M)">&#128266;</button>
           <input id="vol" class="vol" type="range" min="0" max="100" step="1" title="Volume (Up / Down)">
           <label class="switch-row" title="Child-friendly: songs with swearing or explicit words are hidden"><span>Child-friendly</span><input id="kidsSw" type="checkbox" class="switch"></label>
+          <label class="switch-row" title="Lyrics on the screen (phones can show them too: Show lyrics in the songbook)"><span>Lyrics</span><input id="lyricsSw" type="checkbox" class="switch"></label>
           <label class="switch-row" title="Note bars"><span>Notes</span><input id="notesSw" type="checkbox" class="switch"></label>
           <button id="skipAdBtn" class="btn small" title="Lets you click YouTube's Skip button">Skip ad</button>
           <button id="fsBtn" class="btn round" title="Full screen (F)">&#x26F6;</button>
@@ -114,10 +117,10 @@
     </main>
   </section>
 
-  <script src="chart.js?v=1793966868"></script>
-  <script src="draw.js?v=1793966868"></script>
-  <script src="recommend.js?v=1793966868"></script>
-  <script src="common.js?v=1793966868"></script>
-  <script src="app.js?v=1793966868"></script>
+  <script src="chart.js?v=1794110869950"></script>
+  <script src="draw.js?v=1794110869950"></script>
+  <script src="recommend.js?v=1794110869950"></script>
+  <script src="common.js?v=1794110869950"></script>
+  <script src="app.js?v=1794110869950"></script>
 </body>
 </html>

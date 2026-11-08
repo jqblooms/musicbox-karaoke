@@ -52,13 +52,18 @@
   }
 
   /* one line of lyrics, centred; current: white with the sung part in colour (clipped) */
-  /* the line's size and widths, measured once per line and size (measuring every frame is slow) */
-  const widthCache = new Map();
+  /* the line's size and widths, measured once per line and size (measuring every frame is slow).
+   * Kept with the line itself (one line object per line of each song and part), so another song's
+   * or the other duet part's line can never borrow its widths - which put lines off-centre and
+   * made the highlight run at the wrong pace. */
+  const widthCache = new WeakMap();
   function measure(ctx, tr, li, px, maxw) {
-    const key = tr.lines[li].first + "|" + px + "|" + maxw;
-    let m = widthCache.get(key);
-    if (m) return m;
     const l = tr.lines[li];
+    let sizes = widthCache.get(l);
+    if (!sizes) widthCache.set(l, (sizes = new Map()));
+    const key = px + "|" + maxw;
+    let m = sizes.get(key);
+    if (m) return m;
     setFont(ctx, px, true);
     let w = ctx.measureText(l.text).width;
     if (w > maxw) {
@@ -68,9 +73,9 @@
     }
     const notes = [];
     for (let i = l.first; i < l.first + l.count; i++) notes.push(ctx.measureText(tr.notes[i].text).width);
-    if (widthCache.size > 400) widthCache.clear();
+    if (sizes.size > 8) sizes.clear();
     m = { px, w, notes };
-    widthCache.set(key, m);
+    sizes.set(key, m);
     return m;
   }
 

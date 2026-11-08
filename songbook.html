@@ -8,7 +8,7 @@
 <title>Songbook · musicbox karaoke</title>
 <link rel="icon" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1793864977420">
+<link rel="stylesheet" href="style.css?v=1794110869950">
 </head>
 <body class="songbook">
   <section id="lock" class="lock">
@@ -59,6 +59,11 @@
           <div class="sing-foot"><span id="singRating">Sing when the line comes up</span><span id="singNote"></span></div>
           <button id="singStop" class="btn small" type="button">Stop singing</button>
         </div>
+        <!-- just the lyrics, in time with the screen: no mic, no score -->
+        <div id="lyricsPanel" class="group sing-panel" hidden>
+          <canvas id="lyricsCanvas" class="sing-canvas lyrics-canvas"></canvas>
+          <button id="lyricsHide" class="btn small" type="button">Hide lyrics</button>
+        </div>
         <div class="search sb-search"><input id="q" type="search" placeholder="Search songs to sing" autocomplete="off" spellcheck="false"></div>
         <div id="results" class="group list"></div>
         <div class="group-title">Up next</div>
@@ -85,12 +90,12 @@
     </div>
   </section>
 
-  <script src="chart.js?v=1793864977420"></script>
-  <script src="draw.js?v=1793864977420"></script>
-  <script src="score.js?v=1793864977420"></script>
-  <script src="recommend.js?v=1793864977420"></script>
-  <script src="common.js?v=1793864977420"></script>
-  <script src="mic.js?v=1793864977420"></script>
-  <script src="songbook.js?v=1793864977420"></script>
+  <script src="chart.js?v=1794110869950"></script>
+  <script src="draw.js?v=1794110869950"></script>
+  <script src="score.js?v=1794110869950"></script>
+  <script src="recommend.js?v=1794110869950"></script>
+  <script src="common.js?v=1794110869950"></script>
+  <script src="mic.js?v=1794110869950"></script>
+  <script src="songbook.js?v=1794110869950"></script>
 </body>
 </html>

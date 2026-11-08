@@ -168,25 +168,71 @@ async function paintSingButtons() {
   const box = $("singButtons");
   if (!now || sing) {
     box.hidden = true;
-    return;
+    return paintLyrics();
   }
   if (!chartNow || chartNow.id !== now.id) {
     const id = now.id, text = await chartText(id).catch(() => null);
     if (!now || now.id !== id) return;
     chartNow = { id, song: text && MbxChart.parse(text) };
   }
-  if (!chartNow.song) return void (box.hidden = true);
+  if (!chartNow.song) {
+    box.hidden = true;
+    return paintLyrics();
+  }
   const tr = chartNow.song.tracks;
-  box.replaceChildren(
-    ...(tr.length > 1 ? [1, 2] : [1]).map((part) => {
-      const b = el("button", "btn blue", tr.length > 1 ? `Sing part ${part}${tr[part - 1].name ? " (" + tr[part - 1].name + ")" : ""}` : "Sing this one");
-      b.type = "button";
-      b.addEventListener("click", () => startSinging(part));
-      return b;
-    })
-  );
+  const buttons = (tr.length > 1 ? [1, 2] : [1]).map((part) => {
+    const b = el("button", "btn blue", tr.length > 1 ? `Sing part ${part}${tr[part - 1].name ? " (" + tr[part - 1].name + ")" : ""}` : "Sing this one");
+    b.type = "button";
+    b.addEventListener("click", () => startSinging(part));
+    return b;
+  });
+  if (!lyricsOn) {
+    const b = el("button", "btn", "Show lyrics");
+    b.type = "button";
+    b.addEventListener("click", () => {
+      lyricsOn = true;
+      store("mbxPhoneLyrics", true);
+      paintSingButtons();
+    });
+    buttons.push(b);
+  }
+  box.replaceChildren(...buttons);
   box.hidden = false;
+  paintLyrics();
 }
+
+/* ------------------------------------------------------------------ just the lyrics
+ * In time with the screen, without the mic or a score: for reading along, or when the screen's
+ * lyrics are off (a slow TV). Stays on from song to song until hidden; remembered on this phone. */
+let lyricsOn = store("mbxPhoneLyrics") === true, view = null, viewDrawing = false;
+function paintLyrics() {
+  const show = lyricsOn && !sing && now && chartNow && chartNow.id === now.id && chartNow.song;
+  $("lyricsPanel").hidden = !show;
+  if (!show) return void (view = null);
+  if (!view || view.id !== chartNow.id) view = { id: chartNow.id, song: chartNow.song, st: { alpha: 0, alphaTarget: 0 } };
+  if (!viewDrawing) {
+    viewDrawing = true;
+    requestAnimationFrame(lyricsDraw);
+  }
+}
+function lyricsDraw() {
+  if (!view) return void (viewDrawing = false);
+  requestAnimationFrame(lyricsDraw);
+  const c = $("lyricsCanvas"), dpr = window.devicePixelRatio || 1;
+  const W = Math.round(c.clientWidth * dpr), H = Math.round(c.clientHeight * dpr);
+  if (c.width !== W || c.height !== H) (c.width = W), (c.height = H);
+  const ctx = c.getContext("2d"), t = songTime();
+  ctx.clearRect(0, 0, W, H);
+  if (t == null || !play || play.id !== view.id) return;
+  /* sized so the lyrics bar fills the panel */
+  const u = H / (view.song.tracks.length > 1 ? 300 : 240);
+  MbxDraw.render(ctx, { song: view.song, offset: 0, t, dur: 0, W, H, u, lift: 0, notes: false, map: false, st: view.st });
+}
+$("lyricsHide").addEventListener("click", () => {
+  lyricsOn = false;
+  store("mbxPhoneLyrics", false);
+  paintSingButtons();
+});
 
 async function startSinging(part) {
   if (!now || !chartNow || chartNow.id !== now.id || !chartNow.song) return;

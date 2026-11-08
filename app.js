@@ -9,7 +9,7 @@ const TV = new URLSearchParams(location.search).get("tv") === "1"; /* TV mode (t
 const st = store("mbxWeb") || {};
 const mode = { queue: st.queue || [], history: st.history || [], exclude: [], upnext: [], upnextFor: -1 };
 const taste = store("mbxTaste") || { artists: {} };
-const settings = Object.assign({ notes: true }, store("mbxSettings") || {});
+const settings = Object.assign({ notes: true, lyrics: true }, store("mbxSettings") || {});
 const save = () => store("mbxWeb", { queue: mode.queue, history: mode.history.slice(-300) });
 
 let toastTimer = 0;
@@ -437,6 +437,12 @@ setInterval(() => {
   $("stage").classList.toggle("through", through);
   $("adPill").hidden = !ad;
 }, 500);
+/* lyrics off: nothing drawn over the video (on a slow TV, phones can show them instead) */
+$("lyricsSw").checked = settings.lyrics;
+$("lyricsSw").addEventListener("change", (e) => {
+  settings.lyrics = e.target.checked;
+  store("mbxSettings", settings);
+});
 $("notesSw").checked = settings.notes;
 $("notesSw").addEventListener("change", (e) => {
   settings.notes = e.target.checked;
@@ -545,7 +551,7 @@ function frame(now) {
    * would sometimes skip two frames, which shows as a stutter) */
   if (LEVELS[level].fps < 60 && now - lastDraw < 1000 / LEVELS[level].fps - 8) return;
   const W = canvas.width, H = canvas.height;
-  if (!cur || !player || !player.getDuration) {
+  if (!cur || !player || !player.getDuration || !settings.lyrics) {
     if (lastSig !== "empty") ctx.clearRect(0, 0, W, H), (lastSig = "empty");
     setBgAlpha(0);
     return;
@@ -814,6 +820,7 @@ function tvOpen(panel) {
 }
 function paintTvMenu() {
   $("tvKids").textContent = `Child-friendly: ${kids ? "On" : "Off"}`;
+  $("tvLyrics").textContent = `Lyrics: ${settings.lyrics ? "On" : "Off (on phones)"}`;
   $("tvNotes").textContent = `Note bars: ${settings.notes ? "On" : "Off"}`;
 }
 function moveFocus(items, step) {
@@ -842,6 +849,7 @@ function moveGrid(key) {
 }
 function paintTvSettings() {
   $("tvSetKids").textContent = `Child-friendly: ${kids ? "On" : "Off"}`;
+  $("tvSetLyrics").textContent = `Lyrics: ${settings.lyrics ? "On" : "Off"}`;
   $("tvSetNotes").textContent = `Note bars: ${settings.notes ? "On" : "Off"}`;
 }
 if (TV) {
@@ -854,6 +862,11 @@ if (TV) {
     paintTvSettings();
     $("tvSetKids").focus(); /* stay on the switch after the songs are refreshed */
   });
+  $("tvSetLyrics").addEventListener("click", () => {
+    $("lyricsSw").click();
+    paintTvSettings();
+    $("tvSetLyrics").focus();
+  });
   $("tvSetNotes").addEventListener("click", () => {
     $("notesSw").click();
     paintTvSettings();
@@ -861,6 +874,10 @@ if (TV) {
   });
   $("tvKids").addEventListener("click", () => {
     $("kidsSw").click();
+    paintTvMenu();
+  });
+  $("tvLyrics").addEventListener("click", () => {
+    $("lyricsSw").click();
     paintTvMenu();
   });
   $("tvNotes").addEventListener("click", () => {
