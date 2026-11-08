@@ -177,11 +177,13 @@ body.tv .side .row:focus .a { color: #dbe8ff; }
 body.tv .side .row:hover:not(:focus) { background: none; color: inherit; }
 body.tv .side .row:hover:not(:focus) .a { color: #6d737d; }
 body.tv .mini { display: none; }
-body.tv .welcome { padding-top: 6vh; }
-body.tv .welcome h2 { font-size: 34px; }
-/* the songs leave room on the right for the QR code, so it never covers them */
-body.tv .welcome { padding-right: 230px; }
+/* the TV's home screen fits the screen: two rows of songs, room on the right for the QR code */
+body.tv .welcome { justify-content: flex-start; padding: 4vh calc(14vh + 60px) 0 3vw; }
+body.tv .welcome h2 { font-size: 30px; }
+body.tv .welcome p { margin-bottom: 2vh; }
 body.tv .picks { grid-template-columns: repeat(4, 1fr); width: min(1000px, 100%); }
+body.tv .pick:nth-child(n + 9) { display: none; }
+body.tv .tv-settings { margin: 1vh 0 1.5vh; }
 .tv-settings { display: flex; gap: 12px; margin: 4px 0 16px; }
 .tv-chip { height: 44px; padding: 0 18px; border-radius: 22px; cursor: pointer; color: #fff; font: bold 17px var(--font);
   background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.25); }

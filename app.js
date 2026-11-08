@@ -292,7 +292,7 @@ function renderUpNext() {
 
 function renderPicks() {
   if (TV) paintTvSettings();
-  const picks = MbxRecommend.recommend(songs, { current: 0, history: mode.history, exclude: mode.exclude, taste: taste.artists, n: 16 }).filter((s) => !broken.has(ytOf(s))).slice(0, 12);
+  const picks = MbxRecommend.recommend(songs, { current: 0, history: mode.history, exclude: mode.exclude, taste: taste.artists, n: 16 }).filter((s) => !broken.has(ytOf(s))).slice(0, TV ? 8 : 12); /* a TV: two rows, so it fits the screen */
   $("picks").replaceChildren(
     ...picks.map((s) => {
       const p = el("div", "pick");
@@ -639,7 +639,8 @@ function loadScript(src) {
 
 async function showQr() {
   if (TV) $("tvQr").hidden = false;
-  await loadScript("https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js");
+  /* our own copy (an ad blocker may refuse outside script hosts), the public one if that fails */
+  await loadScript("qrcode.js").catch(() => loadScript("https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"));
   const q = qrcode(0, "M");
   q.addData(songbookUrl());
   q.make();
