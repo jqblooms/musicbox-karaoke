@@ -3,7 +3,12 @@
  * the screen plays them before anything else. */
 "use strict";
 
-const session = (location.hash.match(/[#&]s=([A-Za-z0-9]{8,24})/) || [])[1] || "";
+/* this phone's screen: from the QR code, or (opened from the home screen) the last one */
+const session = (() => {
+  const s = (location.hash.match(/[#&]s=([A-Za-z0-9]{8,24})/) || [])[1];
+  if (s) store("mbxSbSession", s);
+  return s || store("mbxSbSession") || "";
+})();
 let fb = null, path = "", queue = new Map(), now = null, seen = 0;
 
 let toastTimer = 0;
@@ -81,6 +86,7 @@ async function pick(s) {
     toast(jumped ? `Playing next: ${s.title}` : `Added: ${s.title}`);
     $("q").value = "";
     paintResults();
+    maybeDuet(s);
   } catch (e) {
     toast("Couldn't add it: " + e.message);
   }
@@ -99,13 +105,15 @@ $("q").addEventListener("keydown", (e) => {
 
 /* ------------------------------------------------------------------ what the screen is doing */
 function paintQueue() {
-  const items = [...queue.values()].sort((a, b) => (a.at || 0) - (b.at || 0));
+  const items = fairOrder([...queue.values()]); /* the screen's order: turns alternate between people */
+  const firstMine = items.findIndex((it) => it.by === fb.uid);
+  $("queueTitle").textContent = firstMine >= 0 ? `Up next · yours is ${firstMine === 0 ? "next" : ordinal(firstMine + 1) + " in line"}` : "Up next";
   $("queue").replaceChildren(
-    ...items.map((it) => {
+    ...items.map((it, i) => {
       const s = songs.byId.get(it.id) || { title: it.title, artist: it.artist, v: "" };
       const mine = it.by === fb.uid;
       return row(s, {
-        tag: mine ? "You" : it.name || null,
+        tag: mine ? `You · ${ordinal(i + 1)}` : it.name || null,
         button: mine
           ? { label: "×", title: "Take it out", run: () => fb.db.remove(fb.db.ref(fb.database, `${path}/queue/${it.key}`)).catch((e) => toast(e.message)) }
           : null,
@@ -157,6 +165,7 @@ function askName() {
       if (!v) return;
       $("name").value = v;
       store("mbxName", v);
+      publishPresence();
       done(v);
     };
     $("nameCancel").onclick = () => done("");
@@ -180,8 +189,11 @@ async function paintSingButtons() {
     return paintLyrics();
   }
   const tr = chartNow.song.tracks;
-  const buttons = (tr.length > 1 ? [1, 2] : [1]).map((part) => {
-    const b = el("button", "btn blue", tr.length > 1 ? `Sing part ${part}${tr[part - 1].name ? " (" + tr[part - 1].name + ")" : ""}` : "Sing this one");
+  const mine = tr.length > 1 && duets.get(now.id);
+  const parts = tr.length > 1 ? (mine === 2 ? [2, 1] : [1, 2]) : [1];
+  const buttons = parts.map((part) => {
+    const label = tr.length > 1 ? `${mine === part ? "Your duet: s" : "S"}ing part ${part}${tr[part - 1].name ? " (" + tr[part - 1].name + ")" : ""}` : "Sing this one";
+    const b = el("button", mine && mine !== part ? "btn" : "btn blue", label);
     b.type = "button";
     b.addEventListener("click", () => startSinging(part));
     return b;
@@ -364,6 +376,216 @@ MbxMic.onChange((st) => {
 });
 paintMic(MbxMic.st);
 
+/* ------------------------------------------------------------------ the remote
+ * Every phone can go back, pause / carry on, skip, and change the volume; the screen shows who. */
+function send(what) {
+  if (!fb) return toast("Not connected yet");
+  const { db, database } = fb;
+  db.push(db.ref(database, path + "/cmd"), { do: what, name: myName() || "Guest", by: fb.uid, at: db.serverTimestamp() })
+    .then(() => navigator.vibrate?.(15))
+    .catch((e) => toast("Couldn't: " + e.message));
+}
+$("rPrev").addEventListener("click", () => send("prev"));
+$("rPlay").addEventListener("click", () => send("toggle"));
+$("rNext").addEventListener("click", () => send("next"));
+$("rVolDown").addEventListener("click", () => send("voldown"));
+$("rVolUp").addEventListener("click", () => send("volup"));
+function paintRemote() {
+  $("remote").hidden = !now;
+  $("rPlay").innerHTML = play && play.playing === false ? "&#9654;" : "&#10074;&#10074;";
+  $("rVol").textContent = play && typeof play.vol === "number" ? play.vol + "%" : "";
+}
+
+/* ------------------------------------------------------------------ lyrics size, full screen, timing */
+let lyrScale = Math.max(0.7, Math.min(2, +(store("mbxLyrScale") || 1)));
+function applyLyrScale() {
+  $("lyricsCanvas").style.height = Math.round(150 * lyrScale) + "px";
+}
+function lyrSize(d) {
+  lyrScale = Math.max(0.7, Math.min(2, Math.round((lyrScale + d) * 100) / 100));
+  store("mbxLyrScale", lyrScale);
+  applyLyrScale();
+}
+$("lyrSmaller").addEventListener("click", () => lyrSize(-0.15));
+$("lyrBigger").addEventListener("click", () => lyrSize(0.15));
+applyLyrScale();
+function setFull(on) {
+  $("lyricsPanel").classList.toggle("full", on);
+  $("lyrFull").textContent = on ? "Exit full screen" : "Full screen";
+}
+$("lyrFull").addEventListener("click", () => {
+  const on = !$("lyricsPanel").classList.contains("full");
+  setFull(on);
+  if (on) $("lyricsPanel").requestFullscreen?.().catch(() => {});
+  else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+});
+document.addEventListener("fullscreenchange", () => {
+  if (!document.fullscreenElement && $("lyricsPanel").classList.contains("full")) setFull(false);
+});
+/* the song's timing, for everyone: positive = the lyrics come sooner */
+function paintNudge() {
+  const n = play && now && play.id === now.id ? play.nudge || 0 : 0;
+  $("nudgeVal").textContent = n === 0 ? "as charted" : `${n > 0 ? "+" : ""}${n.toFixed(1)} s`;
+}
+async function nudge(ms) {
+  if (!fb || !now) return;
+  const { db, database } = fb;
+  try {
+    await db.runTransaction(db.ref(database, `groups/${config.group}/nudge/${now.id}`), (v) => ({
+      ms: Math.max(-5000, Math.min(5000, ((v && v.ms) || 0) + ms)),
+      at: db.serverTimestamp(),
+    }));
+    toast(ms > 0 ? "Lyrics a little sooner - for everyone, every time" : "Lyrics a little later - for everyone, every time");
+  } catch (e) {
+    toast("Couldn't change it: " + e.message);
+  }
+}
+$("nudgeSooner").addEventListener("click", () => nudge(100));
+$("nudgeLater").addEventListener("click", () => nudge(-100));
+
+/* ------------------------------------------------------------------ the home screen */
+let installPrompt = null;
+const standalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  installPrompt = e;
+});
+$("installRow").hidden = standalone || store("mbxInstallDone") === true;
+$("installBtn").addEventListener("click", async () => {
+  if (installPrompt) {
+    installPrompt.prompt();
+    const r = await installPrompt.userChoice.catch(() => null);
+    if (r && r.outcome === "accepted") {
+      store("mbxInstallDone", true);
+      $("installRow").hidden = true;
+    }
+  } else toast(/iPhone|iPad|iPod/.test(navigator.userAgent) ? "Tap Share, then Add to Home Screen" : "In the browser's menu: Add to Home screen (or Install app)");
+});
+
+/* ------------------------------------------------------------------ duets
+ * Phones with a name are listed (phones/<uid>); picking a duet asks who sings part 2, and they get
+ * an invite. When the song comes on, each phone's own part is the button at the front. */
+const phones = new Map(); /* uid -> name (other phones) */
+const duets = new Map(Object.entries(store("mbxDuets") || {}).map(([k, v]) => [+k, v])); /* song id -> my part */
+const saveDuets = () => store("mbxDuets", Object.fromEntries(duets));
+function publishPresence() {
+  if (!fb) return;
+  const { db, database } = fb;
+  const ref = db.ref(database, `${path}/phones/${fb.uid}`);
+  const name = myName();
+  if (!name) return void db.remove(ref).catch(() => {});
+  db.set(ref, { name, at: db.serverTimestamp() }).catch(() => {});
+  db.onDisconnect(ref).remove().catch(() => {});
+}
+$("name").addEventListener("change", publishPresence);
+async function maybeDuet(s) {
+  const text = await chartText(s.id).catch(() => null);
+  const song = text && MbxChart.parse(text);
+  if (!song || song.tracks.length < 2) return;
+  duets.set(s.id, 1);
+  saveDuets();
+  if (!phones.size) return toast("It's a duet: you're part 1 - anyone can sing part 2 when it's on");
+  $("duetText").textContent = `"${s.title}" has two parts - you'll sing part 1. Who should sing part 2?`;
+  $("duetPeople").replaceChildren(
+    ...[...phones].map(([uid, name]) => {
+      const b = el("button", "btn blue", name);
+      b.type = "button";
+      b.addEventListener("click", () => {
+        $("duetSheet").hidden = true;
+        invite(uid, name, s);
+      });
+      return b;
+    })
+  );
+  $("duetSheet").hidden = false;
+}
+$("duetNo").addEventListener("click", () => ($("duetSheet").hidden = true));
+function invite(uid, name, s) {
+  const { db, database } = fb;
+  const ref = db.ref(database, `${path}/invites/${uid}`);
+  db.set(ref, { by: fb.uid, from: myName() || "Guest", id: s.id, title: s.title.slice(0, 200), part: 2, at: Date.now() })
+    .then(() => {
+      toast(`Asked ${name} to sing part 2`);
+      let yes = false;
+      const off = db.onValue(ref, (snap) => {
+        const v = snap.val();
+        if (v && v.by === fb.uid && v.id === s.id) {
+          if (v.accepted && !yes) {
+            yes = true;
+            toast(`${name} will sing part 2 with you!`);
+          }
+        } else {
+          if (!yes) toast(`${name} said no thanks`);
+          off();
+        }
+      });
+    })
+    .catch((e) => toast("Couldn't ask: " + e.message));
+}
+function listenInvites() {
+  const { db, database } = fb;
+  const ref = db.ref(database, `${path}/invites/${fb.uid}`);
+  db.onValue(ref, (snap) => {
+    const v = snap.val();
+    if (!v || v.accepted) return;
+    $("inviteText").textContent = `${v.from} wants you to sing part ${v.part} of "${v.title}" with them when it comes up.`;
+    $("inviteSheet").hidden = false;
+    navigator.vibrate?.(120);
+    $("inviteYes").onclick = () => {
+      $("inviteSheet").hidden = true;
+      duets.set(v.id, v.part);
+      saveDuets();
+      db.set(ref, { ...v, accepted: true }).catch(() => {});
+      toast(`You're part ${v.part} - your phone will say when it's on`);
+      paintSingButtons();
+    };
+    $("inviteNo").onclick = () => {
+      $("inviteSheet").hidden = true;
+      db.remove(ref).catch(() => {});
+    };
+  });
+  db.onValue(db.ref(database, `${path}/phones`), (snap) => {
+    phones.clear();
+    snap.forEach((c) => void (c.key !== fb.uid && c.val()?.name && phones.set(c.key, c.val().name)));
+  });
+}
+/* the song on changed: a duet of mine starting, or one finished */
+let lastNowId = 0;
+function duetNow() {
+  const id = now ? now.id : 0;
+  if (id === lastNowId) return;
+  const prev = lastNowId;
+  if (prev && duets.has(prev)) {
+    duets.delete(prev);
+    saveDuets();
+    /* the invite for it, done with */
+    if (fb) fb.db.get(fb.db.ref(fb.database, `${path}/invites/${fb.uid}`)).then((s) => s.val()?.id === prev && fb.db.remove(s.ref)).catch(() => {});
+  }
+  lastNowId = id;
+  if (id && duets.has(id)) {
+    toast(`Your duet is on - tap "Sing part ${duets.get(id)}"`);
+    navigator.vibrate?.([120, 80, 120]);
+  }
+}
+
+/* ------------------------------------------------------------------ tonight's top singers */
+function listenTonight() {
+  const { db, database } = fb;
+  db.onValue(db.ref(database, `${path}/scores`), (snap) => {
+    const top = Object.values(snap.val() || {}).sort((a, b) => b.score - a.score).slice(0, 5);
+    $("tonightSb").replaceChildren(
+      ...top.map((s, i) => {
+        const r = el("div", "row tonight-row");
+        const txt = el("div", "txt");
+        txt.append(el("div", "t", s.name), el("div", "a", s.title));
+        r.append(el("b", "rank r" + (i + 1), String(i + 1)), txt, el("span", "pts", s.score.toLocaleString()));
+        return r;
+      })
+    );
+    if (!top.length) $("tonightSb").appendChild(el("div", "empty", "Nobody's been scored yet tonight. Sing along to get on here!"));
+  });
+}
+
 /* ------------------------------------------------------------------ in */
 window.onUnlocked = async () => {
   $("lock").hidden = true;
@@ -395,12 +617,19 @@ window.onUnlocked = async () => {
   db.onValue(db.ref(database, path + "/now"), (snap) => {
     now = snap.val();
     if (sing && (!now || now.id !== sing.id)) stopSinging(true); /* the screen moved on */
+    duetNow();
     paintNow();
     paintSingButtons();
+    paintRemote();
   });
   db.onValue(db.ref(database, path + "/play"), (snap) => {
     play = snap.val();
+    paintRemote();
+    paintNudge();
   });
+  publishPresence();
+  listenInvites();
+  listenTonight();
   /* the screen's child-friendly setting decides what this phone can find (on until it says) */
   db.onValue(db.ref(database, path + "/kids"), (snap) => {
     setKids(snap.val() !== false);

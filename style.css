@@ -89,7 +89,7 @@ body { font: 15px var(--font); color: #000; background: #c5ccd4 repeating-linear
 .toast { position: absolute; left: 50%; top: 18px; transform: translateX(-50%); padding: 9px 16px; border-radius: 16px; color: #fff; font-weight: bold;
   background: rgba(20,24,32,.9); border: 1px solid rgba(255,255,255,.2); z-index: 5; }
 
-.controls { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 10px; background: #fff; border: 1px solid #acb3bb; }
+.controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 8px 10px; border-radius: 10px; background: #fff; border: 1px solid #acb3bb; }
 .now { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .now b, .now span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .now span { color: #6d737d; font-size: 13px; }
 .switch-row { display: flex; align-items: center; gap: 8px; font-weight: bold; color: #4c566c; }
@@ -286,3 +286,60 @@ body.tv .pick:focus { background: rgba(80,140,230,.45); transform: scale(1.04); 
   -webkit-mask: radial-gradient(circle, transparent 54%, #000 56%); mask: radial-gradient(circle, transparent 54%, #000 56%);
   animation: spin 0.9s steps(12) infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ------------------------------------------------------------------ what phones did (the top strip) */
+.act-bar { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 12; display: flex; flex-direction: column; align-items: center; gap: 6px; pointer-events: none; max-width: 80%; }
+.act { padding: 7px 16px; border-radius: 16px; color: #fff; font: bold 16px var(--font); text-shadow: 0 -1px 0 #000; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  background: linear-gradient(rgba(70,74,84,.94), rgba(18,19,23,.96)); border: 1px solid rgba(255,255,255,.22); box-shadow: 0 4px 14px rgba(0,0,0,.5); animation: actIn .25s ease-out; }
+.act:last-child { background: linear-gradient(rgba(96,150,232,.96), rgba(36,87,184,.97)); border-color: rgba(255,255,255,.35); }
+@keyframes actIn { from { transform: translateY(-8px); opacity: 0; } }
+body.tv .act { font-size: 20px; }
+
+/* ------------------------------------------------------------------ a struggling screen */
+.struggle { position: absolute; inset: 0; z-index: 20; display: grid; place-items: center; background: rgba(10,12,16,.55); }
+.struggle .name-card { width: min(460px, 86%); }
+.struggle .btn:focus { outline: 3px solid #8fb8ff; outline-offset: 2px; }
+
+/* ------------------------------------------------------------------ tonight's top singers */
+.tonight { position: absolute; inset: 0; z-index: 19; display: grid; place-items: center; overflow-y: auto; padding: 12px 0; background: radial-gradient(ellipse at 50% 35%, rgba(59,74,99,.93), rgba(11,13,18,.97) 75%); cursor: pointer; }
+.tonight-card { width: min(640px, 92%); color: #fff; text-align: center; }
+.podiums { display: flex; justify-content: center; align-items: flex-end; gap: 12px; margin: 18px 0 14px; }
+.podium { flex: 0 1 180px; display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 0; }
+.podium b { font-size: 22px; text-shadow: 0 -1px 0 #000; }
+.podium .pts { font-weight: bold; color: #8fb8ff; font-variant-numeric: tabular-nums; }
+.podium small { color: #b9c2d0; font-size: 12px; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.podium .step { width: 100%; margin-top: 6px; display: grid; place-items: center; font: bold 30px var(--font); border-radius: 10px 10px 0 0; border: 1px solid rgba(255,255,255,.25);
+  background: linear-gradient(rgba(96,150,232,.95), rgba(36,87,184,.97)); text-shadow: 0 -1px 0 #000; }
+.podium.p1 .step { height: min(110px, 16vh); background: linear-gradient(#ffe38a, #d4a017); color: #5a4100; text-shadow: 0 1px 0 rgba(255,255,255,.5); }
+.podium.p2 .step { height: min(80px, 11vh); background: linear-gradient(#f1f3f6, #a9b0ba); color: #3a414c; text-shadow: 0 1px 0 rgba(255,255,255,.6); }
+.podium.p3 .step { height: min(60px, 8vh); background: linear-gradient(#f0c08f, #b5743a); color: #4b2a0c; text-shadow: 0 1px 0 rgba(255,255,255,.4); }
+.tonight .res-row .song { flex: 1; color: #b9c2d0; font-size: 13px; text-align: left; margin: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side-bar > span { display: flex; gap: 6px; }
+
+/* ------------------------------------------------------------------ songbook: the remote */
+.remote { display: flex; align-items: center; justify-content: center; gap: 10px; margin: -4px 0 12px; }
+.rbtn { width: 54px; height: 54px; border-radius: 50%; font-size: 20px; color: #2c3d55; cursor: pointer;
+  background: linear-gradient(#fff, #e9ebee 50%, #d9dce1 51%, #eef0f2); border: 1px solid #9aa2ad; box-shadow: 0 1px 2px rgba(0,0,0,.25), inset 0 1px 0 #fff; }
+.rbtn:active { background: linear-gradient(#d4d8de, #eef0f2); }
+.rbtn.big { width: 66px; height: 66px; font-size: 22px; color: #fff; text-shadow: 0 -1px 0 rgba(0,0,0,.4);
+  background: linear-gradient(#80b4f7, #4c8be6 50%, #3474db 51%, #2a63c8); border-color: #17428c; }
+.rbtn.small { width: 38px; height: 38px; font-size: 20px; font-weight: bold; }
+.rvol { display: flex; align-items: center; gap: 4px; margin-left: 8px; }
+.rvol #rVol { min-width: 40px; text-align: center; font-weight: bold; color: #4c566c; font-size: 13px; }
+/* lyrics: size, full screen, timing */
+.lyr-tools, .lyr-timing { display: flex; gap: 6px; margin: 0 0 8px; align-items: center; }
+.lyr-tools .btn, .lyr-timing .btn { width: auto; flex: 1; }
+.lyr-timing span { color: #4c566c; font-weight: bold; font-size: 13px; }
+.lyr-timing b { min-width: 76px; text-align: center; color: #2c3d55; font-size: 13px; }
+.sing-panel.full { position: fixed; inset: 0; z-index: 45; margin: 0; border-radius: 0; display: flex; flex-direction: column; justify-content: center; background: #0b0d12; padding: 16px; }
+.sing-panel.full .lyrics-canvas { height: 62vh !important; }
+.sing-panel.full .lyr-timing span, .sing-panel.full .lyr-timing b { color: #c9d1dd; }
+.install-row { padding: 8px; }
+.install-row .btn { width: 100%; }
+.duet-people { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.duet-people .btn { flex: 1 1 40%; }
+.tonight-row .rank { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 50%; color: #fff; font-size: 15px; background: linear-gradient(#80b4f7, #2a63c8); }
+.tonight-row .rank.r1 { background: linear-gradient(#ffe38a, #d4a017); color: #5a4100; }
+.tonight-row .rank.r2 { background: linear-gradient(#f1f3f6, #a9b0ba); color: #3a414c; }
+.tonight-row .rank.r3 { background: linear-gradient(#f0c08f, #b5743a); color: #4b2a0c; }
+.tonight-row .pts { font-weight: bold; color: #1c62de; font-variant-numeric: tabular-nums; margin-left: auto; padding-left: 8px; }

@@ -193,3 +193,18 @@ function newSessionId() {
   const abc = "abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   return Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => abc[b % abc.length]).join("");
 }
+
+/* Fair turns: picks alternate between people (everyone's 1st pick, then everyone's 2nd, ...), in the
+ * order they came within a round - so one person filling the queue can't lock everyone else out.
+ * items: [{by (who), at (when)}]; the screen and the phones use the same order. */
+function fairOrder(items) {
+  const sorted = [...items].sort((a, b) => (a.at || 0) - (b.at || 0));
+  const count = new Map();
+  const round = new Map(sorted.map((it) => {
+    const n = count.get(it.by || "") || 0;
+    count.set(it.by || "", n + 1);
+    return [it, n];
+  }));
+  return sorted.sort((a, b) => round.get(a) - round.get(b) || (a.at || 0) - (b.at || 0));
+}
+const ordinal = (n) => n + (n % 10 === 1 && n % 100 !== 11 ? "st" : n % 10 === 2 && n % 100 !== 12 ? "nd" : n % 10 === 3 && n % 100 !== 13 ? "rd" : "th");

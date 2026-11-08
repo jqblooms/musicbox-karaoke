@@ -7,7 +7,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>musicbox karaoke</title>
 <link rel="icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1794110869950">
+<link rel="stylesheet" href="style.css?v=1794111918832">
 </head>
 <body>
   <!-- the lock: the songs are encrypted; the password unlocks them here, in the browser -->
@@ -58,6 +58,20 @@
           <!-- a song on its way: shown from the moment it's chosen until it plays -->
           <div id="loadCard" class="load-card" hidden><div><i class="spinner"></i><b id="loadTitle"></b><span id="loadArtist"></span><small id="loadState"></small></div></div>
           <div id="toast" class="toast" hidden></div>
+          <!-- what phones did (skipped, paused, went back, volume), along the top -->
+          <div id="actBar" class="act-bar" hidden></div>
+          <!-- the lyrics are too much for this screen: leave them to the phones? -->
+          <div id="struggleCard" class="struggle" hidden><div class="name-card">
+            <b>The lyrics are too much for this screen</b>
+            <span>Turn them off here and read them on phones instead (Show lyrics in the songbook)?</span>
+            <div class="name-btns"><button type="button" id="struggleOff" class="btn blue">Turn lyrics off</button><button type="button" id="struggleKeep" class="btn">Keep them</button></div>
+          </div></div>
+          <!-- tonight's top singers -->
+          <div id="tonightCard" class="tonight" hidden><div class="tonight-card">
+            <b class="results-title">Tonight's top singers</b>
+            <div id="tonightPodium" class="podiums"></div>
+            <div id="tonightList" class="res-list"></div>
+          </div></div>
           <!-- singers on their phones: a chip each while singing, then the results -->
           <div id="chips" class="chips"></div>
           <div id="scoreScreen" class="results-screen" hidden>
@@ -78,6 +92,7 @@
             <button id="tvNotes" class="tv-item"></button>
             <button id="tvNext" class="tv-item">Next song</button>
             <button id="tvUpnext" class="tv-item">Up next</button>
+            <button id="tvTonight" class="tv-item">Tonight's top singers</button>
           </div>
           <div id="tvHint" class="tv-hint" hidden>&#9660; Up next &nbsp;&middot;&nbsp; &#9650; or Menu button: Menu &nbsp;&middot;&nbsp; OK Pause &nbsp;&middot;&nbsp; &#9664; &#9654; 10 s</div>
           <div id="adCard" class="ad-card" hidden><div><b>Ad</b><span>Your song starts in a moment</span></div></div>
@@ -111,16 +126,16 @@
           <img id="qr" alt="QR code for the songbook">
           <div><b>Add songs from your phone</b><span id="sbStatus">Connecting…</span></div>
         </a>
-        <div class="side-bar"><b>Up next</b><button id="shuffleBtn" class="btn small" title="New suggestions">New picks</button></div>
+        <div class="side-bar"><b>Up next</b><span><button id="tonightBtn" class="btn small" title="Tonight's top singers">Top singers</button> <button id="shuffleBtn" class="btn small" title="New suggestions">New picks</button></span></div>
         <div id="upnext" class="list"></div>
       </aside>
     </main>
   </section>
 
-  <script src="chart.js?v=1794110869950"></script>
-  <script src="draw.js?v=1794110869950"></script>
-  <script src="recommend.js?v=1794110869950"></script>
-  <script src="common.js?v=1794110869950"></script>
-  <script src="app.js?v=1794110869950"></script>
+  <script src="chart.js?v=1794111918832"></script>
+  <script src="draw.js?v=1794111918832"></script>
+  <script src="recommend.js?v=1794111918832"></script>
+  <script src="common.js?v=1794111918832"></script>
+  <script src="app.js?v=1794111918832"></script>
 </body>
 </html>

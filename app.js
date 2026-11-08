@@ -59,6 +59,13 @@ async function playSong(rec) {
     mode.exclude.push(rec.id);
     return next();
   }
+  if (broken.has(ytOf(rec))) { /* another screen found this video won't play */
+    hideLoading();
+    toast(`"${rec.title}" won't play - skipping it`);
+    if (rec.remoteKey) takeRemote(rec.remoteKey);
+    mode.exclude.push(rec.id);
+    return next();
+  }
   leaveSong();
   const text = await chartText(rec.id);
   const song = text && MbxChart.parse(text);
@@ -72,7 +79,8 @@ async function playSong(rec) {
   if (rec.remoteKey) takeRemote(rec.remoteKey);
   showLoading(rec, "Starting the video…");
   /* auto: an algorithm's suggestion nobody chose - a phone's pick may jump in over it */
-  cur = { rec, song, yt, by: rec.by || "", auto: !!rec.auto, offset: yt === rec.v ? song.videogap : 0, played: 0, ended: false, st: { alpha: 0, alphaTarget: 0 } };
+  cur = { rec, song, yt, by: rec.by || "", auto: !!rec.auto, offset: yt === rec.v ? song.videogap : 0, nudge: 0, played: 0, ended: false, st: { alpha: 0, alphaTarget: 0 } };
+  listenNudge(cur);
   publishNow();
   publishPlay();
   if (hosted) hosted.fb.db.remove(hosted.fb.db.ref(hosted.fb.database, hosted.path + "/singers")).catch(() => {});
@@ -93,7 +101,7 @@ async function playSong(rec) {
     player = new YT.Player("yt", {
       videoId: yt,
       playerVars: { autoplay: 1, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, rel: 0, playsinline: 1, cc_load_policy: 0, origin: location.origin, mute: MUTED ? 1 : 0 },
-      events: { onReady: () => applyVolume(), onStateChange, onError },
+      events: { onReady: () => (applyVolume(), sendCap()), onStateChange, onError },
     });
   } else player.loadVideoById(yt);
   renderUpNext();
@@ -110,7 +118,7 @@ function onStateChange(e) {
   clock.at = performance.now();
   $("playBtn").innerHTML = $("fsPlay").innerHTML = clock.playing ? "&#10074;&#10074;" : "&#9654;";
   $("pauseScreen").hidden = s !== YT.PlayerState.PAUSED || !cur;
-  if (clock.playing) hideLoading();
+  if (clock.playing) hideLoading(), sendCap();
   publishPlay();
   if (s === YT.PlayerState.ENDED) endSong();
 }
@@ -120,7 +128,14 @@ function endSong() {
   if (!cur || cur.ended) return;
   cur.ended = true;
   const rec = cur.rec;
-  (singersNow().length ? showResults(rec) : Promise.resolve()).finally(() => cur && cur.rec === rec && next());
+  if (singersNow().length) {
+    /* the results take a few seconds: get the next video ready meanwhile */
+    const n = upNext()[0];
+    try {
+      if (n && ytOf(n)) player.cueVideoById(ytOf(n));
+    } catch {}
+    showResults(rec).finally(() => cur && cur.rec === rec && next());
+  } else next();
 }
 
 /* Some videos never say they've ended (YouTube's spinner sits on the last frame), and some never
@@ -137,6 +152,12 @@ setInterval(() => {
     return next();
   }
   const d = player.getDuration() || 0, t = player.getCurrentTime() || 0;
+  /* 20 s before the end: the next song's lyrics, ready (they load in the background) */
+  if (d > 0 && d - t < 20 && !cur.prefetched) {
+    cur.prefetched = true;
+    const n = upNext()[0];
+    if (n) chartText(n.id).catch(() => {});
+  }
   stillAtEnd = d > 0 && d - t < 1.2 && !clock.playing ? stillAtEnd + 1 : 0;
   if (stillAtEnd >= 2) endSong();
 }, 1000);
@@ -147,6 +168,7 @@ function onError(e) {
   if (!cur) return;
   hideLoading();
   mode.exclude.push(cur.rec.id);
+  if ([2, 100, 101, 150].includes(e.data)) reportBroken(cur.yt, e.data);
   const why = e.data === 101 || e.data === 150 ? "isn't allowed to play outside YouTube" : "won't play";
   toast(`${cur.rec.title} ${why} - skipping it`);
   cur.ended = true; /* not a skip of theirs */
@@ -182,8 +204,7 @@ function leaveSong() {
 
 function upNext() {
   /* phones' picks first (in the order they came), then this screen's queue, then recommendations */
-  const picks = [...remote.values()]
-    .sort((a, b) => a.at - b.at)
+  const picks = fairOrder([...remote.values()].map((r) => ({ ...r, by: r.uid })))
     .map((r) => songs.byId.get(r.id) && { ...MbxRecommend.info(songs, [r.id])[0], remoteKey: r.key, by: r.name })
     .filter(Boolean);
   const queued = MbxRecommend.info(songs, mode.queue).map((s) => ({ ...s, queued: true }));
@@ -199,7 +220,7 @@ function upNext() {
     mode.upnextFor = curId;
   }
   const taken = new Set([...mode.queue, ...picks.map((p) => p.id)]);
-  const recs = MbxRecommend.info(songs, mode.upnext.filter((id) => !taken.has(id)));
+  const recs = MbxRecommend.info(songs, mode.upnext.filter((id) => !taken.has(id))).filter((s) => !broken.has(ytOf(s)));
   return [...picks, ...queued, ...recs.map((s) => ({ ...s, auto: true }))];
 }
 
@@ -271,7 +292,7 @@ function renderUpNext() {
 
 function renderPicks() {
   if (TV) paintTvSettings();
-  const picks = MbxRecommend.recommend(songs, { current: 0, history: mode.history, exclude: mode.exclude, taste: taste.artists, n: 12 });
+  const picks = MbxRecommend.recommend(songs, { current: 0, history: mode.history, exclude: mode.exclude, taste: taste.artists, n: 16 }).filter((s) => !broken.has(ytOf(s))).slice(0, 12);
   $("picks").replaceChildren(
     ...picks.map((s) => {
       const p = el("div", "pick");
@@ -381,6 +402,7 @@ function applyVolume() {
   $("vol").value = $("fsVol").value = settings.volume;
   $("muteBtn").innerHTML = $("fsMute").innerHTML = settings.muted || settings.volume === 0 ? "&#128263;" : "&#128266;";
   store("mbxSettings", settings);
+  if (cur) publishPlay(); /* the phones show the volume */
   if (!player || !player.setVolume) return;
   player.setVolume(settings.volume);
   if (settings.muted || MUTED) player.mute();
@@ -523,6 +545,7 @@ function watchLag(now) {
   const share = first ? 0 : lag.late / Math.max(1, lag.n); /* the first window only learns the rhythm */
   lag.n = lag.late = 0;
   lag.since = now;
+  if (share > 0.2 && level === LEVELS.length - 1) struggling();
   if (share > 0.2 && level < LEVELS.length - 1) {
     if (now - lag.triedUpAt < 30000) lag.noUp = true; /* the sharper level didn't hold: stay put */
     level++;
@@ -532,6 +555,7 @@ function watchLag(now) {
     console.debug(`[musicbox] lag (${Math.round(share * 100)}% late frames): lyrics now drawn ${canvas.width}x${canvas.height}`);
   } else if (share < 0.03) {
     lag.calm += 5;
+    if (lag.calm >= 300 && level === 0 && videoCap < 1080) setCap(1080); /* five smooth minutes at the top: sharper video again */
     if (lag.calm >= 120 && level > 0 && !lag.noUp) { /* two smooth minutes: try a level sharper */
       level--;
       lag.calm = 0;
@@ -557,7 +581,7 @@ function frame(now) {
     return;
   }
   const vt = videoTime();
-  const sig = [vt.toFixed(3), W, H, settings.notes, cur.rec.id, cur.st.alpha.toFixed(3)].join("|");
+  const sig = [vt.toFixed(3), W, H, settings.notes, cur.rec.id, cur.nudge, cur.st.alpha.toFixed(3)].join("|");
   if (sig === lastSig) return;
   lastSig = sig;
   lastDraw = now;
@@ -566,7 +590,7 @@ function frame(now) {
   MbxDraw.render(ctx, {
     song: cur.song,
     offset: cur.offset,
-    t: vt - cur.offset,
+    t: vt - cur.offset + cur.nudge,
     dur: player.getDuration() || 0,
     W,
     H,
@@ -649,7 +673,7 @@ async function hostSongbook() {
         if (v && kids && songsAll.byId.get(v.id)?.x) toast(`${v.name || "Someone"} picked "${v.title}" - not child-friendly, left out`);
         return void db.remove(snap.ref).catch(() => {});
       }
-      remote.set(snap.key, { key: snap.key, id: v.id, name: v.name || "", at: v.at || 0 });
+      remote.set(snap.key, { key: snap.key, id: v.id, name: v.name || "", uid: v.by || "", at: v.at || 0 });
       renderUpNext();
       if (!cur) next();
       else if (v.jump && cur.auto && !cur.ended) { /* they chose to skip the suggestion that's on */
@@ -662,6 +686,9 @@ async function hostSongbook() {
       remote.delete(snap.key);
       renderUpNext();
     });
+    listenShared(fb);
+    listenCommands(fb, path);
+    listenScores(fb, path);
     await showQr();
     $("sbStatus").textContent = "Scan to pick songs on your phone";
     publishKids();
@@ -682,13 +709,21 @@ function takeRemote(key) {
 function publishPlay() {
   if (!hosted || !cur || !player || !player.getCurrentTime) return;
   const { db, database } = hosted.fb;
-  db.set(db.ref(database, hosted.path + "/play"), {
+  const v = {
     id: cur.rec.id,
-    pos: Math.max(0, videoTime() - cur.offset),
+    pos: Math.max(0, videoTime() - cur.offset + cur.nudge), /* lyrics time, with the song's timing nudge */
     playing: !!clock.playing,
     at: db.serverTimestamp(),
-  }).catch(() => {});
+  };
+  /* the volume and nudge for the phones' remotes - unless the database's rules are older and refuse them */
+  const extra = playPlain ? {} : { vol: settings.muted ? 0 : settings.volume, nudge: cur.nudge };
+  db.set(db.ref(database, hosted.path + "/play"), { ...v, ...extra }).catch(() => {
+    if (playPlain) return;
+    playPlain = true;
+    db.set(db.ref(database, hosted.path + "/play"), v).catch(() => {});
+  });
 }
+let playPlain = false;
 setInterval(() => clock.playing && publishPlay(), 3000);
 
 /* ------------------------------------------------------------------ singers (phones scoring themselves) */
@@ -724,6 +759,11 @@ async function showResults(rec) {
   await new Promise((r) => setTimeout(r, 2500)); /* the phones send their last lines */
   const done = [...singers.values()].filter((s) => s.song === rec.id && s.score > 0).sort((a, b) => b.score - a.score);
   if (!done.length) return;
+  if (hosted) { /* tonight's scores, for the top singers screen (here and on phones) */
+    const { db, database } = hosted.fb;
+    for (const s of done)
+      db.push(db.ref(database, hosted.path + "/scores"), { name: String(s.name).slice(0, 8), score: Math.min(10000, Math.round(s.score)), song: rec.id, title: rec.title.slice(0, 200), at: db.serverTimestamp() }).catch(() => {});
+  }
   $("resTitle").textContent = rec.title;
   $("resSingers").replaceChildren(
     ...done.map((s) => {
@@ -779,6 +819,177 @@ function publishNow() {
   db.set(db.ref(database, hosted.path + "/now"), { id: cur.rec.id, title: cur.rec.title, artist: cur.rec.artist, name: cur.by || (cur.auto ? "" : "Chosen on the screen").slice(0, 40), at: db.serverTimestamp() }).catch(() => {});
 }
 
+/* ------------------------------------------------------------------ shared by every screen
+ * Videos that won't play (removed, private, not allowed outside YouTube): one screen finds out and
+ * no screen picks them again. And each song's timing nudge, set from phones ("lyrics sooner /
+ * later"), fixed once for everyone. */
+const broken = new Set();
+function listenShared(fb) {
+  const { db, database } = fb;
+  db.onValue(db.ref(database, `groups/${config.group}/broken`), (snap) => {
+    snap.forEach((c) => void broken.add(c.key));
+  });
+}
+function reportBroken(yt, code) {
+  if (!hosted || !/^[A-Za-z0-9_-]{11}$/.test(yt || "")) return;
+  broken.add(yt);
+  const { db, database } = hosted.fb;
+  db.set(db.ref(database, `groups/${config.group}/broken/${yt}`), { code, at: db.serverTimestamp() }).catch(() => {});
+}
+let nudgeOff = null;
+function listenNudge(c) {
+  nudgeOff?.();
+  nudgeOff = null;
+  if (!hosted) return;
+  const { db, database } = hosted.fb;
+  nudgeOff = db.onValue(db.ref(database, `groups/${config.group}/nudge/${c.rec.id}`), (snap) => {
+    const ms = snap.val()?.ms || 0;
+    if (c.nudge === ms / 1000) return;
+    c.nudge = ms / 1000;
+    if (cur === c) publishPlay();
+  });
+}
+
+/* ------------------------------------------------------------------ phones as remotes
+ * Phones send next / previous / play-pause / volume; the strip along the top says who did what. */
+let skewHost = 0, hostSince = 0;
+function listenCommands(fb, path) {
+  const { db, database } = fb;
+  db.onValue(db.ref(database, ".info/serverTimeOffset"), (snap) => (skewHost = snap.val() || 0));
+  hostSince = Date.now();
+  db.onChildAdded(db.ref(database, path + "/cmd"), (snap) => {
+    const v = snap.val();
+    db.remove(snap.ref).catch(() => {});
+    if (!v || (v.at || 0) < hostSince + skewHost - 10000) return; /* left over from before */
+    runCommand(v);
+  });
+}
+function runCommand(v) {
+  const who = v.name || "Someone";
+  if (v.do === "volup" || v.do === "voldown") {
+    settings.volume = Math.max(0, Math.min(100, settings.volume + (v.do === "volup" ? 10 : -10)));
+    settings.muted = false;
+    applyVolume();
+    return act(`${who} turned it ${v.do === "volup" ? "up" : "down"} to ${settings.volume}%`);
+  }
+  if (!cur || !player) return;
+  if (v.do === "toggle") {
+    act(clock.playing ? `${who} paused "${cur.rec.title}"` : `${who} carried on`);
+    togglePlay();
+  } else if (v.do === "next") {
+    act(`${who} skipped "${cur.rec.title}"`);
+    next();
+  } else if (v.do === "prev") {
+    /* into the song: back to its start; at its start: the song before */
+    const prevId = mode.history[mode.history.length - 2], prev = prevId && MbxRecommend.info(songs, [prevId])[0];
+    if (videoTime() - cur.offset > 10 || !prev) {
+      act(`${who} restarted "${cur.rec.title}"`);
+      player.seekTo(0, true);
+    } else {
+      act(`${who} went back to "${prev.title}"`);
+      mode.history.pop();
+      playSong(prev);
+    }
+  }
+}
+/* the strip along the top: the last few things phones did, for 8 s */
+const acts = [];
+let actTimer = 0;
+function act(text) {
+  acts.push(text);
+  while (acts.length > 3) acts.shift();
+  $("actBar").replaceChildren(...acts.map((a) => el("div", "act", a)));
+  $("actBar").hidden = false;
+  clearTimeout(actTimer);
+  actTimer = setTimeout(() => {
+    $("actBar").hidden = true;
+    acts.length = 0;
+  }, 8000);
+}
+
+/* ------------------------------------------------------------------ tonight's top singers */
+let tonight = [];
+function listenScores(fb, path) {
+  const { db, database } = fb;
+  const ref = db.ref(database, path + "/scores");
+  db.get(ref)
+    .then((snap) => {
+      /* a new night: the last score over 8 hours ago */
+      const all = Object.values(snap.val() || {});
+      if (all.length && Math.max(...all.map((s) => s.at || 0)) < Date.now() + skewHost - 8 * 3600e3) return db.remove(ref);
+    })
+    .catch(() => {})
+    .finally(() =>
+      db.onValue(ref, (snap) => {
+        tonight = Object.values(snap.val() || {}).sort((a, b) => b.score - a.score);
+        if (!$("tonightCard").hidden) paintTonight();
+      })
+    );
+}
+function paintTonight() {
+  const top = tonight.slice(0, 10);
+  $("tonightPodium").replaceChildren(
+    ...[1, 0, 2].filter((i) => top[i]).map((i) => {
+      const p = el("div", `podium p${i + 1}`);
+      p.append(el("b", "", top[i].name), el("span", "pts", top[i].score.toLocaleString()), el("small", "", top[i].title), el("div", "step", String(i + 1)));
+      return p;
+    })
+  );
+  $("tonightList").replaceChildren(
+    ...top.slice(3).map((s, i) => {
+      const r = el("div", "res-row");
+      r.append(el("span", "name", `${i + 4}. ${s.name}`), el("span", "song", s.title), el("span", "num", s.score.toLocaleString()));
+      return r;
+    })
+  );
+  if (!top.length) $("tonightList").replaceChildren(Object.assign(el("div", "res-row empty"), { textContent: "Nobody's been scored yet tonight - sing along on a phone!" }));
+}
+let tonightTimer = 0;
+function showTonight() {
+  paintTonight();
+  $("tonightCard").hidden = false;
+  clearTimeout(tonightTimer);
+  tonightTimer = setTimeout(() => ($("tonightCard").hidden = true), 20000);
+}
+$("tonightBtn").addEventListener("click", showTonight);
+$("tonightCard").addEventListener("click", () => ($("tonightCard").hidden = true));
+
+/* ------------------------------------------------------------------ a struggling screen
+ * At the lowest lyric level and still missing frames: the video steps down to 720p (from the next
+ * song; the TV app's helper picks it up), and the screen offers to leave the lyrics to the phones. */
+let videoCap = +(store("mbxVideoCap") || 1080), struggleAsked = false;
+function sendCap() {
+  try {
+    player?.getIframe?.()?.contentWindow?.postMessage({ musicboxCap: videoCap }, "*");
+  } catch {}
+}
+function setCap(h) {
+  videoCap = h;
+  store("mbxVideoCap", h);
+  sendCap();
+  console.debug(`[musicbox] video now at most ${h}p (from the next song)`);
+}
+function struggling() {
+  if (videoCap > 720) setCap(720);
+  if (struggleAsked || !settings.lyrics) return;
+  struggleAsked = true;
+  $("struggleCard").hidden = false;
+  if (TV) {
+    const b = [...document.querySelectorAll("#struggleCard button")];
+    b.forEach((x) => (x.tabIndex = 0));
+    b[0]?.focus();
+  }
+  setTimeout(() => ($("struggleCard").hidden = true), 30000);
+}
+$("struggleOff").addEventListener("click", () => {
+  $("struggleCard").hidden = true;
+  $("lyricsSw").checked = false;
+  $("lyricsSw").dispatchEvent(new Event("change"));
+  if (TV) paintTvMenu();
+  toast("Lyrics off here - tap Show lyrics in the songbook to see them on your phone");
+});
+$("struggleKeep").addEventListener("click", () => ($("struggleCard").hidden = true));
+
 /* ------------------------------------------------------------------ TV mode (?tv=1)
  * The page in the TV app: the video fills the screen, the QR code stays up, and the remote drives
  * it: OK pauses, Left / Right jump 10 s, Down opens Up next, Up opens the menu, Back closes what's
@@ -792,17 +1003,23 @@ function tvHint() {
   hintTimer = setTimeout(() => ($("tvHint").style.opacity = "0"), 4000);
 }
 function tvPanel() {
+  if (!$("struggleCard").hidden) return "struggle";
+  if (!$("tonightCard").hidden) return "tonight";
   if (!$("tvMenu").hidden) return "menu";
   if (document.querySelector(".side").classList.contains("open")) return "side";
   return null;
 }
 function tvClose() {
   $("tvMenu").hidden = true;
+  $("struggleCard").hidden = true;
+  $("tonightCard").hidden = true;
   document.querySelector(".side").classList.remove("open");
   document.activeElement?.blur();
 }
 function tvFocusables(panel) {
   if (panel === "menu") return [...document.querySelectorAll("#tvMenu .tv-item")];
+  if (panel === "struggle") return [...document.querySelectorAll("#struggleCard button")];
+  if (panel === "tonight") return [];
   return [...document.querySelectorAll("#upnext .row")];
 }
 function tvOpen(panel) {
@@ -889,6 +1106,10 @@ if (TV) {
     next();
   });
   $("tvUpnext").addEventListener("click", () => tvOpen("side"));
+  $("tvTonight").addEventListener("click", () => {
+    tvClose();
+    showTonight();
+  });
   document.addEventListener(
     "keydown",
     (e) => {

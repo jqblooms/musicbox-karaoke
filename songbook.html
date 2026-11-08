@@ -7,8 +7,11 @@
 <meta name="theme-color" content="#6d84a2">
 <title>Songbook · musicbox karaoke</title>
 <link rel="icon" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="stylesheet" href="style.css?v=1794110869950">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Songbook">
+<link rel="stylesheet" href="style.css?v=1794111918832">
 </head>
 <body class="songbook">
   <section id="lock" class="lock">
@@ -47,9 +50,17 @@
         <div class="group">
           <label class="row name-row"><span>Your name</span><input id="name" maxlength="8" placeholder="Up to 8 letters" autocomplete="nickname"></label>
         </div>
+        <div id="installRow" class="group install-row" hidden><button id="installBtn" class="btn" type="button">Add the songbook to your home screen</button></div>
         <div class="group nowcard">
           <img id="nowImg" alt="">
           <div class="txt"><small>Now singing</small><b id="nowTitle">Nothing yet</b><span id="nowArtist"></span></div>
+        </div>
+        <!-- the remote: every phone can go back, pause, skip and change the volume (the screen shows who) -->
+        <div id="remote" class="remote" hidden>
+          <button id="rPrev" class="rbtn" type="button" title="Back">&#9198;</button>
+          <button id="rPlay" class="rbtn big" type="button" title="Pause / carry on">&#10074;&#10074;</button>
+          <button id="rNext" class="rbtn" type="button" title="Skip">&#9197;</button>
+          <span class="rvol"><button id="rVolDown" class="rbtn small" type="button" title="Quieter">&minus;</button><span id="rVol"></span><button id="rVolUp" class="rbtn small" type="button" title="Louder">+</button></span>
         </div>
         <!-- singing along: scored on this phone -->
         <div id="singButtons" class="sing-buttons" hidden></div>
@@ -62,12 +73,20 @@
         <!-- just the lyrics, in time with the screen: no mic, no score -->
         <div id="lyricsPanel" class="group sing-panel" hidden>
           <canvas id="lyricsCanvas" class="sing-canvas lyrics-canvas"></canvas>
+          <div class="lyr-tools">
+            <button id="lyrSmaller" class="btn small" type="button" title="Smaller">A&minus;</button>
+            <button id="lyrBigger" class="btn small" type="button" title="Bigger">A+</button>
+            <button id="lyrFull" class="btn small" type="button">Full screen</button>
+          </div>
+          <div class="lyr-timing"><span>Timing</span><button id="nudgeLater" class="btn small" type="button">Later</button><b id="nudgeVal">as charted</b><button id="nudgeSooner" class="btn small" type="button">Sooner</button></div>
           <button id="lyricsHide" class="btn small" type="button">Hide lyrics</button>
         </div>
         <div class="search sb-search"><input id="q" type="search" placeholder="Search songs to sing" autocomplete="off" spellcheck="false"></div>
         <div id="results" class="group list"></div>
-        <div class="group-title">Up next</div>
+        <div class="group-title" id="queueTitle">Up next</div>
         <div id="queue" class="group list"></div>
+        <div class="group-title">Tonight's top singers</div>
+        <div id="tonightSb" class="group list"></div>
       </div>
     </div>
     <div id="toast" class="toast sb-toast" hidden></div>
@@ -77,6 +96,23 @@
         <b>Play yours now?</b>
         <span id="jumpText"></span>
         <div class="name-btns"><button type="button" id="jumpQueue" class="btn">Add to the queue</button><button type="button" id="jumpNow" class="btn blue">Play mine now</button></div>
+      </div>
+    </div>
+    <!-- a duet: who sings part 2? -->
+    <div id="duetSheet" class="name-sheet" hidden>
+      <div class="name-card">
+        <b>It's a duet!</b>
+        <span id="duetText"></span>
+        <div id="duetPeople" class="duet-people"></div>
+        <button type="button" id="duetNo" class="btn">Not now</button>
+      </div>
+    </div>
+    <!-- asked to sing a part -->
+    <div id="inviteSheet" class="name-sheet" hidden>
+      <div class="name-card">
+        <b>Duet invite</b>
+        <span id="inviteText"></span>
+        <div class="name-btns"><button type="button" id="inviteNo" class="btn">No thanks</button><button type="button" id="inviteYes" class="btn blue">Yes, I'll sing</button></div>
       </div>
     </div>
     <!-- the singer's name, asked for the first time they sing -->
@@ -90,12 +126,12 @@
     </div>
   </section>
 
-  <script src="chart.js?v=1794110869950"></script>
-  <script src="draw.js?v=1794110869950"></script>
-  <script src="score.js?v=1794110869950"></script>
-  <script src="recommend.js?v=1794110869950"></script>
-  <script src="common.js?v=1794110869950"></script>
-  <script src="mic.js?v=1794110869950"></script>
-  <script src="songbook.js?v=1794110869950"></script>
+  <script src="chart.js?v=1794111918832"></script>
+  <script src="draw.js?v=1794111918832"></script>
+  <script src="score.js?v=1794111918832"></script>
+  <script src="recommend.js?v=1794111918832"></script>
+  <script src="common.js?v=1794111918832"></script>
+  <script src="mic.js?v=1794111918832"></script>
+  <script src="songbook.js?v=1794111918832"></script>
 </body>
 </html>
