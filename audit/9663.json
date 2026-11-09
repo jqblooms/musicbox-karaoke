@@ -1,0 +1,109 @@
+{
+ "id": 9663,
+ "artist": "Katy Perry feat. Snoop Dogg",
+ "title": "California Gurls",
+ "edits": [
+  [
+   ": 524 2 12 can ",
+   ": 524 2 12 could "
+  ],
+  [
+   ": 1548 2 12 can ",
+   ": 1548 2 12 could "
+  ],
+  [
+   "F 2542 1 0 The ",
+   "F 2542 1 0 And "
+  ],
+  [
+   "F 2544 1 0 men ",
+   "F 2544 1 0 live "
+  ],
+  [
+   "F 2595 3 0 babes ",
+   "F 2595 3 0 bait "
+  ],
+  [
+   "F 2760 3 0 tan",
+   "F 2760 3 0 zucc"
+  ],
+  [
+   "F 2764 3 0 ki",
+   "F 2764 3 0 hi"
+  ],
+  [
+   "F 2768 3 0 nis, ",
+   "F 2768 3 0 nis, "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 39.18,
+   "chart": "can",
+   "ref": "could",
+   "kind": "word"
+  },
+  {
+   "t": 100.62,
+   "chart": "can",
+   "ref": "could",
+   "kind": "word"
+  },
+  {
+   "t": 160.26,
+   "chart": "The men",
+   "ref": "and live",
+   "kind": "word"
+  },
+  {
+   "t": 163.44,
+   "chart": "babes",
+   "ref": "bait",
+   "kind": "word"
+  },
+  {
+   "t": 173.34,
+   "chart": "tankinis,",
+   "ref": "zucchinis",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 87.9,
+   "chart": "get my",
+   "ref": "do not mind",
+   "why": "different number of words"
+  },
+  {
+   "t": 125.1,
+   "chart": "Will",
+   "ref": "We'll",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 157.02,
+   "chart": "bones Uh!",
+   "ref": "buns",
+   "why": "different number of words"
+  },
+  {
+   "t": 169.02,
+   "chart": "Come on boys, bang ’em",
+   "ref": "Homeboys bangin'",
+   "why": "different number of words"
+  },
+  {
+   "t": 178.98,
+   "chart": "You lookin’",
+   "ref": "lookie",
+   "why": "different number of words"
+  },
+  {
+   "t": 194.22,
+   "chart": "Will",
+   "ref": "We'll",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  }
+ ]
+}

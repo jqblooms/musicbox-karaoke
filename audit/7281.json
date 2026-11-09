@@ -1,0 +1,88 @@
+{
+ "id": 7281,
+ "artist": "The Black Eyed Peas",
+ "title": "I Gotta Feeling",
+ "edits": [
+  [
+   ": 1272 2 11 get ",
+   ": 1272 2 11 kick "
+  ],
+  [
+   ": 1276 2 11 get ",
+   ": 1276 2 11 it "
+  ],
+  [
+   ": 1916 2 9 Just ",
+   ": 1916 2 9 Let's "
+  ],
+  [
+   ": 2808 2 11 get ",
+   ": 2808 2 11 kick "
+  ],
+  [
+   ": 2812 2 11 get ",
+   ": 2812 2 11 it "
+  ],
+  [
+   ": 3472 2 11 Feel ",
+   ": 3472 2 11 Fill "
+  ],
+  [
+   ": 3492 2 12 dy",
+   ": 3492 2 12 dy "
+  ],
+  [
+   ": 3804 2 7 ry",
+   ": 3804 2 7 ry "
+  ],
+  [
+   ": 3836 2 7 ry",
+   ": 3836 2 7 ry "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 104.67,
+   "chart": "get get",
+   "ref": "kick it",
+   "kind": "word"
+  },
+  {
+   "t": 142.41,
+   "chart": "Just",
+   "ref": "let's",
+   "kind": "word"
+  },
+  {
+   "t": 194.67,
+   "chart": "get get",
+   "ref": "kick it",
+   "kind": "word"
+  },
+  {
+   "t": 233.58,
+   "chart": "Feel",
+   "ref": "Fill",
+   "kind": "word"
+  },
+  {
+   "t": 234.51,
+   "chart": "Bodyrock",
+   "ref": "body rock",
+   "kind": "spacing"
+  },
+  {
+   "t": 252.8,
+   "chart": "everyday",
+   "ref": "every day",
+   "kind": "spacing"
+  },
+  {
+   "t": 254.67,
+   "chart": "everyday",
+   "ref": "every day",
+   "kind": "spacing"
+  }
+ ],
+ "review": []
+}

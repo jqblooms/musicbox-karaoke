@@ -1,0 +1,79 @@
+{
+ "id": 443,
+ "artist": "Eminem",
+ "title": "Mockingbird",
+ "edits": [
+  [
+   "R 677 2 13 Well ",
+   "R 677 2 13 When "
+  ],
+  [
+   "R 1825 4 11 his ",
+   "R 1825 4 11 as "
+  ],
+  [
+   "R 5991 5 12 mom",
+   "R 5991 5 12 ma"
+  ],
+  [
+   "R 5997 3 11 ma’s ",
+   "R 5997 3 11 ma's "
+  ],
+  [
+   ": 7213 3 11 I’d ",
+   ": 7213 3 11 I'll "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 32.49,
+   "chart": "Well",
+   "ref": "When",
+   "kind": "word"
+  },
+  {
+   "t": 70.75,
+   "chart": "his",
+   "ref": "as",
+   "kind": "word"
+  },
+  {
+   "t": 209.62,
+   "chart": "momma’s",
+   "ref": "mama's",
+   "kind": "word"
+  },
+  {
+   "t": 250.35,
+   "chart": "I’d",
+   "ref": "I'll",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 78.32,
+   "chart": "gotten",
+   "ref": "got",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 152.42,
+   "chart": "knew",
+   "ref": "know",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 234.19,
+   "chart": "too",
+   "ref": "to",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 251.39,
+   "chart": "jeweller",
+   "ref": "jeweler",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  }
+ ]
+}

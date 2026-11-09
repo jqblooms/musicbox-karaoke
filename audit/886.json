@@ -1,0 +1,43 @@
+{
+ "id": 886,
+ "artist": "Gorillaz",
+ "title": "Feel Good Inc",
+ "edits": [
+  [
+   ": 907 2 3 Now ",
+   ": 907 2 3 And "
+  ],
+  [
+   ": 1252 4 8 there ",
+   ": 1252 4 8 in "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 71.92,
+   "chart": "Now",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 90.6,
+   "chart": "there",
+   "ref": "in",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 54.75,
+   "chart": "They’ll",
+   "ref": "They",
+   "why": "contraction (captions often drop them)"
+  },
+  {
+   "t": 75.98,
+   "chart": "gotta kiss",
+   "ref": "a kissing",
+   "why": "different number of words"
+  }
+ ]
+}

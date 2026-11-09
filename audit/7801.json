@@ -1,0 +1,67 @@
+{
+ "id": 7801,
+ "artist": "Miley Cyrus",
+ "title": "Party In The U.S.A.",
+ "edits": [
+  [
+   ": 540 2 6 in ",
+   ": 540 2 6 and "
+  ],
+  [
+   ": 2076 2 6 in ",
+   ": 2076 2 6 and "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 31.47,
+   "chart": "in",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 91.47,
+   "chart": "in",
+   "ref": "and",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 30.85,
+   "chart": "tommy’s",
+   "ref": "tummy's",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 58.97,
+   "chart": "O.K.",
+   "ref": "okay",
+   "why": "different number of words"
+  },
+  {
+   "t": 90.85,
+   "chart": "tommy’s",
+   "ref": "tummy's",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 118.97,
+   "chart": "O.K.",
+   "ref": "okay",
+   "why": "different number of words"
+  },
+  {
+   "t": 142.25,
+   "chart": "everytime",
+   "ref": "every time every time",
+   "why": "different number of words"
+  },
+  {
+   "t": 163.97,
+   "chart": "O.K.",
+   "ref": "okay going to be okay",
+   "why": "different number of words"
+  }
+ ]
+}

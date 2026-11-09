@@ -1,0 +1,89 @@
+{
+ "id": 5774,
+ "artist": "Red Hot Chili Peppers",
+ "title": "Otherside",
+ "edits": [
+  [
+   "* 657 6 9 ther",
+   "* 657 6 9 ther "
+  ],
+  [
+   ": 959 7 9 ther",
+   ": 959 7 9 ther "
+  ],
+  [
+   ": 1027 7 9 ther",
+   ": 1027 7 9 ther "
+  ],
+  [
+   ": 1831 6 9 ther",
+   ": 1831 6 9 ther "
+  ],
+  [
+   ": 2164 6 9 ther",
+   ": 2164 6 9 ther "
+  ],
+  [
+   ": 2230 6 9 ther",
+   ": 2230 6 9 ther "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 48.41,
+   "chart": "otherside",
+   "ref": "other side",
+   "kind": "spacing"
+  },
+  {
+   "t": 66.02,
+   "chart": "otherside",
+   "ref": "other side",
+   "kind": "spacing"
+  },
+  {
+   "t": 69.98,
+   "chart": "otherside",
+   "ref": "other side",
+   "kind": "spacing"
+  },
+  {
+   "t": 116.72,
+   "chart": "otherside",
+   "ref": "other side",
+   "kind": "spacing"
+  },
+  {
+   "t": 136.02,
+   "chart": "otherside",
+   "ref": "other side",
+   "kind": "spacing"
+  },
+  {
+   "t": 139.92,
+   "chart": "otherside",
+   "ref": "other side",
+   "kind": "spacing"
+  }
+ ],
+ "review": [
+  {
+   "t": 62.07,
+   "chart": "changed",
+   "ref": "change",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 63.35,
+   "chart": "I’ve",
+   "ref": "I",
+   "why": "contraction (captions often drop them)"
+  },
+  {
+   "t": 194.51,
+   "chart": "otherside",
+   "ref": "other side",
+   "why": "held notes inside the word"
+  }
+ ]
+}

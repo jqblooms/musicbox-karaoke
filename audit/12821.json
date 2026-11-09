@@ -1,0 +1,37 @@
+{
+ "id": 12821,
+ "artist": "Maroon 5 feat. Christina Aguilera",
+ "title": "Moves Like Jagger",
+ "edits": [
+  [
+   ": 72 2 1 from ",
+   ": 72 2 1 for "
+  ],
+  [
+   ": 1440 2 -1 Then ",
+   ": 1440 2 -1 But "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 78.99,
+   "chart": "from",
+   "ref": "for",
+   "kind": "word"
+  },
+  {
+   "t": 159.23,
+   "chart": "Then",
+   "ref": "But",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 156.18,
+   "chart": "excited If",
+   "ref": "inside it And",
+   "why": "different number of words"
+  }
+ ]
+}

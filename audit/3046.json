@@ -1,0 +1,159 @@
+{
+ "id": 3046,
+ "artist": "Pulp",
+ "title": "Disco 2000",
+ "edits": [
+  [
+   ": 1201 5 21 ~",
+   ": 1201 5 21 ~ "
+  ],
+  [
+   ": 1349 4 22 ~",
+   ": 1349 4 22 ~ "
+  ],
+  [
+   ": 1615 3 22 ~",
+   ": 1615 3 22 ~ "
+  ],
+  [
+   ": 1676 4 22 ~",
+   ": 1676 4 22 ~ "
+  ],
+  [
+   ": 2704 4 17 ~",
+   ": 2704 4 17 ~ "
+  ],
+  [
+   ": 2918 4 21 ~",
+   ": 2918 4 21 ~ "
+  ],
+  [
+   ": 3067 4 22 ~",
+   ": 3067 4 22 ~ "
+  ],
+  [
+   ": 3382 4 24 ~",
+   ": 3382 4 24 ~ "
+  ],
+  [
+   ": 3392 3 22 ~",
+   ": 3392 3 22 ~ "
+  ],
+  [
+   ": 4625 4 21 ~",
+   ": 4625 4 21 ~ "
+  ],
+  [
+   ": 4772 4 22 ~",
+   ": 4772 4 22 ~ "
+  ],
+  [
+   ": 5036 4 22 ~",
+   ": 5036 4 22 ~ "
+  ],
+  [
+   ": 5097 4 22 ~",
+   ": 5097 4 22 ~ "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 77.64,
+   "chart": "we’reall",
+   "ref": "we're all",
+   "kind": "spacing"
+  },
+  {
+   "t": 84.12,
+   "chart": "downthe",
+   "ref": "down the",
+   "kind": "spacing"
+  },
+  {
+   "t": 95.86,
+   "chart": "dampand",
+   "ref": "damp and",
+   "kind": "spacing"
+  },
+  {
+   "t": 98.55,
+   "chart": "yearsago",
+   "ref": "years ago",
+   "kind": "spacing"
+  },
+  {
+   "t": 143.9,
+   "chart": "Atall",
+   "ref": "at all",
+   "kind": "spacing"
+  },
+  {
+   "t": 153.34,
+   "chart": "we’reall",
+   "ref": "we're all",
+   "kind": "spacing"
+  },
+  {
+   "t": 159.92,
+   "chart": "downthe",
+   "ref": "down the",
+   "kind": "spacing"
+  },
+  {
+   "t": 173.33,
+   "chart": "Thursdayyearsago",
+   "ref": "Thursday years ago",
+   "kind": "spacing"
+  },
+  {
+   "t": 228.65,
+   "chart": "we’reall",
+   "ref": "we're all",
+   "kind": "spacing"
+  },
+  {
+   "t": 235.14,
+   "chart": "downthe",
+   "ref": "down the",
+   "kind": "spacing"
+  },
+  {
+   "t": 246.79,
+   "chart": "dampand",
+   "ref": "damp and",
+   "kind": "spacing"
+  },
+  {
+   "t": 249.48,
+   "chart": "yearsago",
+   "ref": "years ago",
+   "kind": "spacing"
+  }
+ ],
+ "review": [
+  {
+   "t": 52.54,
+   "chart": "Deb’rah",
+   "ref": "Deborah",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 128.33,
+   "chart": "Deb’rah",
+   "ref": "Deborah",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 139.89,
+   "chart": "roundto",
+   "ref": "'round to",
+   "why": "different number of words"
+  },
+  {
+   "t": 215.2,
+   "chart": "roundto",
+   "ref": "around to",
+   "why": "different number of words"
+  }
+ ]
+}

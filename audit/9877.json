@@ -1,0 +1,73 @@
+{
+ "id": 9877,
+ "artist": "Eminem feat. Rihanna",
+ "title": "Love The Way You Lie",
+ "edits": [
+  [
+   ": 1362 2 14 in ",
+   ": 1362 2 14 at "
+  ],
+  [
+   ": 1370 4 12 bag ",
+   ": 1370 4 12 back "
+  ],
+  [
+   ": 2686 3 14 you’ve ",
+   ": 2686 3 14 you'd "
+  ],
+  [
+   ": 2788 2 14 And ",
+   ": 2788 2 14 In "
+  ],
+  [
+   ": 2792 2 14 these ",
+   ": 2792 2 14 your "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 59.01,
+   "chart": "in",
+   "ref": "at",
+   "kind": "word"
+  },
+  {
+   "t": 59.35,
+   "chart": "bag",
+   "ref": "back",
+   "kind": "word"
+  },
+  {
+   "t": 115.15,
+   "chart": "you’ve",
+   "ref": "you'd",
+   "kind": "word"
+  },
+  {
+   "t": 119.48,
+   "chart": "And these",
+   "ref": "in your",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 38.83,
+   "chart": "of a",
+   "ref": "off her",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 63.42,
+   "chart": "snap",
+   "ref": "snapped",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 224.97,
+   "chart": "I’mma",
+   "ref": "I'ma",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  }
+ ]
+}

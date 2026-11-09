@@ -1,0 +1,49 @@
+{
+ "id": 1845,
+ "artist": "Timbaland feat. Keri Hilson & D.O.E.",
+ "title": "The Way I Are",
+ "edits": [
+  [
+   ": 990 3 8 Thug ",
+   ": 990 3 8 Work "
+  ],
+  [
+   ": 2142 3 8 Thug ",
+   ": 2142 3 8 Work "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 55.27,
+   "chart": "Thug",
+   "ref": "Work",
+   "kind": "word"
+  },
+  {
+   "t": 105.48,
+   "chart": "Thug",
+   "ref": "Work",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 45.33,
+   "chart": "flaun",
+   "ref": "flaunt",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 95.54,
+   "chart": "flaun",
+   "ref": "flaunt",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  },
+  {
+   "t": 133.46,
+   "chart": "your",
+   "ref": "ya",
+   "why": "spelling or word ending (the singer may sing it that way)"
+  }
+ ]
+}
