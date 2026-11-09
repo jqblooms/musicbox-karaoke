@@ -110,17 +110,26 @@ async function tryKey(raw) {
     } catch { $("lockMsg").textContent = "That password didn't work"; }
   }
   $("lock").hidden = true;
-  const original = shard[id];
-  if (!original) { $("title").textContent += " - not in the site's songs"; return; }
-  const lines = original.split("\n").map((l) => l.replace(/\r$/, ""));
-  let applied = 0;
-  for (const [from, to] of data.edits) {
-    const i = lines.indexOf(from);
-    if (i >= 0) { lines[i] = to; applied++; }
-  }
-  if (applied < data.edits.length) $("title").textContent += ` (${data.edits.length - applied} of ${data.edits.length} edits didn't match this chart)`;
+  const siteText = shard[id];
+  if (!siteText) { $("title").textContent += " - not in the site's songs"; return; }
+  /* the site's chart is either still the original (apply the edits) or already fixed (a build with
+   * the fixes in: undo them to get the original back) */
+  const rows = siteText.split("\n").map((l) => l.replace(/\r$/, ""));
+  const swap = (rs, a, b) => { /* whole lines only (": 10 4 1 x" must not match inside ": 210 4 1 x") */
+    let t = "\n" + rs.join("\n") + "\n", n = 0;
+    for (const e of data.edits) {
+      const from = "\n" + e[a] + "\n";
+      if (t.includes(from)) (t = t.replace(from, "\n" + e[b] + "\n")), n++;
+    }
+    return { n, text: t.slice(1, -1) };
+  };
+  const fwd = swap(rows, 0, 1), back = swap(rows, 1, 0);
+  let original, fixed, hits;
+  if (back.n > fwd.n) (original = back.text), (fixed = rows.join("\n")), (hits = back.n);
+  else (original = rows.join("\n")), (fixed = fwd.text), (hits = fwd.n);
+  if (hits < data.edits.length) $("title").textContent += ` (${data.edits.length - hits} of ${data.edits.length} edits didn't match this chart)`;
   songs.L = MbxChart.parse(original);
-  songs.R = MbxChart.parse(lines.join("\n"));
+  songs.R = MbxChart.parse(fixed);
   document.title = `${data.title} · before/after`;
   yt = songs.L.video.v || songs.L.video.a;
   offset = songs.L.video.v ? songs.L.videogap : 0;
