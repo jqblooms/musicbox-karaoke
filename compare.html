@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Lyrics Before/After</title>
+<style>
+  :root { --surface-0: #f3f2ee; --surface-1: #fcfcfb; --ink-1: #0b0b0b; --ink-2: #4b4a45; --ink-3: #75746c; --ring: rgba(11,11,11,.1);
+    --good: #0ca30c; --bad: #d03b3b; --accent: #2a63c8; --grid: #e1e0d9; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --surface-0: #121211; --surface-1: #1a1a19; --ink-1: #f2f1ec; --ink-2: #c3c2b7; --ink-3: #8f8e86; --ring: rgba(255,255,255,.1); --accent: #6f9ef0; --grid: #2c2c2a; } }
+  :root[data-theme="dark"] { --surface-0: #121211; --surface-1: #1a1a19; --ink-1: #f2f1ec; --ink-2: #c3c2b7; --ink-3: #8f8e86; --ring: rgba(255,255,255,.1); --accent: #6f9ef0; --grid: #2c2c2a; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; background: var(--surface-0); color: var(--ink-1); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1500px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
+  h1 { font-size: 19px; margin: 0; }
+  .sub { color: var(--ink-3); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 480px) { .pair { grid-template-columns: 1fr; } }
+  .side h2 { font-size: 14px; margin: 0 0 6px; display: flex; gap: 8px; align-items: center; }
+  .tag { font-size: 11px; padding: 1px 7px; border-radius: 9px; color: #fff; }
+  .screen { position: relative; aspect-ratio: 16 / 9; background: #000; border-radius: 10px; overflow: hidden; }
+  .screen > div, .screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .screen canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--surface-1); border: 1px solid var(--ring); border-radius: 10px; padding: 10px 12px; }
+  button { font: inherit; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--ring); background: var(--surface-0); color: var(--ink-1); cursor: pointer; }
+  button.on { background: var(--accent); color: #fff; border-color: transparent; }
+  input[type=range] { flex: 1; min-width: 160px; }
+  .time { font-variant-numeric: tabular-nums; color: var(--ink-2); min-width: 92px; }
+  .card { background: var(--surface-1); border: 1px solid var(--ring); border-radius: 10px; padding: 12px 14px; }
+  .card h2 { font-size: 14px; margin: 0 0 8px; color: var(--ink-2); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  td, th { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+  th { color: var(--ink-3); font-weight: 600; }
+  tr.jump { cursor: pointer; } tr.jump:hover td { background: var(--surface-0); }
+  .old { color: var(--bad); text-decoration: line-through; } .new { color: var(--good); font-weight: 600; }
+  .muted { color: var(--ink-3); }
+</style>
+</head>
+<body>
+<main>
+  <div>
+    <h1 id="title">Loading…</h1>
+    <div class="sub">Left: the chart as it is on USDB. Right: with the confirmed fixes. Both start muted - pick a side's sound below.</div>
+  </div>
+  <form class="bar" id="lock" hidden>
+    <span>Karaoke password:</span><input id="pw" type="password" autocomplete="current-password" style="flex:1;min-width:140px;font:inherit;padding:6px 8px;border-radius:8px;border:1px solid var(--ring);background:var(--surface-0);color:var(--ink-1)">
+    <button>Unlock</button><span class="muted" id="lockMsg"></span></form>
+  <div class="bar">
+    <button id="play">▶ Play</button>
+    <button id="back">↺ −10 s</button>
+    <span class="time" id="time">0:00 / 0:00</span>
+    <input type="range" id="seek" min="0" max="1000" value="0" aria-label="Position">
+    <span class="muted">Sound:</span>
+    <button id="sndOff" class="on">Off</button><button id="sndL">Left</button><button id="sndR">Right</button>
+  </div>
+  <div class="pair">
+    <section class="side"><h2><span class="tag" style="background:var(--bad)">Before</span> USDB chart</h2>
+      <div class="screen"><div id="ytL"></div><canvas id="cvL" width="1280" height="720"></canvas></div></section>
+    <section class="side"><h2><span class="tag" style="background:var(--good)">After</span> fixed chart</h2>
+      <div class="screen"><div id="ytR"></div><canvas id="cvR" width="1280" height="720"></canvas></div></section>
+  </div>
+  <section class="card"><h2 id="fixHead">Fixes</h2>
+    <table><thead><tr><th>Time</th><th>Chart</th><th>Fixed to</th><th>Kind</th></tr></thead><tbody id="fixes"></tbody></table></section>
+  <section class="card"><h2 id="revHead">Confirmed but not applied (need a person)</h2>
+    <table><thead><tr><th>Time</th><th>Chart</th><th>Reference</th><th>Why not</th></tr></thead><tbody id="review"></tbody></table></section>
+</main>
+<script src="chart.js"></script>
+<script src="draw.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const id = new URLSearchParams(location.search).get("id") || "5105";
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+const mmss = (t) => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
+let data, songs = {}, players = {}, ready = 0, yt = "", offset = 0, sound = "off";
+
+/* the chart comes from the site's encrypted songs (the karaoke password, or the key this browser
+ * already has from unlocking the karaoke page); only the changed lines are in audit/<id>.json */
+const b64 = { dec: (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0)), enc: (u8) => btoa(String.fromCharCode(...u8)) };
+let meta, key;
+async function openFile(path) {
+  const r = await fetch(`data/${path}?b=${meta.built}`);
+  const buf = new Uint8Array(await r.arrayBuffer());
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: buf.slice(0, 12) }, key, buf.slice(12));
+  return JSON.parse(await new Response(new Blob([plain]).stream().pipeThrough(new DecompressionStream("gzip"))).text());
+}
+async function tryKey(raw) {
+  key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
+  return openFile(`c/${id % meta.shards}.bin`);
+}
+(async function start() {
+  meta = await (await fetch("data/meta.json", { cache: "no-cache" })).json();
+  data = await (await fetch(`audit/${id}.json?t=${Date.now()}`, { cache: "no-store" })).json();
+  $("title").textContent = `${data.artist} – ${data.title}`;
+  let shard = null;
+  try {
+    const k = JSON.parse(localStorage.getItem("mbxKey") || "null");
+    if (k && k.salt === meta.salt) shard = await tryKey(b64.dec(k.key));
+  } catch {}
+  while (!shard) {
+    $("lock").hidden = false;
+    const pw = await new Promise((res) => ($("lock").onsubmit = (e) => (e.preventDefault(), res($("pw").value))));
+    $("lockMsg").textContent = "Unlocking…";
+    try {
+      const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
+      const raw = new Uint8Array(await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: b64.dec(meta.salt), iterations: meta.iter }, base, 256));
+      shard = await tryKey(raw);
+      try { localStorage.setItem("mbxKey", JSON.stringify({ salt: meta.salt, key: b64.enc(raw) })); } catch {}
+    } catch { $("lockMsg").textContent = "That password didn't work"; }
+  }
+  $("lock").hidden = true;
+  const original = shard[id];
+  if (!original) { $("title").textContent += " - not in the site's songs"; return; }
+  const lines = original.split("\n").map((l) => l.replace(/\r$/, ""));
+  let applied = 0;
+  for (const [from, to] of data.edits) {
+    const i = lines.indexOf(from);
+    if (i >= 0) { lines[i] = to; applied++; }
+  }
+  if (applied < data.edits.length) $("title").textContent += ` (${data.edits.length - applied} of ${data.edits.length} edits didn't match this chart)`;
+  songs.L = MbxChart.parse(original);
+  songs.R = MbxChart.parse(lines.join("\n"));
+  document.title = `${data.title} · before/after`;
+  yt = songs.L.video.v || songs.L.video.a;
+  offset = songs.L.video.v ? songs.L.videogap : 0;
+  const row = (cells, t) => `<tr class="jump" data-t="${t}">${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
+  $("fixHead").textContent = `Fixes applied (${data.fixes.length}) - click one to jump there`;
+  $("fixes").innerHTML = data.fixes.map((f) => row([mmss(f.t), `<span class="old">${esc(f.chart)}</span>`, `<span class="new">${esc(f.ref)}</span>`, f.kind === "spacing" ? "run-together words" : "wrong word"], f.t)).join("") || `<tr><td colspan="4" class="muted">None</td></tr>`;
+  $("revHead").textContent = `Confirmed but not applied (${data.review.length}) - these need a person`;
+  $("review").innerHTML = data.review.map((f) => row([mmss(f.t), esc(f.chart), esc(f.ref), esc(f.why)], f.t)).join("") || `<tr><td colspan="4" class="muted">None</td></tr>`;
+  document.querySelectorAll("tr.jump").forEach((tr) => tr.addEventListener("click", () => seekAll(Math.max(0, +tr.dataset.t - 3))));
+  const s = document.createElement("script");
+  s.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(s);
+})();
+
+function onYouTubeIframeAPIReady() {
+  for (const side of ["L", "R"]) {
+    players[side] = new YT.Player("yt" + side, {
+      videoId: yt,
+      playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, iv_load_policy: 3, rel: 0, playsinline: 1, cc_load_policy: 0, mute: 1, origin: location.origin },
+      events: { onReady: (e) => { e.target.mute(); ready++; }, onStateChange: (e) => side === "L" && paintPlay(e.data) },
+    });
+  }
+}
+const both = (f) => ["L", "R"].forEach((s) => players[s] && f(players[s], s));
+function paintPlay(state) { $("play").textContent = state === 1 ? "❚❚ Pause" : "▶ Play"; }
+function seekAll(t) { both((p) => p.seekTo(t, true)); }
+$("play").onclick = () => {
+  if (ready < 2) return;
+  const playing = players.L.getPlayerState() === 1;
+  both((p) => (playing ? p.pauseVideo() : p.playVideo()));
+};
+$("back").onclick = () => ready === 2 && seekAll(Math.max(0, players.L.getCurrentTime() - 10));
+$("seek").oninput = (e) => ready === 2 && seekAll((e.target.value / 1000) * players.L.getDuration());
+function setSound(which) {
+  sound = which;
+  for (const [b, w] of [["sndOff", "off"], ["sndL", "L"], ["sndR", "R"]]) $(b).classList.toggle("on", w === which);
+  both((p, s) => (s === which ? (p.unMute(), p.setVolume(80)) : p.mute()));
+}
+$("sndOff").onclick = () => setSound("off");
+$("sndL").onclick = () => setSound("L");
+$("sndR").onclick = () => setSound("R");
+
+/* draw both overlays; keep the right video on the left one's time */
+const st = { L: { alpha: 0, alphaTarget: 0 }, R: { alpha: 0, alphaTarget: 0 } };
+const ctx = { L: $("cvL").getContext("2d"), R: $("cvR").getContext("2d") };
+function frame() {
+  requestAnimationFrame(frame);
+  if (ready < 2) return;
+  const t = players.L.getCurrentTime() || 0, dur = players.L.getDuration() || 0;
+  const tr = players.R.getCurrentTime() || 0;
+  if (Math.abs(tr - t) > 0.25 && players.L.getPlayerState() === 1) players.R.seekTo(t, true);
+  $("time").textContent = `${mmss(t)} / ${mmss(dur)}`;
+  if (document.activeElement !== $("seek") && dur) $("seek").value = Math.round((t / dur) * 1000);
+  for (const s of ["L", "R"]) {
+    const c = ctx[s];
+    c.clearRect(0, 0, 1280, 720);
+    MbxDraw.render(c, { song: songs[s], offset, t: t - offset, dur, W: 1280, H: 720, u: 720 / 1080, lift: 0, notes: true, map: true, st: st[s] });
+  }
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
