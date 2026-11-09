@@ -26,6 +26,22 @@
   [
    ": 2753 7 -1 cold ",
    ": 2753 7 -1 call "
+  ],
+  [
+   ": 3143 3 -8 us ",
+   ": 3143 3 -8 life "
+  ],
+  [
+   "* 3148 4 -1 in",
+   "* 3148 4 -1 since "
+  ],
+  [
+   ": 3153 4 -4 ~",
+   ": 3153 4 -4 then"
+  ],
+  [
+   ": 3158 14 -4 stead ",
+   ": 3158 14 -4 ~ "
   ]
  ],
  "fixes": [
@@ -52,14 +68,13 @@
    "chart": "cold",
    "ref": "call",
    "kind": "word"
-  }
- ],
- "review": [
+  },
   {
    "t": 162.64,
    "chart": "us instead",
    "ref": "life since then",
-   "why": "different number of words"
+   "kind": "word"
   }
- ]
+ ],
+ "review": []
 }

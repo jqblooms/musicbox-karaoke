@@ -8,8 +8,44 @@
    ": 540 2 6 and "
   ],
   [
+   ": 1244 6 6 O.",
+   ": 1244 6 6 O"
+  ],
+  [
+   "* 1252 12 8 K. ",
+   "* 1252 12 8 kay. "
+  ],
+  [
    ": 2076 2 6 in ",
    ": 2076 2 6 and "
+  ],
+  [
+   ": 2780 6 6 O.",
+   ": 2780 6 6 O"
+  ],
+  [
+   ": 2788 12 8 K. ",
+   ": 2788 12 8 kay. "
+  ],
+  [
+   ": 3376 2 8 e",
+   ": 3376 2 8 every "
+  ],
+  [
+   ": 3380 2 10 ~",
+   ": 3380 2 10 time "
+  ],
+  [
+   ": 3384 6 6 very",
+   ": 3384 6 6 every "
+  ],
+  [
+   ": 3932 6 6 O.",
+   ": 3932 3 6 Okay \n: 3935 3 6 gonna "
+  ],
+  [
+   ": 3940 12 8 K. ",
+   ": 3940 6 8 be \n: 3946 6 8 okay. "
   ]
  ],
  "fixes": [
@@ -20,9 +56,33 @@
    "kind": "word"
   },
   {
+   "t": 58.97,
+   "chart": "O.K.",
+   "ref": "okay",
+   "kind": "word"
+  },
+  {
    "t": 91.47,
    "chart": "in",
    "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 118.97,
+   "chart": "O.K.",
+   "ref": "okay",
+   "kind": "word"
+  },
+  {
+   "t": 142.25,
+   "chart": "everytime",
+   "ref": "every time every time",
+   "kind": "word"
+  },
+  {
+   "t": 163.97,
+   "chart": "O.K.",
+   "ref": "okay gonna be okay",
    "kind": "word"
   }
  ],
@@ -31,37 +91,13 @@
    "t": 30.85,
    "chart": "tommy’s",
    "ref": "tummy's",
-   "why": "spelling or word ending (the singer may sing it that way)"
-  },
-  {
-   "t": 58.97,
-   "chart": "O.K.",
-   "ref": "okay",
-   "why": "different number of words"
+   "why": "spelling or contraction - the chart may be how it's sung"
   },
   {
    "t": 90.85,
    "chart": "tommy’s",
    "ref": "tummy's",
-   "why": "spelling or word ending (the singer may sing it that way)"
-  },
-  {
-   "t": 118.97,
-   "chart": "O.K.",
-   "ref": "okay",
-   "why": "different number of words"
-  },
-  {
-   "t": 142.25,
-   "chart": "everytime",
-   "ref": "every time every time",
-   "why": "different number of words"
-  },
-  {
-   "t": 163.97,
-   "chart": "O.K.",
-   "ref": "okay going to be okay",
-   "why": "different number of words"
+   "why": "spelling or contraction - the chart may be how it's sung"
   }
  ]
 }

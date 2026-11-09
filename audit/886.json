@@ -8,6 +8,18 @@
    ": 907 2 3 And "
   ],
   [
+   ": 982 2 3 got",
+   ": 982 2 3 a "
+  ],
+  [
+   ": 986 2 3 ta ",
+   ": 986 2 3 kis"
+  ],
+  [
+   ": 990 3 3 kiss ",
+   ": 990 3 3 sing "
+  ],
+  [
    ": 1252 4 8 there ",
    ": 1252 4 8 in "
   ]
@@ -17,6 +29,12 @@
    "t": 71.92,
    "chart": "Now",
    "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 75.98,
+   "chart": "gotta kiss",
+   "ref": "a kissing",
    "kind": "word"
   },
   {
@@ -31,13 +49,7 @@
    "t": 54.75,
    "chart": "They’ll",
    "ref": "They",
-   "why": "contraction (captions often drop them)"
-  },
-  {
-   "t": 75.98,
-   "chart": "gotta kiss",
-   "ref": "a kissing",
-   "why": "different number of words"
+   "why": "spelling or contraction - the chart may be how it's sung"
   }
  ]
 }

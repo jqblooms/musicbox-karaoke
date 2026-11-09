@@ -63,8 +63,8 @@
   </div>
   <section class="card"><h2 id="fixHead">Fixes</h2>
     <table><thead><tr><th>Time</th><th>Chart</th><th>Fixed to</th><th>Kind</th></tr></thead><tbody id="fixes"></tbody></table></section>
-  <section class="card"><h2 id="revHead">Confirmed but not applied (need a person)</h2>
-    <table><thead><tr><th>Time</th><th>Chart</th><th>Reference</th><th>Why not</th></tr></thead><tbody id="review"></tbody></table></section>
+  <section class="card"><h2 id="revHead">Left as they are</h2>
+    <table><thead><tr><th>Time</th><th>Chart</th><th>Reference</th><th>Rule</th></tr></thead><tbody id="review"></tbody></table></section>
 </main>
 <script src="chart.js"></script>
 <script src="draw.js"></script>
@@ -127,7 +127,7 @@ async function tryKey(raw) {
   const row = (cells, t) => `<tr class="jump" data-t="${t}">${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
   $("fixHead").textContent = `Fixes applied (${data.fixes.length}) - click one to jump there`;
   $("fixes").innerHTML = data.fixes.map((f) => row([mmss(f.t), `<span class="old">${esc(f.chart)}</span>`, `<span class="new">${esc(f.ref)}</span>`, f.kind === "spacing" ? "run-together words" : "wrong word"], f.t)).join("") || `<tr><td colspan="4" class="muted">None</td></tr>`;
-  $("revHead").textContent = `Confirmed but not applied (${data.review.length}) - these need a person`;
+  $("revHead").textContent = `Left as they are (${data.review.length}) - the captions agreed, but a rule keeps the chart`;
   $("review").innerHTML = data.review.map((f) => row([mmss(f.t), esc(f.chart), esc(f.ref), esc(f.why)], f.t)).join("") || `<tr><td colspan="4" class="muted">None</td></tr>`;
   document.querySelectorAll("tr.jump").forEach((tr) => tr.addEventListener("click", () => seekAll(Math.max(0, +tr.dataset.t - 3))));
   const s = document.createElement("script");

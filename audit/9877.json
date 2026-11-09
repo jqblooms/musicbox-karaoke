@@ -4,6 +4,14 @@
  "title": "Love The Way You Lie",
  "edits": [
   [
+   ": 886 2 15 of ",
+   ": 886 2 15 off "
+  ],
+  [
+   ": 890 2 15 a ",
+   ": 890 2 15 her "
+  ],
+  [
    ": 1362 2 14 in ",
    ": 1362 2 14 at "
   ],
@@ -25,6 +33,12 @@
   ]
  ],
  "fixes": [
+  {
+   "t": 38.83,
+   "chart": "of a",
+   "ref": "off her",
+   "kind": "word"
+  },
   {
    "t": 59.01,
    "chart": "in",
@@ -52,22 +66,16 @@
  ],
  "review": [
   {
-   "t": 38.83,
-   "chart": "of a",
-   "ref": "off her",
-   "why": "spelling or word ending (the singer may sing it that way)"
-  },
-  {
    "t": 63.42,
    "chart": "snap",
    "ref": "snapped",
-   "why": "spelling or word ending (the singer may sing it that way)"
+   "why": "spelling or contraction - the chart may be how it's sung"
   },
   {
    "t": 224.97,
    "chart": "I’mma",
    "ref": "I'ma",
-   "why": "spelling or word ending (the singer may sing it that way)"
+   "why": "spelling or contraction - the chart may be how it's sung"
   }
  ]
 }

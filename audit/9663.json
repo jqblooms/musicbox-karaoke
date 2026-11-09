@@ -8,6 +8,14 @@
    ": 524 2 12 could "
   ],
   [
+   ": 1336 2 5 get ",
+   ": 1336 2 5 don't "
+  ],
+  [
+   ": 1340 2 7 my ",
+   ": 1340 2 7 mind "
+  ],
+  [
    ": 1548 2 12 can ",
    ": 1548 2 12 could "
   ],
@@ -24,6 +32,26 @@
    "F 2595 3 0 bait "
   ],
   [
+   "F 2688 1 0 Come ",
+   "F 2688 1 0 Ho"
+  ],
+  [
+   "F 2690 3 0 on ",
+   "F 2690 3 0 me"
+  ],
+  [
+   "F 2694 3 0 boys, ",
+   "F 2694 3 0 boys "
+  ],
+  [
+   "F 2704 3 0 bang ",
+   "F 2704 3 0 ban"
+  ],
+  [
+   "F 2708 1 0 ’em ",
+   "F 2708 1 0 gin' "
+  ],
+  [
    "F 2760 3 0 tan",
    "F 2760 3 0 zucc"
   ],
@@ -32,8 +60,16 @@
    "F 2764 3 0 hi"
   ],
   [
-   "F 2768 3 0 nis, ",
-   "F 2768 3 0 nis, "
+   "F 2854 1 0 You ",
+   "F 2854 1 0 Loo"
+  ],
+  [
+   "F 2856 1 0 loo",
+   "F 2856 1 0 kie’"
+  ],
+  [
+   "F 2858 1 0 kin’ ",
+   "F 2858 1 0 ~ "
   ]
  ],
  "fixes": [
@@ -41,6 +77,12 @@
    "t": 39.18,
    "chart": "can",
    "ref": "could",
+   "kind": "word"
+  },
+  {
+   "t": 87.9,
+   "chart": "get my",
+   "ref": "don't mind",
    "kind": "word"
   },
   {
@@ -62,48 +104,42 @@
    "kind": "word"
   },
   {
+   "t": 169.02,
+   "chart": "Come on boys, bang ’em",
+   "ref": "Homeboys bangin'",
+   "kind": "word"
+  },
+  {
    "t": 173.34,
    "chart": "tankinis,",
    "ref": "zucchinis",
    "kind": "word"
-  }
- ],
- "review": [
-  {
-   "t": 87.9,
-   "chart": "get my",
-   "ref": "do not mind",
-   "why": "different number of words"
-  },
-  {
-   "t": 125.1,
-   "chart": "Will",
-   "ref": "We'll",
-   "why": "spelling or word ending (the singer may sing it that way)"
-  },
-  {
-   "t": 157.02,
-   "chart": "bones Uh!",
-   "ref": "buns",
-   "why": "different number of words"
-  },
-  {
-   "t": 169.02,
-   "chart": "Come on boys, bang ’em",
-   "ref": "Homeboys bangin'",
-   "why": "different number of words"
   },
   {
    "t": 178.98,
    "chart": "You lookin’",
    "ref": "lookie",
-   "why": "different number of words"
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 125.1,
+   "chart": "Will",
+   "ref": "We'll",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 157.02,
+   "chart": "bones Uh!",
+   "ref": "buns",
+   "why": "ad-lib sounds"
   },
   {
    "t": 194.22,
    "chart": "Will",
    "ref": "We'll",
-   "why": "spelling or word ending (the singer may sing it that way)"
+   "why": "spelling or contraction - the chart may be how it's sung"
   }
  ]
 }

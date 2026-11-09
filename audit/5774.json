@@ -26,6 +26,10 @@
   [
    ": 2230 6 9 ther",
    ": 2230 6 9 ther "
+  ],
+  [
+   "* 3169 3 19 ther",
+   "* 3169 3 19 ther "
   ]
  ],
  "fixes": [
@@ -64,6 +68,12 @@
    "chart": "otherside",
    "ref": "other side",
    "kind": "spacing"
+  },
+  {
+   "t": 194.51,
+   "chart": "otherside",
+   "ref": "other side",
+   "kind": "spacing"
   }
  ],
  "review": [
@@ -71,19 +81,13 @@
    "t": 62.07,
    "chart": "changed",
    "ref": "change",
-   "why": "spelling or word ending (the singer may sing it that way)"
+   "why": "spelling or contraction - the chart may be how it's sung"
   },
   {
    "t": 63.35,
    "chart": "I’ve",
    "ref": "I",
-   "why": "contraction (captions often drop them)"
-  },
-  {
-   "t": 194.51,
-   "chart": "otherside",
-   "ref": "other side",
-   "why": "held notes inside the word"
+   "why": "spelling or contraction - the chart may be how it's sung"
   }
  ]
 }
