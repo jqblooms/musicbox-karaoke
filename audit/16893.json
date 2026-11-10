@@ -1,0 +1,181 @@
+{
+ "id": 16893,
+ "artist": "Lorde",
+ "title": "Team",
+ "edits": [
+  [
+   ": 408 4 -1 That ",
+   ": 408 4 -1 And "
+  ],
+  [
+   ": 416 6 -2 you’ll ",
+   ": 416 6 -2 She'll "
+  ],
+  [
+   ": 452 4 -6 I’ll ",
+   ": 452 4 -6 Out "
+  ],
+  [
+   ": 486 6 -6 I’ll ",
+   ": 486 6 -6 Out "
+  ],
+  [
+   ": 522 4 -6 I’ll ",
+   ": 522 4 -6 Out "
+  ],
+  [
+   ": 556 4 -6 I’ll ",
+   ": 556 4 -6 Out "
+  ],
+  [
+   ": 588 4 -6 I’ll ",
+   ": 588 4 -6 Out "
+  ],
+  [
+   ": 620 4 -6 I’ll ",
+   ": 620 4 -6 Out "
+  ],
+  [
+   ": 652 4 -6 I’ll ",
+   ": 652 4 -6 Out "
+  ],
+  [
+   ": 684 4 -6 I’ll ",
+   ": 684 4 -6 Out "
+  ],
+  [
+   ": 716 4 -6 I’ll ",
+   ": 716 4 -6 Out "
+  ],
+  [
+   ": 748 4 -6 I’ll ",
+   ": 748 4 -6 Out "
+  ],
+  [
+   ": 780 4 -6 I’ll ",
+   ": 780 4 -6 Out "
+  ],
+  [
+   ": 812 4 -6 I’ll ",
+   ": 812 4 -6 Out "
+  ],
+  [
+   ": 844 4 -6 I’ll ",
+   ": 844 4 -6 Out "
+  ],
+  [
+   ": 876 4 -6 I’ll ",
+   ": 876 4 -6 Out "
+  ],
+  [
+   ": 908 4 -6 I’ll ",
+   ": 908 4 -6 Out "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 21.42,
+   "chart": "That you’ll",
+   "ref": "and She'll",
+   "kind": "word"
+  },
+  {
+   "t": 23.07,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 24.35,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 25.7,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 26.97,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 28.17,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 29.37,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 30.57,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 31.77,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 32.97,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 34.17,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 35.37,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 36.57,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 37.77,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 38.97,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  },
+  {
+   "t": 40.17,
+   "chart": "I’ll",
+   "ref": "out",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 151.77,
+   "chart": "revelled",
+   "ref": "reveled",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  }
+ ]
+}

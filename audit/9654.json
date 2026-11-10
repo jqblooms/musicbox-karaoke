@@ -1,0 +1,279 @@
+{
+ "id": 9654,
+ "artist": "Adam Lambert",
+ "title": "Whataya Want From Me",
+ "edits": [
+  [
+   ": 110 2 6 What ",
+   ": 110 2 6 Wha"
+  ],
+  [
+   ": 114 2 6 do ",
+   ": 114 2 6 taya"
+  ],
+  [
+   ": 118 2 6 you ",
+   ": 118 2 6 ~ "
+  ],
+  [
+   ": 176 2 6 What ",
+   ": 176 2 6 Wha"
+  ],
+  [
+   ": 180 2 6 do ",
+   ": 180 2 6 taya"
+  ],
+  [
+   ": 184 2 6 you ",
+   ": 184 2 6 ~ "
+  ],
+  [
+   ": 368 2 6 What ",
+   ": 368 2 6 Wha"
+  ],
+  [
+   ": 372 2 6 do ",
+   ": 372 2 6 taya"
+  ],
+  [
+   ": 376 2 6 you ",
+   ": 376 2 6 ~ "
+  ],
+  [
+   ": 432 2 6 What ",
+   ": 432 2 6 Wha"
+  ],
+  [
+   ": 436 2 6 do ",
+   ": 436 2 6 taya"
+  ],
+  [
+   ": 440 2 6 you ",
+   ": 440 2 6 ~ "
+  ],
+  [
+   ": 880 2 6 what ",
+   ": 880 2 6 wha"
+  ],
+  [
+   ": 884 2 6 do ",
+   ": 884 2 6 taya"
+  ],
+  [
+   ": 888 2 6 you ",
+   ": 888 2 6 ~ "
+  ],
+  [
+   ": 944 2 6 What ",
+   ": 944 2 6 Wha"
+  ],
+  [
+   ": 948 2 6 do ",
+   ": 948 2 6 taya"
+  ],
+  [
+   ": 952 2 6 you ",
+   ": 952 2 6 ~ "
+  ],
+  [
+   ": 1520 2 9 What ",
+   ": 1520 2 9 Wha"
+  ],
+  [
+   ": 1524 2 9 do ",
+   ": 1524 2 9 taya"
+  ],
+  [
+   ": 1528 2 9 you ",
+   ": 1528 2 9 ~ "
+  ],
+  [
+   ": 1584 2 9 What ",
+   ": 1584 2 9 Wha"
+  ],
+  [
+   ": 1588 2 9 do ",
+   ": 1588 2 9 taya"
+  ],
+  [
+   ": 1592 2 9 you ",
+   ": 1592 2 9 ~ "
+  ],
+  [
+   ": 1648 2 9 What ",
+   ": 1648 2 9 Wha"
+  ],
+  [
+   ": 1652 2 9 do ",
+   ": 1652 2 9 taya"
+  ],
+  [
+   ": 1656 2 9 you ",
+   ": 1656 2 9 ~ "
+  ],
+  [
+   ": 2320 4 6 step ",
+   ": 2320 4 6 slip "
+  ],
+  [
+   ": 3024 2 9 What ",
+   ": 3024 2 9 Wha"
+  ],
+  [
+   ": 3028 2 9 do ",
+   ": 3028 2 9 taya"
+  ],
+  [
+   ": 3032 2 9 you ",
+   ": 3032 2 9 ~ "
+  ],
+  [
+   ": 3056 2 9 What ",
+   ": 3056 2 9 Wha"
+  ],
+  [
+   ": 3060 2 9 do ",
+   ": 3060 2 9 taya"
+  ],
+  [
+   ": 3064 2 9 you ",
+   ": 3064 2 9 ~ "
+  ],
+  [
+   ": 3120 2 9 What ",
+   ": 3120 2 9 Wha"
+  ],
+  [
+   ": 3124 2 9 do ",
+   ": 3124 2 9 taya"
+  ],
+  [
+   ": 3128 2 9 you ",
+   ": 3128 2 9 ~ "
+  ],
+  [
+   ": 3152 2 9 What ",
+   ": 3152 2 9 Wha"
+  ],
+  [
+   ": 3156 2 9 do ",
+   ": 3156 2 9 taya"
+  ],
+  [
+   ": 3160 2 9 you ",
+   ": 3160 2 9 ~ "
+  ],
+  [
+   ": 4464 2 14 What ",
+   ": 4464 2 14 Wha"
+  ],
+  [
+   ": 4468 2 14 do ",
+   ": 4468 2 14 taya"
+  ],
+  [
+   ": 4472 2 14 you ",
+   ": 4472 2 14 ~ "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 15.06,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 17.72,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 25.46,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 28.04,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 46.1,
+   "chart": "what do you",
+   "ref": "whataya",
+   "kind": "word"
+  },
+  {
+   "t": 48.68,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 71.91,
+   "chart": "What do you",
+   "ref": "whataya",
+   "kind": "word"
+  },
+  {
+   "t": 74.49,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 77.07,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 104.17,
+   "chart": "step",
+   "ref": "slip",
+   "kind": "word"
+  },
+  {
+   "t": 132.56,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 133.85,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 136.43,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 137.72,
+   "chart": "What do you",
+   "ref": "Whataya",
+   "kind": "word"
+  },
+  {
+   "t": 190.62,
+   "chart": "What do you",
+   "ref": "whataya",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 130.62,
+   "chart": "hey What do you",
+   "ref": "whataya",
+   "why": "ad-lib sounds"
+  }
+ ]
+}

@@ -1,0 +1,209 @@
+{
+ "id": 4353,
+ "artist": "The Pussycat Dolls feat. Busta Rhymes",
+ "title": "Don’t Cha",
+ "edits": [
+  [
+   "F 720 3 8 look-",
+   "F 720 3 8 lookout "
+  ],
+  [
+   "F 725 4 8 out ",
+   "F 725 2 8 Let's \nF 727 2 8 dance "
+  ],
+  [
+   ": 2154 6 17 you ",
+   ": 2154 6 17 cha "
+  ],
+  [
+   ": 2538 6 17 you ",
+   ": 2538 6 17 cha "
+  ],
+  [
+   ": 2668 6 17 you ",
+   ": 2668 6 17 cha "
+  ],
+  [
+   ": 4078 6 17 you ",
+   ": 4078 6 17 cha "
+  ],
+  [
+   ": 4206 6 17 you ",
+   ": 4206 6 17 cha "
+  ],
+  [
+   ": 4590 6 17 you ",
+   ": 4590 6 17 cha "
+  ],
+  [
+   ": 4719 6 17 you ",
+   ": 4719 6 17 cha "
+  ],
+  [
+   ": 4823 14 15 thrills ",
+   ": 4823 14 15 fun "
+  ],
+  [
+   "F 5506 4 10 Play",
+   "F 5506 4 10 Player"
+  ],
+  [
+   "F 5511 3 10 a-",
+   "F 5511 3 10 ~"
+  ],
+  [
+   "F 5515 7 10 girl ",
+   "F 5515 7 10 ~ "
+  ],
+  [
+   ": 7155 6 17 you ",
+   ": 7155 6 17 cha "
+  ],
+  [
+   ": 7283 6 17 you ",
+   ": 7283 6 17 cha "
+  ],
+  [
+   ": 7668 6 17 you ",
+   ": 7668 6 17 cha "
+  ],
+  [
+   ": 7796 6 17 you ",
+   ": 7796 6 17 cha "
+  ],
+  [
+   ": 7900 14 15 thrills ",
+   ": 7900 14 15 fun "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 23.64,
+   "chart": "look-out",
+   "ref": "lookout Let's dance",
+   "kind": "word"
+  },
+  {
+   "t": 68.38,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 80.36,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 84.42,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 128.41,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 132.4,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 144.38,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 148.4,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 151.65,
+   "chart": "thrills",
+   "ref": "fun",
+   "kind": "word"
+  },
+  {
+   "t": 172.96,
+   "chart": "Playa-girl",
+   "ref": "player",
+   "kind": "word"
+  },
+  {
+   "t": 224.4,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 228.4,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 240.41,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 244.4,
+   "chart": "you",
+   "ref": "cha",
+   "kind": "word"
+  },
+  {
+   "t": 247.64,
+   "chart": "thrills",
+   "ref": "fun",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 156.14,
+   "chart": "Don’t cha Seems",
+   "ref": "Seem",
+   "why": "crosses a line break"
+  },
+  {
+   "t": 162.44,
+   "chart": "wan’",
+   "ref": "wanna",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 164.5,
+   "chart": "allmighty",
+   "ref": "almighty",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 169.43,
+   "chart": "wan’",
+   "ref": "wanna",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 178.92,
+   "chart": "wan’",
+   "ref": "wanna",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 182.19,
+   "chart": "wit’",
+   "ref": "with",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  }
+ ]
+}

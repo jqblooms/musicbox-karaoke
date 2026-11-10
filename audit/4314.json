@@ -1,0 +1,170 @@
+{
+ "id": 4314,
+ "artist": "Amy Macdonald",
+ "title": "This Is The Life",
+ "edits": [
+  [
+   ": 564 3 1 When ",
+   ": 564 3 1 And "
+  ],
+  [
+   ": 596 2 1 Then ",
+   ": 596 2 1 And "
+  ],
+  [
+   ": 820 2 1 When ",
+   ": 820 2 1 And "
+  ],
+  [
+   ": 852 3 1 Then ",
+   ": 852 3 1 And "
+  ],
+  [
+   ": 1844 2 1 When ",
+   ": 1844 2 1 And "
+  ],
+  [
+   ": 1876 2 1 Then ",
+   ": 1876 2 1 And "
+  ],
+  [
+   ": 2100 2 1 When ",
+   ": 2100 2 1 And "
+  ],
+  [
+   ": 2132 2 1 Then ",
+   ": 2132 2 1 And "
+  ],
+  [
+   ": 2868 2 1 When ",
+   ": 2868 2 1 And "
+  ],
+  [
+   ": 2900 3 1 Then ",
+   ": 2900 3 1 And "
+  ],
+  [
+   ": 3124 2 1 When ",
+   ": 3124 2 1 And "
+  ],
+  [
+   ": 3156 2 1 Then ",
+   ": 3156 2 1 And "
+  ],
+  [
+   ": 3380 3 1 When ",
+   ": 3380 3 1 And "
+  ],
+  [
+   ": 3412 2 1 Then ",
+   ": 3412 2 1 And "
+  ],
+  [
+   ": 3636 2 1 When ",
+   ": 3636 2 1 And "
+  ],
+  [
+   ": 3668 3 1 Then ",
+   ": 3668 3 1 And "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 38.05,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 39.31,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 48.15,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 49.42,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 88.58,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 89.84,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 98.68,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 99.95,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 129.0,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 130.27,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 139.11,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 140.37,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 149.22,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 150.48,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  },
+  {
+   "t": 159.32,
+   "chart": "When",
+   "ref": "And",
+   "kind": "word"
+  },
+  {
+   "t": 160.58,
+   "chart": "Then",
+   "ref": "and",
+   "kind": "word"
+  }
+ ],
+ "review": []
+}

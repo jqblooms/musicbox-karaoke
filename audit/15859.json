@@ -1,0 +1,355 @@
+{
+ "id": 15859,
+ "artist": "will.i.am feat. Justin Bieber",
+ "title": "#thatPOWER",
+ "edits": [
+  [
+   ": 856 4 -6 ma",
+   ": 856 4 -6 mil"
+  ],
+  [
+   ": 862 4 -8 ley ",
+   ": 862 4 -8 li' "
+  ],
+  [
+   ": 888 4 -6 va",
+   ": 888 4 -6 bil"
+  ],
+  [
+   ": 894 4 -8 let ",
+   ": 894 4 -8 li' "
+  ],
+  [
+   ": 920 2 -6 ti",
+   ": 920 2 -6 pig"
+  ],
+  [
+   ": 924 1 -8 cket ",
+   ": 924 1 -8 gy "
+  ],
+  [
+   ": 926 4 -8 thing, ",
+   ": 926 4 -8 bank, "
+  ],
+  [
+   ": 990 4 -8 state ",
+   ": 990 4 -8 think "
+  ],
+  [
+   ": 1010 1 -6 we ",
+   ": 1010 1 -6 I'm "
+  ],
+  [
+   ": 1012 1 -6 do",
+   ": 1012 1 -6 doin'"
+  ],
+  [
+   ": 1014 1 -6 ing ",
+   ": 1014 1 -6 ~ "
+  ],
+  [
+   ": 1072 2 -3 loose ",
+   ": 1072 2 -3 men"
+  ],
+  [
+   ": 1076 2 -3 to ",
+   ": 1076 2 -3 tal "
+  ],
+  [
+   ": 1228 2 -6 and ",
+   ": 1228 2 -6 in "
+  ],
+  [
+   ": 1232 2 -6 buy ",
+   ": 1232 2 -6 fly "
+  ],
+  [
+   ": 2152 2 -6 We’re ",
+   ": 2152 2 -6 Work "
+  ],
+  [
+   ": 2168 4 -6 pres ",
+   ": 2168 4 -6 pres"
+  ],
+  [
+   ": 2174 4 -6 yall ",
+   ": 2174 4 -6 sure "
+  ],
+  [
+   ": 2260 2 -6 in ",
+   ": 2260 2 -6 them "
+  ],
+  [
+   ": 2268 2 -6 ject ",
+   ": 2268 2 -6 jects "
+  ],
+  [
+   ": 2272 2 -6 where ",
+   ": 2272 2 -6 with "
+  ],
+  [
+   ": 2312 2 -3 beat ",
+   ": 2312 2 -3 did "
+  ],
+  [
+   ": 2350 1 -3 what ",
+   ": 2350 1 -3 when "
+  ],
+  [
+   ": 2360 4 -3 on ",
+   ": 2360 4 -3 youn"
+  ],
+  [
+   ": 2366 4 -1 it ",
+   ": 2366 4 -1 ger "
+  ],
+  [
+   ": 2696 2 4 Call ",
+   ": 2696 2 4 Co"
+  ],
+  [
+   ": 2700 2 4 me ",
+   ": 2700 2 4 min' "
+  ],
+  [
+   ": 2752 2 -1 lock ",
+   ": 2752 2 -1 I'm "
+  ],
+  [
+   ": 2756 2 -1 it ",
+   ": 2756 2 -1 knockin' "
+  ],
+  [
+   ": 2760 2 -1 lock ",
+   ": 2760 2 -1 knoc"
+  ],
+  [
+   ": 2764 2 -1 it ",
+   ": 2764 2 -1 kin' "
+  ],
+  [
+   ": 2772 2 -1 and ",
+   ": 2772 2 -1 the "
+  ],
+  [
+   ": 2776 2 -1 go ",
+   ": 2776 2 -1 door "
+  ],
+  [
+   ": 2792 2 -1 go ",
+   ": 2792 2 -1 door "
+  ],
+  [
+   ": 2814 2 4 Call ",
+   ": 2814 2 4 Comin' "
+  ],
+  [
+   ": 2822 2 4 call ",
+   ": 2822 2 4 co"
+  ],
+  [
+   ": 2826 2 4 me ",
+   ": 2826 2 4 min' "
+  ],
+  [
+   ": 2878 2 -1 lock ",
+   ": 2878 2 -1 I'm "
+  ],
+  [
+   ": 2882 2 -1 it ",
+   ": 2882 2 -1 knockin' "
+  ],
+  [
+   ": 2886 2 -1 lock ",
+   ": 2886 2 -1 knoc"
+  ],
+  [
+   ": 2890 2 -1 it ",
+   ": 2890 2 -1 kin' "
+  ],
+  [
+   ": 2898 2 -1 and ",
+   ": 2898 2 -1 the "
+  ],
+  [
+   ": 2902 2 -1 go ",
+   ": 2902 2 -1 door "
+  ],
+  [
+   ": 2918 2 -1 go ",
+   ": 2918 2 -1 door "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 80.38,
+   "chart": "maley",
+   "ref": "milli'",
+   "kind": "word"
+  },
+  {
+   "t": 82.26,
+   "chart": "valet",
+   "ref": "billi'",
+   "kind": "word"
+  },
+  {
+   "t": 84.13,
+   "chart": "ticket thing,",
+   "ref": "piggy bank",
+   "kind": "word"
+  },
+  {
+   "t": 88.24,
+   "chart": "state",
+   "ref": "think",
+   "kind": "word"
+  },
+  {
+   "t": 89.41,
+   "chart": "we doing",
+   "ref": "I'm doin'",
+   "kind": "word"
+  },
+  {
+   "t": 93.04,
+   "chart": "loose to",
+   "ref": "mental",
+   "kind": "word"
+  },
+  {
+   "t": 102.19,
+   "chart": "and buy",
+   "ref": "in fly",
+   "kind": "word"
+  },
+  {
+   "t": 156.35,
+   "chart": "We’re",
+   "ref": "work",
+   "kind": "word"
+  },
+  {
+   "t": 157.29,
+   "chart": "pres yall",
+   "ref": "pressure",
+   "kind": "word"
+  },
+  {
+   "t": 162.68,
+   "chart": "in project where",
+   "ref": "them projects with",
+   "kind": "word"
+  },
+  {
+   "t": 165.73,
+   "chart": "beat",
+   "ref": "did",
+   "kind": "word"
+  },
+  {
+   "t": 167.96,
+   "chart": "what",
+   "ref": "when",
+   "kind": "word"
+  },
+  {
+   "t": 168.55,
+   "chart": "on it",
+   "ref": "younger",
+   "kind": "word"
+  },
+  {
+   "t": 188.24,
+   "chart": "Call me",
+   "ref": "Comin'",
+   "kind": "word"
+  },
+  {
+   "t": 191.53,
+   "chart": "lock it lock it",
+   "ref": "I'm knockin' knockin'",
+   "kind": "word"
+  },
+  {
+   "t": 192.7,
+   "chart": "and go",
+   "ref": "the door",
+   "kind": "word"
+  },
+  {
+   "t": 193.87,
+   "chart": "go",
+   "ref": "door",
+   "kind": "word"
+  },
+  {
+   "t": 195.16,
+   "chart": "Call call me",
+   "ref": "Comin' comin'",
+   "kind": "word"
+  },
+  {
+   "t": 198.91,
+   "chart": "lock it lock it",
+   "ref": "I'm knockin' knockin'",
+   "kind": "word"
+  },
+  {
+   "t": 200.08,
+   "chart": "and go",
+   "ref": "the door",
+   "kind": "word"
+  },
+  {
+   "t": 201.26,
+   "chart": "go",
+   "ref": "door",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 78.5,
+   "chart": "chilli",
+   "ref": "chilly",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 91.64,
+   "chart": "hussle,",
+   "ref": "hustle",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 98.2,
+   "chart": "Imma",
+   "ref": "I'ma",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 103.59,
+   "chart": "Keeping",
+   "ref": "Keep",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 169.48,
+   "chart": "Imma",
+   "ref": "I'ma",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 178.63,
+   "chart": "Keeping",
+   "ref": "Keep",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 186.37,
+   "chart": "Imma",
+   "ref": "I'ma",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  }
+ ]
+}

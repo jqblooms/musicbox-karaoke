@@ -1,0 +1,211 @@
+{
+ "id": 13959,
+ "artist": "Usher",
+ "title": "U Got It Bad",
+ "edits": [
+  [
+   ": 684 1 22 fu",
+   ": 684 1 22 humped"
+  ],
+  [
+   ": 686 1 18 ~cked ",
+   ": 686 1 18 ~ "
+  ],
+  [
+   ": 924 3 25 u ",
+   ": 924 3 25 you "
+  ],
+  [
+   ": 1052 3 25 u ",
+   ": 1052 3 25 you "
+  ],
+  [
+   ": 1300 3 26 U ",
+   ": 1300 3 26 You "
+  ],
+  [
+   ": 1410 3 27 U ",
+   ": 1410 3 27 You "
+  ],
+  [
+   ": 2221 1 22 fu",
+   ": 2221 1 22 humped"
+  ],
+  [
+   ": 2223 1 18 ~cked ",
+   ": 2223 1 18 ~ "
+  ],
+  [
+   ": 2319 3 26 ry",
+   ": 2319 3 26 ry "
+  ],
+  [
+   ": 2455 1 23 U ",
+   ": 2455 1 23 You "
+  ],
+  [
+   ": 2460 3 24 u ",
+   ": 2460 1 24 it \n: 2461 2 24 you "
+  ],
+  [
+   ": 2579 3 23 U ",
+   ": 2579 3 23 You "
+  ],
+  [
+   ": 2590 3 24 u ",
+   ": 2590 1 24 it \n: 2591 2 24 you "
+  ],
+  [
+   ": 2836 3 26 U ",
+   ": 2836 1 26 Look \n: 2837 1 26 at \n: 2838 1 26 yourself You "
+  ],
+  [
+   ": 2947 2 27 U ",
+   ": 2947 2 27 You "
+  ],
+  [
+   ": 3474 3 23 U ",
+   ": 3474 3 23 You "
+  ],
+  [
+   ": 3485 3 24 u ",
+   ": 3485 1 24 it \n: 3486 2 24 you "
+  ],
+  [
+   ": 3601 3 23 U ",
+   ": 3601 3 23 You "
+  ],
+  [
+   ": 3613 3 24 u ",
+   ": 3613 1 24 it \n: 3614 2 24 you "
+  ],
+  [
+   ": 3860 3 26 U ",
+   ": 3860 3 26 You "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 78.72,
+   "chart": "fucked",
+   "ref": "humped",
+   "kind": "word"
+  },
+  {
+   "t": 93.24,
+   "chart": "u",
+   "ref": "you",
+   "kind": "word"
+  },
+  {
+   "t": 100.98,
+   "chart": "u",
+   "ref": "you",
+   "kind": "word"
+  },
+  {
+   "t": 115.98,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  },
+  {
+   "t": 122.64,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  },
+  {
+   "t": 171.7,
+   "chart": "fucked",
+   "ref": "humped",
+   "kind": "word"
+  },
+  {
+   "t": 177.5,
+   "chart": "Everyone",
+   "ref": "Every one",
+   "kind": "spacing"
+  },
+  {
+   "t": 185.85,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  },
+  {
+   "t": 186.15,
+   "chart": "u",
+   "ref": "it you",
+   "kind": "word"
+  },
+  {
+   "t": 193.35,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  },
+  {
+   "t": 194.02,
+   "chart": "u",
+   "ref": "it you",
+   "kind": "word"
+  },
+  {
+   "t": 208.9,
+   "chart": "U",
+   "ref": "look at yourself You",
+   "kind": "word"
+  },
+  {
+   "t": 215.61,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  },
+  {
+   "t": 247.49,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  },
+  {
+   "t": 248.16,
+   "chart": "u",
+   "ref": "it you",
+   "kind": "word"
+  },
+  {
+   "t": 255.18,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  },
+  {
+   "t": 255.9,
+   "chart": "u",
+   "ref": "it you",
+   "kind": "word"
+  },
+  {
+   "t": 270.85,
+   "chart": "U",
+   "ref": "You",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 91.54,
+   "chart": "baby … U",
+   "ref": "maybe You",
+   "why": "crosses a line break"
+  },
+  {
+   "t": 100.25,
+   "chart": "U",
+   "ref": "oh you You",
+   "why": "ad-lib sounds"
+  }
+ ]
+}

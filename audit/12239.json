@@ -1,0 +1,259 @@
+{
+ "id": 12239,
+ "artist": "Pitbull feat. Ne-Yo, Afrojack & Nayer",
+ "title": "Give Me Everything",
+ "edits": [
+  [
+   ": 272 2 3 will ",
+   ": 272 2 3 want "
+  ],
+  [
+   ": 276 8 7 love, ",
+   ": 276 8 7 all "
+  ],
+  [
+   ": 288 5 5 love ",
+   ": 288 5 5 of "
+  ],
+  [
+   ": 542 4 10 my ",
+   ": 542 4 10 the "
+  ],
+  [
+   "* 548 4 0 girls ",
+   "* 548 4 0 games "
+  ],
+  [
+   ": 1560 2 3 may",
+   ": 1560 2 3 ba"
+  ],
+  [
+   ": 1564 2 3 be ",
+   ": 1564 2 3 by "
+  ],
+  [
+   ": 1568 2 3 I’m",
+   ": 1568 2 3 I'"
+  ],
+  [
+   ": 1680 2 3 will ",
+   ": 1680 2 3 want "
+  ],
+  [
+   "* 1684 8 7 love, ",
+   "* 1684 8 7 all "
+  ],
+  [
+   ": 1696 5 5 love ",
+   ": 1696 5 5 of "
+  ],
+  [
+   ": 1950 3 10 my ",
+   ": 1950 3 10 the "
+  ],
+  [
+   ": 1956 4 0 girls ",
+   ": 1956 4 0 games "
+  ],
+  [
+   "F 2468 1 3 you’re ",
+   "F 2468 1 3 you'll fall "
+  ],
+  [
+   "F 2530 1 3 of ",
+   "F 2530 1 3 your"
+  ],
+  [
+   "F 2532 2 3 you ",
+   "F 2532 2 3 ~ "
+  ],
+  [
+   "F 2554 1 3 When ",
+   "F 2554 1 3 What "
+  ],
+  [
+   "F 2564 1 3 When ",
+   "F 2564 1 3 With "
+  ],
+  [
+   "F 2566 1 3 they ",
+   "F 2566 1 3 is "
+  ],
+  [
+   "F 2568 1 3 slee",
+   "F 2568 1 3 dee"
+  ],
+  [
+   "F 2570 1 3 pin’ ",
+   "F 2570 1 3 per "
+  ],
+  [
+   "F 2572 1 3 in ",
+   "F 2572 1 3 than "
+  ],
+  [
+   "F 2580 2 3 cy’s, ",
+   "F 2580 2 3 sons, "
+  ],
+  [
+   "F 2656 1 3 Tied ",
+   "F 2656 1 3 I"
+  ],
+  [
+   "F 2658 1 3 o",
+   "F 2658 1 3 dol "
+  ],
+  [
+   "F 2660 1 3 ver ",
+   "F 2660 1 3 Get"
+  ],
+  [
+   "F 2662 1 3 your ",
+   "F 2662 1 3 ting "
+  ],
+  [
+   ": 2968 2 3 may",
+   ": 2968 2 3 ba"
+  ],
+  [
+   ": 2972 2 3 be ",
+   ": 2972 2 3 by "
+  ],
+  [
+   "* 2976 2 3 I’m",
+   "* 2976 2 3 I'"
+  ],
+  [
+   ": 3088 2 3 will ",
+   ": 3088 2 3 want "
+  ],
+  [
+   ": 3092 8 7 love, ",
+   ": 3092 8 7 all "
+  ],
+  [
+   "* 3104 5 5 love ",
+   "* 3104 5 5 of "
+  ],
+  [
+   ": 3358 3 10 my ",
+   ": 3358 3 10 the "
+  ],
+  [
+   ": 3364 4 0 girls ",
+   ": 3364 4 0 games "
+  ],
+  [
+   ": 3992 2 3 may",
+   ": 3992 2 3 ba"
+  ],
+  [
+   ": 3996 2 3 be ",
+   ": 3996 2 3 by "
+  ],
+  [
+   ": 4000 2 3 I’m",
+   ": 4000 2 3 I'"
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 16.59,
+   "chart": "will love, love",
+   "ref": "want all of",
+   "kind": "word"
+  },
+  {
+   "t": 32.29,
+   "chart": "my girls",
+   "ref": "the games",
+   "kind": "word"
+  },
+  {
+   "t": 91.48,
+   "chart": "maybe I’mma",
+   "ref": "baby I'ma",
+   "kind": "word"
+  },
+  {
+   "t": 98.45,
+   "chart": "will love, love",
+   "ref": "want all of",
+   "kind": "word"
+  },
+  {
+   "t": 114.15,
+   "chart": "my girls",
+   "ref": "the games",
+   "kind": "word"
+  },
+  {
+   "t": 144.27,
+   "chart": "you’re",
+   "ref": "you'll fall",
+   "kind": "word"
+  },
+  {
+   "t": 147.87,
+   "chart": "of you",
+   "ref": "your",
+   "kind": "word"
+  },
+  {
+   "t": 149.27,
+   "chart": "When",
+   "ref": "What",
+   "kind": "word"
+  },
+  {
+   "t": 149.85,
+   "chart": "When they sleepin’ in",
+   "ref": "with is deeper than",
+   "kind": "word"
+  },
+  {
+   "t": 150.55,
+   "chart": "Macy’s,",
+   "ref": "Masons",
+   "kind": "word"
+  },
+  {
+   "t": 155.2,
+   "chart": "Tied over your",
+   "ref": "Idol Getting",
+   "kind": "word"
+  },
+  {
+   "t": 173.34,
+   "chart": "maybe I’mma",
+   "ref": "baby I'ma",
+   "kind": "word"
+  },
+  {
+   "t": 180.31,
+   "chart": "will love, love",
+   "ref": "want all of",
+   "kind": "word"
+  },
+  {
+   "t": 196.01,
+   "chart": "my girls",
+   "ref": "the games",
+   "kind": "word"
+  },
+  {
+   "t": 232.87,
+   "chart": "maybe I’mma",
+   "ref": "baby I'ma",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 72.41,
+   "chart": "blowin’",
+   "ref": "flowin'",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  }
+ ]
+}

@@ -1,0 +1,233 @@
+{
+ "id": 9122,
+ "artist": "Foo Fighters",
+ "title": "All My Life",
+ "edits": [
+  [
+   ": 1006 4 7 breath",
+   ": 1006 4 7 grip"
+  ],
+  [
+   ": 1448 4 17 that ",
+   ": 1448 4 17 the "
+  ],
+  [
+   ": 1672 6 17 that ",
+   ": 1672 6 17 the "
+  ],
+  [
+   ": 2600 6 17 that ",
+   ": 2600 6 17 the "
+  ],
+  [
+   ": 2826 6 17 that ",
+   ": 2826 6 17 the "
+  ],
+  [
+   ": 3876 5 10 un",
+   ": 3876 5 10 on "
+  ],
+  [
+   ": 3882 2 10 der ",
+   ": 3882 2 10 to "
+  ],
+  [
+   ": 3942 3 10 un",
+   ": 3942 3 10 on "
+  ],
+  [
+   ": 3946 2 10 der ",
+   ": 3946 2 10 to "
+  ],
+  [
+   ": 4008 3 10 un",
+   ": 4008 3 10 on "
+  ],
+  [
+   ": 4012 1 10 der ",
+   ": 4012 1 10 to "
+  ],
+  [
+   ": 4070 1 10 un",
+   ": 4070 1 10 on "
+  ],
+  [
+   ": 4072 3 10 der ",
+   ": 4072 3 10 to "
+  ],
+  [
+   ": 4134 1 7 un",
+   ": 4134 1 7 on "
+  ],
+  [
+   ": 4136 3 7 der ",
+   ": 4136 3 7 to "
+  ],
+  [
+   ": 4198 1 7 un",
+   ": 4198 1 7 on "
+  ],
+  [
+   ": 4200 5 7 der ",
+   ": 4200 5 7 to "
+  ],
+  [
+   ": 4772 5 10 un",
+   ": 4772 5 10 on "
+  ],
+  [
+   ": 4778 2 10 der ",
+   ": 4778 2 10 to "
+  ],
+  [
+   ": 4842 1 10 un",
+   ": 4842 1 10 on "
+  ],
+  [
+   ": 4844 1 10 der ",
+   ": 4844 1 10 to "
+  ],
+  [
+   ": 4970 6 17 that ",
+   ": 4970 6 17 the "
+  ],
+  [
+   ": 5196 4 17 that ",
+   ": 5196 4 17 the "
+  ],
+  [
+   ": 5480 3 10 un",
+   ": 5480 3 10 on "
+  ],
+  [
+   ": 5484 2 10 der ",
+   ": 5484 2 10 to "
+  ],
+  [
+   ": 5546 1 10 un",
+   ": 5546 1 10 on "
+  ],
+  [
+   ": 5548 2 10 der ",
+   ": 5548 2 10 to "
+  ]
+ ],
+ "fixes": [
+  {
+   "t": 62.78,
+   "chart": "breath",
+   "ref": "grip",
+   "kind": "word"
+  },
+  {
+   "t": 82.5,
+   "chart": "that",
+   "ref": "the",
+   "kind": "word"
+  },
+  {
+   "t": 92.5,
+   "chart": "that",
+   "ref": "the",
+   "kind": "word"
+  },
+  {
+   "t": 133.9,
+   "chart": "that",
+   "ref": "the",
+   "kind": "word"
+  },
+  {
+   "t": 143.99,
+   "chart": "that",
+   "ref": "the",
+   "kind": "word"
+  },
+  {
+   "t": 190.83,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 193.78,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 196.72,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 199.49,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 202.34,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 205.2,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 230.81,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 233.93,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 239.64,
+   "chart": "that",
+   "ref": "the",
+   "kind": "word"
+  },
+  {
+   "t": 249.73,
+   "chart": "that",
+   "ref": "the",
+   "kind": "word"
+  },
+  {
+   "t": 262.4,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  },
+  {
+   "t": 265.34,
+   "chart": "under",
+   "ref": "on to",
+   "kind": "word"
+  }
+ ],
+ "review": [
+  {
+   "t": 37.53,
+   "chart": "The feelin’ comes",
+   "ref": "Feel it come",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  },
+  {
+   "t": 186.19,
+   "chart": "The feelin’ comes",
+   "ref": "Feel it come",
+   "why": "spelling or contraction - the chart may be how it's sung"
+  }
+ ]
+}
