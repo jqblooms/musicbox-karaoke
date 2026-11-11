@@ -72,7 +72,7 @@ async function unlock(raw) {
   key = await crypto.subtle.importKey("raw", raw, "AES-GCM", false, ["decrypt"]);
   const rows = await openFile("index.bin"); /* a wrong key fails here (the data will not authenticate) */
   keyBytes = raw;
-  songsAll = MbxRecommend.prepare(rows.map(([id, artist, title, language, year, genre, v, a, x]) => ({ id, artist, title, language, year, genre, v, a, x: x || 0 })));
+  songsAll = MbxRecommend.prepare(rows.map(([id, artist, title, language, year, genre, v, a, x, p]) => ({ id, artist, title, language, year, genre, v, a, x: x || 0, p: p || 0 })));
   songsKids = MbxRecommend.prepare(songsAll.filter((s) => !s.x));
   setKids(kids);
   try {

@@ -86,6 +86,7 @@ async function pick(s) {
     toast(jumped ? `Playing next: ${s.title}` : `Added: ${s.title}`);
     $("q").value = "";
     paintResults();
+    paintBrowse();
     maybeDuet(s);
   } catch (e) {
     toast("Couldn't add it: " + e.message);
@@ -99,6 +100,56 @@ function paintResults() {
   if (q && !res.length) $("results").appendChild(el("div", "empty", "No songs match"));
 }
 $("q").addEventListener("input", paintResults);
+
+/* ------------------------------------------------------------------ browsing: popular, by genre */
+const GENRES = [
+  ["", "Popular"], ["pop", "Pop"], ["rock", "Rock"], ["dance", "Dance"], ["hiphop", "Hip-hop"], ["soul", "R&B & Soul"],
+  ["schlager", "Schlager"], ["stage", "Film & Musicals"], ["country", "Country & Folk"], ["latin", "Latin"], ["asian", "Asian pop"],
+];
+let browseTab = store("mbxBrowse") || "", browseN = 25, browseCache = null;
+/* the most viewed first, one row per song (several charts of one song: the most viewed) */
+function browseSongs() {
+  if (browseCache && browseCache.list === songs && browseCache.tab === browseTab) return browseCache.rows;
+  const best = new Map();
+  for (const s of songs) {
+    if (!ytOf(s) || (browseTab && s.fam !== browseTab)) continue;
+    const k = s.key;
+    const b = best.get(k);
+    if (!b || s.p > b.p) best.set(k, s);
+  }
+  const rows = [...best.values()].sort((x, y) => y.p - x.p || x.title.localeCompare(y.title));
+  browseCache = { list: songs, tab: browseTab, rows };
+  return rows;
+}
+function paintBrowse() {
+  $("browse").hidden = !!$("q").value.trim();
+  if ($("browse").hidden || !songs) return;
+  const counts = new Map();
+  for (const s of songs) if (ytOf(s)) counts.set(s.fam, (counts.get(s.fam) || 0) + 1);
+  const tabs = GENRES.filter(([f]) => !f || (counts.get(f) || 0) >= 20);
+  if (!tabs.some(([f]) => f === browseTab)) browseTab = "";
+  $("browseTabs").replaceChildren(...tabs.map(([f, label]) => {
+    const b = el("button", "btab" + (f === browseTab ? " on" : ""), label);
+    b.type = "button";
+    b.setAttribute("role", "tab");
+    b.setAttribute("aria-selected", f === browseTab);
+    b.addEventListener("click", () => {
+      browseTab = f;
+      browseN = 25;
+      store("mbxBrowse", f);
+      paintBrowse();
+    });
+    return b;
+  }));
+  const rows = browseSongs();
+  $("browseList").replaceChildren(...rows.slice(0, browseN).map((s) => row(s, { onClick: () => pick(s), button: { label: "+", title: "Add to the queue", run: () => pick(s) } })));
+  $("browseMore").hidden = rows.length <= browseN;
+}
+$("browseMore").addEventListener("click", () => {
+  browseN += 25;
+  paintBrowse();
+});
+$("q").addEventListener("input", paintBrowse);
 $("q").addEventListener("keydown", (e) => {
   if (e.key === "Enter") $("results").querySelector(".row")?.click();
 });
@@ -596,6 +647,7 @@ window.onUnlocked = async () => {
     $("hostState").textContent = "No screen";
     return;
   }
+  paintBrowse();
   try {
     fb = await liveConnect();
   } catch (e) {
@@ -635,6 +687,7 @@ window.onUnlocked = async () => {
     setKids(snap.val() !== false);
     $("kidsBadge").hidden = !kids;
     paintResults();
+    paintBrowse();
     paintQueue();
   });
   db.onValue(db.ref(database, path + "/seen"), (snap) => {

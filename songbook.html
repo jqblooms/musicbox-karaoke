@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Songbook">
-<link rel="stylesheet" href="style.css?v=1794290401701">
+<link rel="stylesheet" href="style.css?v=1794362226063">
 </head>
 <body class="songbook">
   <section id="lock" class="lock">
@@ -83,6 +83,13 @@
         </div>
         <div class="search sb-search"><input id="q" type="search" placeholder="Search songs to sing" autocomplete="off" spellcheck="false"></div>
         <div id="results" class="group list"></div>
+        <!-- browsing, while nothing is typed: the most viewed songs on USDB, all or by genre -->
+        <div id="browse">
+          <div class="group-title">Browse</div>
+          <div id="browseTabs" class="browse-tabs" role="tablist"></div>
+          <div id="browseList" class="group list"></div>
+          <button id="browseMore" class="btn more-btn" type="button" hidden>Show more</button>
+        </div>
         <div class="group-title" id="queueTitle">Up next</div>
         <div id="queue" class="group list"></div>
         <div class="group-title">Tonight's top singers</div>
@@ -126,12 +133,12 @@
     </div>
   </section>
 
-  <script src="chart.js?v=1794290401701"></script>
-  <script src="draw.js?v=1794290401701"></script>
-  <script src="score.js?v=1794290401701"></script>
-  <script src="recommend.js?v=1794290401701"></script>
-  <script src="common.js?v=1794290401701"></script>
-  <script src="mic.js?v=1794290401701"></script>
-  <script src="songbook.js?v=1794290401701"></script>
+  <script src="chart.js?v=1794362226063"></script>
+  <script src="draw.js?v=1794362226063"></script>
+  <script src="score.js?v=1794362226063"></script>
+  <script src="recommend.js?v=1794362226063"></script>
+  <script src="common.js?v=1794362226063"></script>
+  <script src="mic.js?v=1794362226063"></script>
+  <script src="songbook.js?v=1794362226063"></script>
 </body>
 </html>
